@@ -7,6 +7,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FBF4EA">
 <title>chop chop!</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="chop chop!">
+<meta name="format-detection" content="telephone=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.1.0/style.css">
@@ -39,15 +44,16 @@
   --mono:"SF Mono",Menlo,Consolas,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{
   font-family:var(--sans);
   background:linear-gradient(175deg,var(--bg-a),var(--bg-b));
   color:var(--ink);
   font-size:16px;line-height:1.65;
   max-width:560px;margin:0 auto;
+  height:100dvh;
   display:flex;flex-direction:column;
-  position:relative;overflow-x:hidden;
+  position:relative;
 }
 .aura{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
 .aura.a{width:340px;height:340px;top:-120px;right:-100px;background:rgba(246,204,126,.5)}
@@ -63,8 +69,62 @@ header{
 .head-meta{display:flex;align-items:center;gap:12px}
 .head-clock{font-family:var(--mono);font-size:11px;color:var(--stamp);opacity:.85;letter-spacing:.1em;font-weight:600}
 .gear{background:none;border:none;font-size:18px;color:var(--ink-faint);cursor:pointer;padding:6px 2px}
+.sync{
+  background:none;border:none;cursor:pointer;padding:6px 2px;
+  color:var(--ink-faint);display:flex;align-items:center;
+}
+.sync svg{width:18px;height:18px}
+.sync.busy svg{animation:spin 1s linear infinite;color:var(--sea-deep)}
+.sync.ok svg{color:var(--sage-deep)}
+.sync.err svg{color:#C25537}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-main{flex:1;overflow-y:auto;padding:8px 22px 132px;position:relative;z-index:2}
+/* 云端更新提示条 */
+.cloud-banner{
+  display:none;margin:0 0 14px;padding:11px 15px;
+  background:var(--sea-mist);border:1px solid rgba(78,128,168,.3);border-radius:16px;
+  font-size:13px;color:var(--sea-deep);cursor:pointer;
+  font-family:var(--kai);letter-spacing:.03em;
+}
+.cloud-banner.show{display:block;animation:fade .3s ease}
+
+/* 昨日小结 */
+.sum-card{
+  position:relative;margin:0 0 16px;padding:14px 38px 13px 16px;
+  background:linear-gradient(165deg,rgba(231,238,223,.85),rgba(216,229,205,.8));
+  border:1px solid rgba(124,155,110,.3);border-radius:18px;
+  font-family:var(--kai);font-size:13.5px;line-height:1.8;color:#4A5F3D;
+  white-space:pre-wrap;box-shadow:var(--shadow);
+}
+.sum-card .sum-day{font-size:11px;letter-spacing:.1em;opacity:.7;font-family:var(--mono);font-weight:600;margin-bottom:4px}
+.sum-card .close{
+  position:absolute;right:10px;top:9px;background:none;border:none;
+  color:rgba(74,95,61,.5);font-size:13px;cursor:pointer;padding:4px;
+}
+.sum-inline{
+  margin:2px 0 10px;padding:11px 14px;
+  background:rgba(231,238,223,.6);border-radius:14px;
+  font-family:var(--kai);font-size:13px;line-height:1.75;color:#4A5F3D;white-space:pre-wrap;
+}
+
+/* 今天的三件 */
+.enough{padding:14px 16px 12px;margin:0 0 16px}
+.enough-title{font-family:var(--kai);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.06em;margin-bottom:10px}
+.enough-title small{font-weight:400;color:var(--ink-faint);font-size:11.5px;margin-left:6px}
+.enough-row{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.enough-row:last-of-type{margin-bottom:2px}
+.ecirc{
+  width:25px;height:25px;border-radius:50%;flex-shrink:0;cursor:pointer;
+  border:2px solid var(--sage);background:transparent;
+  transition:all .15s ease;position:relative;
+}
+.ecirc.on{background:var(--sage-deep);border-color:var(--sage-deep);box-shadow:0 3px 10px rgba(95,127,82,.4)}
+.ecirc.on::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.enough-row input{padding:8px 13px;font-size:14px;border-radius:12px}
+.enough-row input.donetext{text-decoration:line-through;color:var(--ink-faint)}
+.enough-fin{font-family:var(--kai);color:var(--sage-deep);font-size:13.5px;text-align:center;padding:6px 0 2px;display:none;letter-spacing:.1em}
+
+main{flex:1;overflow-y:auto;overflow-x:clip;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:8px 22px 132px;position:relative;z-index:2}
 .view{display:none;animation:fade .3s ease}
 .view.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -414,6 +474,9 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
   <div class="wordmark">chop chop<span class="bang">!</span></div>
   <div class="head-meta">
     <span class="head-clock" id="headClock"></span>
+    <button class="sync" id="syncBtn" aria-label="同步" title="同步到云端">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+    </button>
     <button class="gear" id="gearBtn" aria-label="设置">⚙︎</button>
   </div>
 </header>
@@ -441,6 +504,17 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
         <ellipse cx="87" cy="63" rx="6.5" ry="4" fill="rgba(255,110,70,.4)"/>
       </svg>
       <div class="bubble" id="buddySay">今天卡在哪儿？写进来。</div>
+    </div>
+
+    <div class="cloud-banner" id="cloudBanner"></div>
+    <div id="sumBanner"></div>
+
+    <div class="glass enough" id="enoughCard">
+      <div class="enough-title">今天做完哪三件，就算够了<small>给自己的觉察</small></div>
+      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"></div>
+      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"></div>
+      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"></div>
+      <div class="enough-fin" id="enoughFin">三件齐了。今天，够了。</div>
     </div>
 
     <div class="add-row">
@@ -590,7 +664,13 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 /* ---------- storage ---------- */
 const LS = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v===null? d : JSON.parse(v); }catch(e){ return d; } },
-  set(k, v){ localStorage.setItem(k, JSON.stringify(v)); scheduleAutoBackup(); }
+  set(k, v){
+    localStorage.setItem(k, JSON.stringify(v));
+    if(!["qyx_lastbackup","qyx_lastchange","qyx_gistid","qyx_sumseen","qyx_ghtoken","qyx_key","qyx_provider"].includes(k)){
+      localStorage.setItem("qyx_lastchange", JSON.stringify(Date.now()));
+    }
+    scheduleAutoBackup();
+  }
 };
 const DEFAULT_DICE = [
   "去洗头",
@@ -1130,6 +1210,96 @@ function showBottle(b){
   card.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
+/* ---------- 今天做完哪三件就够了 ---------- */
+let enough = LS.get("qyx_enough", null);
+function ensureEnough(){
+  const today = dayKey(Date.now());
+  if(!enough || enough.d !== today){
+    if(enough && enough.items && enough.items.some(i=>i.text)){
+      LS.set("qyx_enough_prev", enough);   // 留给昨日小结用
+    }
+    enough = {d: today, items:[{text:"",done:false},{text:"",done:false},{text:"",done:false}]};
+    LS.set("qyx_enough", enough);
+  }
+}
+function renderEnough(){
+  document.querySelectorAll("#enoughCard input").forEach(inp=>{
+    const i = +inp.dataset.i;
+    inp.value = enough.items[i].text;
+    inp.classList.toggle("donetext", enough.items[i].done);
+  });
+  document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
+    const i = +c.dataset.i;
+    c.classList.toggle("on", enough.items[i].done);
+  });
+  const filled = enough.items.filter(i=>i.text.trim());
+  const allDone = filled.length===3 && filled.every(i=>i.done);
+  $("enoughFin").style.display = allDone ? "block" : "none";
+}
+document.querySelectorAll("#enoughCard input").forEach(inp=>{
+  inp.addEventListener("input", ()=>{
+    enough.items[+inp.dataset.i].text = inp.value;
+    LS.set("qyx_enough", enough);
+  });
+});
+document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
+  c.onclick = ()=>{
+    const i = +c.dataset.i;
+    if(!enough.items[i].text.trim()) return;
+    enough.items[i].done = !enough.items[i].done;
+    LS.set("qyx_enough", enough);
+    renderEnough();
+    if(enough.items[i].done){
+      addLog("done", enough.items[i].text);
+      buddySay("done");
+      const filled = enough.items.filter(x=>x.text.trim());
+      if(filled.length===3 && filled.every(x=>x.done)) toastDone("三件齐了。今天，够了。");
+    }
+  };
+});
+
+/* ---------- 昨日小结 ---------- */
+let summaries = LS.get("qyx_sums", {});
+async function makeDailySummary(){
+  const yk = dayKey(Date.now()-864e5);
+  if(summaries[yk]){ renderSumBanner(); return; }
+  const yes = log.filter(e=>dayKey(e.t)===yk);
+  if(!yes.length) return;
+  const dice = yes.filter(e=>e.type==="dice").length;
+  const ai = yes.filter(e=>e.type==="ai").length;
+  const done = yes.filter(e=>e.type==="done").length;
+  const notes = yes.filter(e=>e.type==="note").length;
+  let text = `切了 ${dice+ai} 次（骰子 ${dice} · 问一句 ${ai}），记录 ${notes} 条，划掉 ${done} 件。`;
+  const prev = LS.get("qyx_enough_prev", null);
+  if(prev && prev.d===yk){
+    const f = prev.items.filter(i=>i.text.trim());
+    if(f.length) text += `「三件就够」完成 ${f.filter(i=>i.done).length}/${f.length}。`;
+  }
+  try{
+    const sample = yes.slice(-14).map(e=>`[${TAG[e.type]||e.type}] ${e.text}`.slice(0,50)).join("\n");
+    const sys = `这是她昨天在一个小工具里的记录。写一段温柔但不腻的观察：她昨天主要在哪些事之间打转、有没有什么小小的模式。只观察，不给建议，不打鸡血，不超过60个字。`;
+    const obs = await runAI(sys, [{role:"user", content:sample}]);
+    if(obs) text += "\n" + obs;
+  }catch(e){ /* 没配 key 就只有数字部分 */ }
+  summaries[yk] = {t: Date.now(), text};
+  LS.set("qyx_sums", summaries);
+  renderSumBanner();
+}
+function renderSumBanner(){
+  const yk = dayKey(Date.now()-864e5);
+  const box = $("sumBanner");
+  box.innerHTML = "";
+  if(!summaries[yk] || LS.get("qyx_sumseen","")===yk) return;
+  const d = document.createElement("div");
+  d.className = "sum-card";
+  d.innerHTML = `<div class="sum-day">昨天 · ${yk.slice(5).replace("-","/")}</div>${esc(summaries[yk].text)}<button class="close">✕</button>`;
+  d.querySelector(".close").onclick = ()=>{
+    localStorage.setItem("qyx_sumseen", JSON.stringify(yk));
+    box.innerHTML = "";
+  };
+  box.appendChild(d);
+}
+
 /* ---------- 记一笔 ---------- */
 $("saveNote").onclick = ()=>{
   const t = $("noteText").value.trim();
@@ -1171,6 +1341,12 @@ function renderLog(){
     exp.onclick = ()=>exportDay(k, groups[k]);
     head.appendChild(exp);
     g.appendChild(head);
+    if(summaries[k]){
+      const s = document.createElement("div");
+      s.className = "sum-inline";
+      s.textContent = summaries[k].text;
+      g.appendChild(s);
+    }
     groups[k].forEach(e=>{
       const row = document.createElement("div"); row.className = "entry";
       const time = new Date(e.t);
@@ -1303,7 +1479,7 @@ function toastDone(msg){
 }
 
 /* ---------- GitHub Gist 云备份 ---------- */
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles"];
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev"];
 function collectBackup(){
   const o = {};
   BACKUP_KEYS.forEach(k=>{ o[k] = LS.get(k, null); });
@@ -1324,6 +1500,41 @@ async function ghFetch(url, opt={}){
   }
   return res.json();
 }
+/* 取云端备份内容，返回 {t: 备份时间戳, data} 或 null */
+async function fetchCloud(){
+  let gistId = LS.get("qyx_gistid","");
+  let data;
+  if(gistId){
+    try{ data = await ghFetch("https://api.github.com/gists/"+gistId); }
+    catch(e){ if(String(e.message).includes("404")) gistId=""; else throw e; }
+  }
+  if(!gistId){
+    const list = await ghFetch("https://api.github.com/gists?per_page=100");
+    const found = list.find(g=>g.files && g.files["chopchop-backup.json"]);
+    if(!found) return null;
+    localStorage.setItem("qyx_gistid", JSON.stringify(found.id));
+    data = await ghFetch("https://api.github.com/gists/"+found.id);
+  }
+  const content = data.files["chopchop-backup.json"].content;
+  const o = JSON.parse(content);
+  return {t: o._exported ? new Date(o._exported).getTime() : 0, data: o};
+}
+function applyRestore(o){
+  BACKUP_KEYS.forEach(k=>{ if(o[k]!==null && o[k]!==undefined) localStorage.setItem(k, JSON.stringify(o[k])); });
+  localStorage.setItem("qyx_lastbackup", JSON.stringify(Date.now()));
+  localStorage.setItem("qyx_lastchange", JSON.stringify(0));
+  dicePool = LS.get("qyx_dice", DEFAULT_DICE);
+  log = LS.get("qyx_log", []);
+  opts = LS.get("qyx_opts", []);
+  bench = LS.get("qyx_bench", []);
+  ongoing = LS.get("qyx_ongoing", []);
+  months = LS.get("qyx_months", {});
+  bottles = LS.get("qyx_bottles", []);
+  summaries = LS.get("qyx_sums", {});
+  enough = LS.get("qyx_enough", null);
+  ensureEnough(); renderEnough();
+  renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderSea(); renderLog();
+}
 async function backupNow(silent){
   const status = $("syncStatus");
   try{
@@ -1338,44 +1549,93 @@ async function backupNow(silent){
     }
     localStorage.setItem("qyx_lastbackup", JSON.stringify(Date.now()));
     if(status) status.textContent = "已备份 " + stampNow();
-    if(!silent) toastDone("备份好了。");
+    if(!silent){
+      $("settingsBg").classList.remove("show");
+      toastDone("备份好了。");
+    }
+    return true;
   }catch(e){
     if(status) status.textContent = "备份失败：" + e.message;
     if(!silent) alert("备份失败：" + e.message);
+    return false;
   }
 }
 async function restoreNow(){
   if(!confirm("会用云端数据覆盖这台设备上的记录，确定？")) return;
   const status = $("syncStatus");
   try{
-    const gistId = LS.get("qyx_gistid","");
-    let data;
-    if(gistId){
-      data = await ghFetch("https://api.github.com/gists/"+gistId);
-    }else{
-      const list = await ghFetch("https://api.github.com/gists?per_page=100");
-      const found = list.find(g=>g.files && g.files["chopchop-backup.json"]);
-      if(!found) throw new Error("云端没找到备份");
-      localStorage.setItem("qyx_gistid", JSON.stringify(found.id));
-      data = await ghFetch("https://api.github.com/gists/"+found.id);
-    }
-    const content = data.files["chopchop-backup.json"].content;
-    const o = JSON.parse(content);
-    BACKUP_KEYS.forEach(k=>{ if(o[k]!==null && o[k]!==undefined) localStorage.setItem(k, JSON.stringify(o[k])); });
-    dicePool = LS.get("qyx_dice", DEFAULT_DICE);
-    log = LS.get("qyx_log", []);
-    opts = LS.get("qyx_opts", []);
-    bench = LS.get("qyx_bench", []);
-    ongoing = LS.get("qyx_ongoing", []);
-    months = LS.get("qyx_months", {});
-    bottles = LS.get("qyx_bottles", []);
-    renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderSea();
-    if(status) status.textContent = "已恢复（备份于 "+(o._exported||"?").slice(0,16).replace("T"," ")+"）";
+    const cloud = await fetchCloud();
+    if(!cloud) throw new Error("云端没找到备份");
+    applyRestore(cloud.data);
+    if(status) status.textContent = "已恢复（备份于 "+(cloud.data._exported||"?").slice(0,16).replace("T"," ")+"）";
+    $("settingsBg").classList.remove("show");
     toastDone("恢复好了。");
   }catch(e){
     if(status) status.textContent = "恢复失败：" + e.message;
   }
 }
+/* 顶栏一键智能同步：云端更新就问要不要拉，否则推 */
+function setSyncState(st){
+  const b = $("syncBtn");
+  b.classList.remove("busy","ok","err");
+  if(st) b.classList.add(st);
+  if(st==="ok"||st==="err") setTimeout(()=>b.classList.remove("ok","err"), 2500);
+}
+async function smartSync(){
+  const token = LS.get("qyx_ghtoken","");
+  if(!token){
+    $("gearBtn").click();
+    toastDone("先在设置里贴 GitHub token。");
+    return;
+  }
+  setSyncState("busy");
+  try{
+    const cloud = await fetchCloud();
+    const lastBackup = LS.get("qyx_lastbackup", 0);
+    const lastChange = LS.get("qyx_lastchange", 0);
+    if(cloud && cloud.t > lastBackup + 60000 && cloud.t > lastChange){
+      // 云端明显更新，本机又没有更新的改动 → 拉
+      if(confirm("云端有更新的备份（可能来自另一台设备）。用云端覆盖本机？")){
+        applyRestore(cloud.data);
+        toastDone("已用云端数据。");
+      }
+    }else{
+      const ok = await backupNow(true);
+      if(ok) toastDone("备份好了。");
+    }
+    setSyncState("ok");
+  }catch(e){
+    setSyncState("err");
+    alert("同步失败：" + e.message);
+  }
+}
+$("syncBtn").onclick = smartSync;
+/* 打开时静默检查云端是否更新 */
+async function cloudCheckOnLoad(){
+  if(!LS.get("qyx_ghtoken","")) return;
+  try{
+    const cloud = await fetchCloud();
+    const lastBackup = LS.get("qyx_lastbackup", 0);
+    const lastChange = LS.get("qyx_lastchange", 0);
+    if(cloud && cloud.t > lastBackup + 60000 && cloud.t >= lastChange){
+      const b = $("cloudBanner");
+      b.textContent = "☁︎ 云端有更新的备份（另一台设备）· 点这里用云端的";
+      b.classList.add("show");
+      b.onclick = ()=>{
+        applyRestore(cloud.data);
+        b.classList.remove("show");
+        toastDone("已用云端数据。");
+      };
+    }
+  }catch(e){ /* 静默 */ }
+}
+/* 离开页面时如有未备份的改动，自动备份 */
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState==="hidden"){
+    const lc = LS.get("qyx_lastchange",0), lb = LS.get("qyx_lastbackup",0);
+    if(lc > lb && localStorage.getItem("qyx_ghtoken")) backupNow(true);
+  }
+});
 let backupTimer = null;
 function scheduleAutoBackup(){
   if(!localStorage.getItem("qyx_ghtoken")) return;
@@ -1418,6 +1678,10 @@ renderBench();
 renderOngoing();
 renderMonth();
 renderSea();
+ensureEnough();
+renderEnough();
+makeDailySummary();
+cloudCheckOnLoad();
 </script>
 </body>
 </html>
