@@ -477,6 +477,14 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
   padding:10px;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:var(--sans);
 }
 .sync-status{font-family:var(--mono);font-size:11px;color:var(--sage-deep);margin-top:8px;min-height:16px}
+#historyList{margin-top:10px}
+#historyList button{
+  display:block;width:100%;text-align:left;margin-bottom:6px;
+  border:1px solid rgba(75,66,55,.15);background:#fff;border-radius:12px;
+  padding:9px 13px;font-size:13px;cursor:pointer;color:var(--ink);
+  font-family:var(--mono);letter-spacing:.03em;
+}
+#historyList .hl-hint{font-size:12px;color:var(--ink-soft);margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -655,14 +663,16 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <input type="password" id="apiKey" placeholder="sk-…">
     <p style="margin-top:8px">key 只存在这台设备的浏览器里。DeepSeek 的 key 记得把上面服务也切过去。</p>
 
-    <h3 style="margin-top:20px">云备份（GitHub）</h3>
-    <p>电脑和手机打开同一个网址、贴同一个 token，数据就通了。新设备第一次先点「从云端恢复」。</p>
+    <h3 style="margin-top:20px">云同步（GitHub）</h3>
+    <p>同步=本机和云端<b>合并</b>，两边记录取并集，谁也不会覆盖谁。平时不用管，改动后会自动同步。</p>
     <input type="password" id="ghToken" placeholder="ghp_… 或 github_pat_…">
     <div class="sync-row">
-      <button id="backupBtn">备份到云端</button>
-      <button id="restoreBtn">从云端恢复</button>
+      <button id="backupBtn">立即同步</button>
+      <button id="historyBtn">找回历史版本</button>
     </div>
+    <div id="historyList"></div>
     <div class="sync-status" id="syncStatus"></div>
+    <p style="margin-top:8px" id="verLine"></p>
 
     <h3 style="margin-top:20px">最小动作池</h3>
     <p>一行一个，全是「一点点」级别的动作。本月里拆出来的小选项也会自动混进抽签池。</p>
@@ -792,6 +802,7 @@ function renderOngoing(){
     d.querySelector(".done").onclick = ()=>{
       ongoing = ongoing.filter(x=>x.id!==o.id);
       LS.set("qyx_ongoing", ongoing);
+      bury("ongoing", o.text);
       addLog("done", o.text);
       renderOngoing();
       buddySay("done");
@@ -806,6 +817,7 @@ let lastDice = null;
 function saveOpts(){ LS.set("qyx_opts", opts); }
 function saveBench(){ LS.set("qyx_bench", bench); }
 function addToOpts(text){
+  unbury("opt", text);
   if(opts.includes(text)) return;
   if(opts.length >= MAX_OPTS){
     if(!bench.includes(text)){ bench.push(text); saveBench(); renderBench(); }
@@ -830,7 +842,7 @@ function renderOpts(){
       renderOpts(); renderBench();
     };
     d.querySelector(".x").onclick = ()=>{
-      opts.splice(i,1); saveOpts(); renderOpts();
+      opts.splice(i,1); saveOpts(); bury("opt", o); renderOpts();
     };
     c.appendChild(d);
   });
@@ -852,7 +864,7 @@ function renderBench(){
       renderOpts(); renderBench();
     };
     d.querySelector(".x").onclick = ()=>{
-      bench.splice(i,1); saveBench(); renderBench();
+      bench.splice(i,1); saveBench(); bury("opt", o); renderBench();
     };
     c.appendChild(d);
   });
@@ -1141,6 +1153,7 @@ function renderMonth(){
       const anchors = monthAnchors();
       const idx = anchors.findIndex(x=>x.id===a.id);
       if(idx>-1) anchors.splice(idx,1);
+      bury("anchor:"+ymNow(), a.text);
       saveMonths(); renderMonth();
     };
     list.appendChild(card);
@@ -1151,6 +1164,7 @@ $("addAnchor").onclick = ()=>{
   if(!t) return;
   const anchors = monthAnchors();
   if(anchors.length>=5){ alert("最多五件。想加，先删一个。"); return; }
+  unbury("anchor:"+ymNow(), t);
   anchors.push({id: Date.now(), text: t, splits: []});
   saveMonths();
   $("anchorText").value = "";
@@ -1518,12 +1532,26 @@ function toastDone(msg){
   setTimeout(()=>t.remove(), 1600);
 }
 
-/* ---------- GitHub Gist 云备份 ---------- */
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev"];
+/* ---------- 云同步：合并式引擎 ---------- */
+const APP_VERSION = "2.0.0";
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_dead"];
+let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
+function bury(scope, val){
+  if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
+  if(dead.length>300) dead = dead.slice(-300);
+  LS.set("qyx_dead", dead);
+}
+function unbury(scope, val){
+  const n = dead.filter(d=>!(d.s===scope && d.v===val));
+  if(n.length!==dead.length){ dead = n; LS.set("qyx_dead", dead); }
+}
+function isDead(scope, val){ return dead.some(d=>d.s===scope && d.v===val); }
+
 function collectBackup(){
   const o = {};
   BACKUP_KEYS.forEach(k=>{ o[k] = LS.get(k, null); });
   o._exported = new Date().toISOString();
+  o._ver = APP_VERSION;
   return JSON.stringify(o, null, 2);
 }
 async function ghFetch(url, opt={}){
@@ -1535,12 +1563,9 @@ async function ghFetch(url, opt={}){
     "Content-Type":"application/json"
   }, opt.headers||{});
   const res = await fetch(url, opt);
-  if(!res.ok){
-    throw new Error(res.status===401 ? "token 无效或过期" : ("GitHub: "+res.status));
-  }
+  if(!res.ok) throw new Error(res.status===401 ? "token 无效或过期" : ("GitHub: "+res.status));
   return res.json();
 }
-/* 取云端备份内容，返回 {t: 备份时间戳, data} 或 null */
 async function fetchCloud(){
   let gistId = LS.get("qyx_gistid","");
   let data;
@@ -1556,36 +1581,124 @@ async function fetchCloud(){
     data = await ghFetch("https://api.github.com/gists/"+found.id);
   }
   const content = data.files["chopchop-backup.json"].content;
-  const o = JSON.parse(content);
-  return {t: o._exported ? new Date(o._exported).getTime() : 0, data: o};
+  return {data: JSON.parse(content)};
 }
-function applyRestore(o){
-  BACKUP_KEYS.forEach(k=>{ if(o[k]!==null && o[k]!==undefined) localStorage.setItem(k, JSON.stringify(o[k])); });
-  localStorage.setItem("qyx_lastbackup", JSON.stringify(Date.now()));
-  localStorage.setItem("qyx_lastchange", JSON.stringify(0));
-  dicePool = LS.get("qyx_dice", DEFAULT_DICE);
-  log = LS.get("qyx_log", []);
-  opts = LS.get("qyx_opts", []);
-  bench = LS.get("qyx_bench", []);
-  ongoing = LS.get("qyx_ongoing", []);
-  months = LS.get("qyx_months", {});
-  bottles = LS.get("qyx_bottles", []);
-  summaries = LS.get("qyx_sums", {});
-  enough = LS.get("qyx_enough", null);
+
+/* 并集合并：把 o（云端或历史版本）并进本机，永不减少记录 */
+function unionStr(local, remote, scope){
+  const set = new Set(local||[]);
+  (remote||[]).forEach(v=>{ if(!isDead(scope, v)) set.add(v); });
+  return [...set];
+}
+function mergeAll(o){
+  if(!o) return false;
+  const before = JSON.stringify(BACKUP_KEYS.map(k=>LS.get(k,null)));
+  // 墓碑先合并，后续过滤才准
+  (o.qyx_dead||[]).forEach(d=>{
+    if(!dead.some(x=>x.s===d.s && x.v===d.v)) dead.push(d);
+  });
+  if(dead.length>300) dead = dead.slice(-300);
+  LS.setSilent("qyx_dead", dead);
+  // 日志：按 时间+类型+内容 去重取并集
+  const logKey = e=>e.t+"|"+e.type+"|"+e.text;
+  const logMap = new Map(log.map(e=>[logKey(e), e]));
+  (o.qyx_log||[]).forEach(e=>{ if(!logMap.has(logKey(e))) logMap.set(logKey(e), e); });
+  log = [...logMap.values()].sort((a,b)=>a.t-b.t);
+  LS.setSilent("qyx_log", log);
+  // 瓶子：按 id 并，后续也并
+  const bMap = new Map(bottles.map(b=>[b.id, b]));
+  (o.qyx_bottles||[]).forEach(rb=>{
+    if(!bMap.has(rb.id)) bMap.set(rb.id, rb);
+    else{
+      const lb = bMap.get(rb.id);
+      const fKey = f=>f.t+"|"+f.text;
+      const fMap = new Map((lb.followups||[]).map(f=>[fKey(f), f]));
+      (rb.followups||[]).forEach(f=>{ if(!fMap.has(fKey(f))) fMap.set(fKey(f), f); });
+      lb.followups = [...fMap.values()].sort((a,b)=>a.t-b.t);
+    }
+  });
+  bottles = [...bMap.values()].sort((a,b)=>a.t-b.t);
+  LS.setSilent("qyx_bottles", bottles);
+  // 定过的：按 id 并，过滤墓碑
+  const oMap = new Map(ongoing.map(x=>[x.id, x]));
+  (o.qyx_ongoing||[]).forEach(x=>{ if(!oMap.has(x.id) && !isDead("ongoing", x.text)) oMap.set(x.id, x); });
+  ongoing = [...oMap.values()].sort((a,b)=>b.t-a.t).slice(0,10);
+  LS.setSilent("qyx_ongoing", ongoing);
+  // 打转/待选/动作池：字符串并集
+  const mergedOpts = unionStr(opts, o.qyx_opts, "opt");
+  const mergedBench = unionStr(bench, o.qyx_bench, "opt");
+  opts = mergedOpts.slice(0, MAX_OPTS);
+  bench = [...new Set([...mergedBench, ...mergedOpts.slice(MAX_OPTS)])];
+  LS.setSilent("qyx_opts", opts); LS.setSilent("qyx_bench", bench);
+  dicePool = unionStr(dicePool, o.qyx_dice, "dice");
+  LS.setSilent("qyx_dice", dicePool);
+  // 月锚点：按月，按文字并，splits 并
+  const rm = o.qyx_months||{};
+  Object.keys(rm).forEach(ym=>{
+    if(!months[ym]) months[ym] = [];
+    (rm[ym]||[]).forEach(ra=>{
+      if(isDead("anchor:"+ym, ra.text)) return;
+      const la = months[ym].find(x=>x.text===ra.text);
+      if(!la){ if(months[ym].length<5) months[ym].push(ra); }
+      else la.splits = [...new Set([...(la.splits||[]), ...(ra.splits||[])])];
+    });
+  });
+  LS.setSilent("qyx_months", months);
+  // 小结：补缺
+  const rs = o.qyx_sums||{};
+  Object.keys(rs).forEach(k=>{ if(!summaries[k]) summaries[k] = rs[k]; });
+  LS.setSilent("qyx_sums", summaries);
+  // 今天三件：同一天则逐项合并；不同天以今天为准
+  const re = o.qyx_enough;
+  const today = dayKey(Date.now());
+  if(re && re.d===today && enough && enough.d===today){
+    enough.items.forEach((it,i)=>{
+      const rit = (re.items||[])[i];
+      if(!rit) return;
+      if(!it.text.trim() && rit.text) it.text = rit.text;
+      it.done = it.done || !!rit.done;
+      it.subs = [...new Set([...(it.subs||[]), ...(rit.subs||[])])];
+    });
+    LS.setSilent("qyx_enough", enough);
+  } else if(re && re.d===today && (!enough || enough.d!==today)){
+    enough = re; enough.items.forEach(i=>{ if(!i.subs) i.subs=[]; });
+    LS.setSilent("qyx_enough", enough);
+  }
+  const rp = o.qyx_enough_prev;
+  if(rp && !LS.get("qyx_enough_prev", null)) LS.setSilent("qyx_enough_prev", rp);
+  const after = JSON.stringify(BACKUP_KEYS.map(k=>LS.get(k,null)));
+  return before !== after;
+}
+function rerenderAll(){
   ensureEnough(); renderEnough();
   renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderSea(); renderLog();
 }
-function localHasData(){
-  return log.length>0 || bottles.length>0 || opts.length>0 || bench.length>0 || ongoing.length>0
-    || Object.values(months).some(a=>a && a.length);
+
+/* 同步 = 拉云端 → 并进本机 → 推合并结果。任何顺序按都不丢数据 */
+let syncing = false;
+function setSyncState(st){
+  const b = $("syncBtn");
+  b.classList.remove("busy","ok","err");
+  if(st) b.classList.add(st);
+  if(st==="ok"||st==="err") setTimeout(()=>b.classList.remove("ok","err"), 2500);
 }
-async function backupNow(silent){
-  const status = $("syncStatus");
-  if(!localHasData()){
-    if(silent) return false;   // 空机静默备份直接跳过，防止覆盖云端
-    if(!confirm("这台设备上几乎没有数据。备份会用空数据覆盖云端，确定？")) return false;
+async function syncNow(silent){
+  if(syncing) return;
+  const token = LS.get("qyx_ghtoken","");
+  if(!token){
+    if(!silent){ $("gearBtn").click(); toastDone("先在设置里贴 GitHub token。"); }
+    return;
   }
+  syncing = true;
+  setSyncState("busy");
+  const status = $("syncStatus");
   try{
+    const cloud = await fetchCloud();
+    if(cloud){
+      const changed = mergeAll(cloud.data);
+      if(changed) rerenderAll();
+    }
+    // 推合并后的完整数据
     let gistId = LS.get("qyx_gistid","");
     const body = {files:{"chopchop-backup.json":{content: collectBackup()}}};
     if(gistId){
@@ -1596,108 +1709,92 @@ async function backupNow(silent){
       localStorage.setItem("qyx_gistid", JSON.stringify(data.id));
     }
     localStorage.setItem("qyx_lastbackup", JSON.stringify(Date.now()));
-    if(status) status.textContent = "已备份 " + stampNow();
-    if(!silent){
-      $("settingsBg").classList.remove("show");
-      toastDone("备份好了。");
-    }
-    return true;
-  }catch(e){
-    if(status) status.textContent = "备份失败：" + e.message;
-    if(!silent) alert("备份失败：" + e.message);
-    return false;
-  }
-}
-async function restoreNow(){
-  if(!confirm("会用云端数据覆盖这台设备上的记录，确定？")) return;
-  const status = $("syncStatus");
-  try{
-    const cloud = await fetchCloud();
-    if(!cloud) throw new Error("云端没找到备份");
-    applyRestore(cloud.data);
-    if(status) status.textContent = "已恢复（备份于 "+(cloud.data._exported||"?").slice(0,16).replace("T"," ")+"）";
-    $("settingsBg").classList.remove("show");
-    toastDone("恢复好了。");
-  }catch(e){
-    if(status) status.textContent = "恢复失败：" + e.message;
-  }
-}
-/* 顶栏一键智能同步：云端更新就问要不要拉，否则推 */
-function setSyncState(st){
-  const b = $("syncBtn");
-  b.classList.remove("busy","ok","err");
-  if(st) b.classList.add(st);
-  if(st==="ok"||st==="err") setTimeout(()=>b.classList.remove("ok","err"), 2500);
-}
-async function smartSync(){
-  const token = LS.get("qyx_ghtoken","");
-  if(!token){
-    $("gearBtn").click();
-    toastDone("先在设置里贴 GitHub token。");
-    return;
-  }
-  setSyncState("busy");
-  try{
-    const cloud = await fetchCloud();
-    const lastBackup = LS.get("qyx_lastbackup", 0);
-    const lastChange = LS.get("qyx_lastchange", 0);
-    if(cloud && cloud.t > lastBackup + 60000 && cloud.t > lastChange){
-      // 云端明显更新，本机又没有更新的改动 → 拉
-      if(confirm("云端有更新的备份（可能来自另一台设备）。用云端覆盖本机？")){
-        applyRestore(cloud.data);
-        toastDone("已用云端数据。");
-      }
-    }else{
-      const ok = await backupNow(true);
-      if(ok) toastDone("备份好了。");
-    }
+    if(status) status.textContent = "已同步 " + stampNow();
+    if(!silent) toastDone("同步好了。");
     setSyncState("ok");
   }catch(e){
+    if(status) status.textContent = "同步失败：" + e.message;
+    if(!silent) alert("同步失败：" + e.message);
     setSyncState("err");
-    alert("同步失败：" + e.message);
   }
+  syncing = false;
 }
-$("syncBtn").onclick = smartSync;
-/* 打开时静默检查云端是否更新 */
-async function cloudCheckOnLoad(){
-  if(!LS.get("qyx_ghtoken","")) return;
+$("syncBtn").onclick = ()=>syncNow(false);
+$("backupBtn").onclick = ()=>{
+  LS.setSilent("qyx_ghtoken", $("ghToken").value.trim());
+  syncNow(false);
+};
+
+/* 历史版本：从 Gist 修订记录里捞回某一天的数据（并入，不覆盖） */
+$("historyBtn").onclick = async ()=>{
+  LS.setSilent("qyx_ghtoken", $("ghToken").value.trim());
+  const box = $("historyList");
+  box.innerHTML = '<div class="hl-hint">在找…</div>';
   try{
-    const cloud = await fetchCloud();
-    const lastBackup = LS.get("qyx_lastbackup", 0);
-    const lastChange = LS.get("qyx_lastchange", 0);
-    if(cloud && cloud.t > lastBackup + 60000 && cloud.t >= lastChange){
-      const b = $("cloudBanner");
-      b.textContent = "☁︎ 云端有更新的备份（另一台设备）· 点这里用云端的";
-      b.classList.add("show");
-      b.onclick = ()=>{
-        applyRestore(cloud.data);
-        b.classList.remove("show");
-        toastDone("已用云端数据。");
+    let gistId = LS.get("qyx_gistid","");
+    if(!gistId){ await fetchCloud(); gistId = LS.get("qyx_gistid",""); }
+    if(!gistId) throw new Error("云端没有备份");
+    const commits = await ghFetch(`https://api.github.com/gists/${gistId}/commits?per_page=20`);
+    box.innerHTML = '<div class="hl-hint">点一个时间点，把那份数据并回来（只加不减）：</div>';
+    commits.forEach(c=>{
+      const b = document.createElement("button");
+      const d = new Date(c.committed_at);
+      b.textContent = `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      b.onclick = async ()=>{
+        b.disabled = true; b.textContent += " …";
+        try{
+          const rev = await ghFetch(`https://api.github.com/gists/${gistId}/${c.version}`);
+          const o = JSON.parse(rev.files["chopchop-backup.json"].content);
+          const changed = mergeAll(o);
+          if(changed) rerenderAll();
+          toastDone(changed ? "并回来了。" : "这份里没有本机缺的东西。");
+          syncNow(true);
+          box.innerHTML = "";
+        }catch(e){ alert("取不到这个版本：" + e.message); b.disabled=false; }
       };
-    }
-  }catch(e){ /* 静默 */ }
-}
-/* 离开页面时如有未备份的改动，自动备份 */
+      box.appendChild(b);
+    });
+  }catch(e){
+    box.innerHTML = '<div class="hl-hint">失败：'+e.message+'</div>';
+  }
+};
+
+/* 页面回到前台：自动合并同步（30秒内不重复）；离开：推一次 */
+let lastAutoSync = 0;
 document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState==="hidden"){
-    const lc = LS.get("qyx_lastchange",0), lb = LS.get("qyx_lastbackup",0);
-    if(lc > lb && localStorage.getItem("qyx_ghtoken")) backupNow(true);
+  if(!localStorage.getItem("qyx_ghtoken")) return;
+  if(document.visibilityState==="visible"){
+    if(Date.now()-lastAutoSync > 30000){ lastAutoSync = Date.now(); syncNow(true); }
+    checkUpdate();
+  }else{
+    syncNow(true);
   }
 });
 let backupTimer = null;
 function scheduleAutoBackup(){
   if(!localStorage.getItem("qyx_ghtoken")) return;
   clearTimeout(backupTimer);
-  backupTimer = setTimeout(()=>backupNow(true), 30000);
+  backupTimer = setTimeout(()=>syncNow(true), 20000);
 }
-$("backupBtn").onclick = ()=>{
-  LS.set("qyx_ghtoken", $("ghToken").value.trim());
-  backupNow(false);
-};
-$("restoreBtn").onclick = ()=>{
-  LS.set("qyx_ghtoken", $("ghToken").value.trim());
-  restoreNow();
-};
+
+/* ---------- 版本自检：app 模式没有刷新键，靠这个拿新版 ---------- */
+async function checkUpdate(){
+  try{
+    const url = location.pathname + "?nocache=" + Date.now();
+    const res = await fetch(url, {cache:"no-store"});
+    const txt = await res.text();
+    const m = txt.match(/APP_VERSION\s*=\s*"([^"]+)"/);
+    if(m && m[1] !== APP_VERSION){
+      const b = $("cloudBanner");
+      b.textContent = "⬆ 有新版本 " + m[1] + " · 点这里更新";
+      b.classList.add("show");
+      b.onclick = async ()=>{
+        await syncNow(true);   // 更新前先同步，数据无虞
+        location.href = location.pathname + "?u=" + Date.now();
+      };
+    }
+  }catch(e){ /* 静默 */ }
+}
 
 /* ---------- settings ---------- */
 $("gearBtn").onclick = ()=>{
@@ -1706,7 +1803,9 @@ $("gearBtn").onclick = ()=>{
   $("ghToken").value = LS.get("qyx_ghtoken","");
   $("dicePool").value = dicePool.join("\n");
   const lb = LS.get("qyx_lastbackup", null);
-  $("syncStatus").textContent = lb ? "上次备份：" + new Date(lb).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
+  $("syncStatus").textContent = lb ? "上次同步：" + new Date(lb).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
+  $("verLine").textContent = "版本 " + APP_VERSION;
+  $("historyList").innerHTML = "";
   $("settingsBg").classList.add("show");
 };
 $("settingsBg").onclick = e=>{ if(e.target===$("settingsBg")) $("settingsBg").classList.remove("show"); };
@@ -1714,8 +1813,10 @@ $("saveSettings").onclick = ()=>{
   LS.set("qyx_key", $("apiKey").value.trim());
   LS.set("qyx_provider", $("provider").value);
   LS.set("qyx_ghtoken", $("ghToken").value.trim());
-  dicePool = $("dicePool").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  if(!dicePool.length) dicePool = DEFAULT_DICE;
+  const newPool = $("dicePool").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  dicePool.forEach(old=>{ if(!newPool.includes(old)) bury("dice", old); });
+  newPool.forEach(v=>unbury("dice", v));
+  dicePool = newPool.length ? newPool : DEFAULT_DICE;
   LS.set("qyx_dice", dicePool);
   $("settingsBg").classList.remove("show");
   toastDone("保存了。");
@@ -1729,7 +1830,8 @@ renderSea();
 ensureEnough();
 renderEnough();
 makeDailySummary();
-cloudCheckOnLoad();
+syncNow(true);
+checkUpdate();
 let bootDay = dayKey(Date.now());
 setInterval(()=>{
   const d = dayKey(Date.now());
