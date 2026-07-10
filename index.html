@@ -110,7 +110,6 @@ header{
 /* 今天的三件 */
 .enough{padding:14px 16px 12px;margin:0 0 16px}
 .enough-title{font-family:var(--kai);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.06em;margin-bottom:10px}
-.enough-title small{font-weight:400;color:var(--ink-faint);font-size:11.5px;margin-left:6px}
 .enough-row{display:flex;gap:10px;align-items:center;margin-bottom:8px}
 .enough-row:last-of-type{margin-bottom:2px}
 .ecirc{
@@ -123,6 +122,20 @@ header{
 .enough-row input{padding:8px 13px;font-size:14px;border-radius:12px}
 .enough-row input.donetext{text-decoration:line-through;color:var(--ink-faint)}
 .enough-fin{font-family:var(--kai);color:var(--sage-deep);font-size:13.5px;text-align:center;padding:6px 0 2px;display:none;letter-spacing:.1em}
+.esub-add{
+  flex-shrink:0;background:none;border:1px dashed rgba(75,66,55,.25);color:var(--ink-soft);
+  border-radius:999px;padding:4px 11px;font-size:12px;cursor:pointer;font-family:var(--kai);
+}
+.esubs{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 8px 35px}
+.esubs:empty{margin:0}
+.esub{
+  display:inline-flex;align-items:center;gap:3px;
+  background:rgba(246,204,126,.28);border:1px solid rgba(230,170,90,.4);
+  border-radius:999px;padding:4px 4px 4px 11px;font-size:12.5px;color:#8A5F22;
+}
+.esub button{background:none;border:none;cursor:pointer;font-size:11px;padding:2px 5px}
+.esub .todice{color:#B5772A;font-weight:600}
+.esub .x{color:rgba(138,95,34,.5)}
 
 main{flex:1;overflow-y:auto;overflow-x:clip;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:8px 22px 132px;position:relative;z-index:2}
 .view{display:none;animation:fade .3s ease}
@@ -482,7 +495,7 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 </header>
 
 <main>
-  <!-- 卡住 -->
+  <!-- 首页 -->
   <section class="view on" id="v-stuck">
     <div class="buddy-row">
       <svg class="buddy" viewBox="0 0 120 110" aria-hidden="true">
@@ -510,33 +523,20 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div id="sumBanner"></div>
 
     <div class="glass enough" id="enoughCard">
-      <div class="enough-title">今天做完哪三件，就算够了<small>给自己的觉察</small></div>
-      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"></div>
-      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"></div>
-      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"></div>
-      <div class="enough-fin" id="enoughFin">三件齐了。今天，够了。</div>
-    </div>
-
-    <div class="add-row">
-      <input type="text" id="optText" placeholder="比如：听课10分钟">
-      <button class="plus" id="addOpt">＋</button>
-    </div>
-    <div class="chips" id="optChips"></div>
-
-    <div id="benchBlock" style="display:none">
-      <h2>待选区 · 这次不掷它<span class="count" id="benchCount"></span></h2>
-      <div class="chips" id="benchChips"></div>
-    </div>
-
-    <div id="ongoingBlock" style="display:none">
-      <h2>定过的 · 点一下排回今天</h2>
-      <div class="chips" id="ongoingChips"></div>
+      <div class="enough-title">今天做完这三件，就够了</div>
+      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button></div>
+      <div class="esubs" data-i="0"></div>
+      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button></div>
+      <div class="esubs" data-i="1"></div>
+      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button></div>
+      <div class="esubs" data-i="2"></div>
+      <div class="enough-fin" id="enoughFin">今天，够了。</div>
     </div>
 
     <button class="hero-btn hero-dice" id="diceBtn">
       <span>
         <span class="name">掷骰子</span>
-        <span class="sub">从打转区里掷出一件，掷到就是它</span>
+        <span class="sub">从下面的事项里掷一件</span>
       </span>
       <span class="glyph">⚄</span>
     </button>
@@ -546,15 +546,31 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <button class="chip-btn" id="rerollDice">再掷</button>
     </div>
 
+    <div class="add-row">
+      <input type="text" id="optText" placeholder="加一件事，最多9条">
+      <button class="plus" id="addOpt">＋</button>
+    </div>
+    <div class="chips" id="optChips"></div>
+
+    <div id="benchBlock" style="display:none">
+      <h2>待选 · 这次不掷<span class="count" id="benchCount"></span></h2>
+      <div class="chips" id="benchChips"></div>
+    </div>
+
+    <div id="ongoingBlock" style="display:none">
+      <h2>定过的 · 点一下排回</h2>
+      <div class="chips" id="ongoingChips"></div>
+    </div>
+
     <button class="hero-btn hero-ai" id="aiToggle">
       <span>
         <span class="name">问一句</span>
-        <span class="sub">说说卡在哪，它看着选项和时间，一句话切</span>
+        <span class="sub">一句话拍板</span>
       </span>
       <span class="glyph">◍</span>
     </button>
     <div class="ai-panel glass" id="aiPanel" style="display:none">
-      <textarea id="aiInput" rows="2" placeholder="卡在什么上？一两句就行"></textarea>
+      <textarea id="aiInput" rows="2" placeholder="卡在什么上？"></textarea>
       <button class="send" id="aiSend">切</button>
       <div class="ai-reply" id="aiReply"></div>
       <div class="ai-actions" id="aiActions">
@@ -569,7 +585,7 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     </div>
 
     <div class="micro-row">
-      不是几件事打架，是整个人动不了？
+      动不了的时候：
       <button class="micro-btn" id="microBtn">抽一个最小动作</button>
       <div class="qian-wrap" id="microWrap"></div>
       <div class="qian-actions" id="microActions" style="display:none">
@@ -582,7 +598,7 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
   <!-- 本月 -->
   <section class="view" id="v-month">
     <div class="month-title" id="monthTitle"></div>
-    <p class="hint">这个月主要就这几件（三到五个）。温和提醒，不是军令状——其他的都算加分。</p>
+    <p class="hint">最多五件。</p>
     <div class="add-row">
       <input type="text" id="anchorText" placeholder="比如：摄影上有点进展">
       <button class="plus" id="addAnchor">＋</button>
@@ -592,16 +608,16 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 
   <!-- 瓶子 -->
   <section class="view" id="v-sea">
-    <p class="hint">担心也好，贪心也好，"什么都想要"也好——写下来，扔海里。它过几天会漂回来。</p>
+    <p class="hint">写下来，扔进去。过几天捞回来看。</p>
     <div class="glass" style="padding:16px">
-      <textarea id="bottleText" rows="3" placeholder="比如：怕选了A就荒废了B。比如：今天又想同时开三个新坑。"></textarea>
+      <textarea id="bottleText" rows="3" placeholder="担心的、贪心的，都行"></textarea>
       <button class="throw-btn" id="throwBtn">扔进海里</button>
     </div>
     <div class="sea-count" id="seaCount"></div>
     <button class="fish-btn" id="fishBtn">
       <span>
         <span class="name">捞一个瓶子</span>
-        <span class="sub">看看过去的你在担心什么，写个后续</span>
+        <span class="sub">随机捞一个旧瓶子</span>
       </span>
       <span class="glyph">🫙</span>
     </button>
@@ -613,19 +629,14 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div class="letter">
       <div class="letter-date" id="letterDate"></div>
       <textarea id="noteText" rows="3" placeholder="发生了什么、注意到什么，话多正好……"></textarea>
-      <div class="ps">
-        P.S. 预估 <input type="number" id="noteEst" min="0" inputmode="numeric"> 分 ·
-        实际 <input type="number" id="noteAct" min="0" inputmode="numeric"> 分（都可不填）
-      </div>
       <button class="seal" id="saveNote">记下</button>
     </div>
-    <p class="hint">进行中的也算数。导出的是事件图，不是完成清单。</p>
     <div id="logList"></div>
   </section>
 </main>
 
 <nav>
-  <button class="on" data-v="v-stuck"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.2 21.6c-.3.4-1 .1-.9-.4L11.9 14H7.3c-.5 0-.8-.6-.5-1L12.8 2.4c.3-.4 1-.1.9.4L12.1 10h4.6c.5 0 .8.6.5 1l-6 10.6Z"/></svg>卡住</button>
+  <button class="on" data-v="v-stuck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>首页</button>
   <button data-v="v-month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h13l-3.2 4L18 12H5"/></svg>本月</button>
   <button data-v="v-sea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M10 2v4.5L6.8 11a5.5 5.5 0 0 0-.8 2.9V19a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-5.1a5.5 5.5 0 0 0-.8-2.9L14 6.5V2"/><path d="M8.5 15h7"/></svg>瓶子</button>
   <button data-v="v-log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>记录</button>
@@ -670,7 +681,8 @@ const LS = {
       localStorage.setItem("qyx_lastchange", JSON.stringify(Date.now()));
     }
     scheduleAutoBackup();
-  }
+  },
+  setSilent(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
 };
 const DEFAULT_DICE = [
   "去洗头",
@@ -797,7 +809,7 @@ function addToOpts(text){
   if(opts.includes(text)) return;
   if(opts.length >= MAX_OPTS){
     if(!bench.includes(text)){ bench.push(text); saveBench(); renderBench(); }
-    toastDone("打转区满9个了，先放进待选。");
+    toastDone("满9条了，先放进待选。");
     return;
   }
   opts.push(text); saveOpts(); renderOpts();
@@ -805,7 +817,7 @@ function addToOpts(text){
 function renderOpts(){
   const c = $("optChips"); c.innerHTML = "";
   if(!opts.length){
-    c.innerHTML = '<div class="chips-empty">还没写。打转的那几件，各占一条（最多9条）。</div>';
+    c.innerHTML = '<div class="chips-empty">先写几件进来。</div>';
     return;
   }
   opts.forEach((o,i)=>{
@@ -834,7 +846,7 @@ function renderBench(){
     d.className = "bench-chip";
     d.innerHTML = `${esc(o)}<button class="up" title="放回打转区">⌃</button><button class="x">✕</button>`;
     d.querySelector(".up").onclick = ()=>{
-      if(opts.length >= MAX_OPTS){ toastDone("打转区满了，先掷掉一件。"); return; }
+      if(opts.length >= MAX_OPTS){ toastDone("满了，先掷掉一件。"); return; }
       bench.splice(i,1); saveBench();
       opts.push(o); saveOpts();
       renderOpts(); renderBench();
@@ -861,7 +873,7 @@ function showQian(text){
 }
 function rollDice(){
   if(opts.length < 2){
-    alert(opts.length===1 ? "只有一件事，那不用掷了——就它。" : "先把打架的几件事写进来");
+    alert(opts.length===1 ? "只有一件，不用掷——就它。" : "先在下面写几件进来");
     return;
   }
   let pick;
@@ -973,7 +985,7 @@ async function runAI(sys, messages){
 function aiContext(){
   const now = new Date();
   const timeStr = `现在是${now.getHours()}点${pad(now.getMinutes())}分`;
-  const optStr = opts.length ? `她此刻在这几件事之间打转：${opts.map((o,i)=>`${i+1}.${o}`).join("；")}。` : "";
+  const optStr = opts.length ? `用户此刻在这几件事之间犹豫：${opts.map((o,i)=>`${i+1}.${o}`).join("；")}。` : "";
   return {timeStr, optStr};
 }
 function showErr(e){
@@ -993,8 +1005,8 @@ $("aiSend").onclick = async ()=>{
   $("aiErr").style.display = "none";
   $("aiFollow").style.display = "none";
   const {timeStr, optStr} = aiContext();
-  const sys = `${timeStr}。${optStr}她卡住了。你只回一句话，直接替她拍板此刻先做什么（考虑时间，晚上九点后偏向能收尾、不兴奋的选项）。格式如「先X，就这个」。可以裁掉某些选项（比如「今晚不听课了」）。不解释，不分析，不安慰，不列选项，不超过30个字。`;
-  const userMsg = ctx || (opts.length ? "（背景她没补充，看选项和时间直接切）" : "（她没写选项也没说背景，就是卡住了，给她一个此刻就能动的最小切口）");
+  const sys = `${timeStr}。${optStr}用户卡住了。直接对用户（用“你”，或不用人称）拍板此刻先做什么，只回一句话（考虑时间，晚上九点后偏向能收尾、不兴奋的选项）。格式如「先X，就这个」。可以直接砍掉某些选项（比如「今晚不听课了」）。大白话，不解释，不分析，不安慰，不抒情，不超过30个字。`;
+  const userMsg = ctx || (opts.length ? "（没写背景，看选项和时间直接切）" : "（没写选项也没写背景，就是卡住了，给一个此刻就能动的最小动作）");
   aiHistory = [{role:"user", content:userMsg}];
   try{
     const text = await runAI(sys, aiHistory);
@@ -1025,7 +1037,7 @@ $("aiAnswerSend").onclick = async ()=>{
   const btn = $("aiAnswerSend"), reply = $("aiReply");
   btn.disabled = true; btn.textContent = "…";
   const {timeStr, optStr} = aiContext();
-  const sys = `${timeStr}。${optStr}你刚才拍了板，她不服，说了她的理由。听她的理由，然后给最终裁决——可以改判也可以维持原判，只回一句，不超过30个字。不解释，不安慰。这是最后一句，说完就结束。`;
+  const sys = `${timeStr}。${optStr}你刚才拍了板，用户不服，说了理由。听完给最终裁决——可以改判也可以维持原判，对用户（用“你”，或不用人称）只回一句大白话，不超过30个字。不解释，不安慰，不抒情。这是最后一句。`;
   aiHistory.push({role:"user", content:ans});
   try{
     const text = await runAI(sys, aiHistory);
@@ -1056,7 +1068,7 @@ function renderMonth(){
   const list = $("anchorList"); list.innerHTML = "";
   const anchors = monthAnchors();
   if(!anchors.length){
-    list.innerHTML = '<div class="empty">还没定。写下这个月真正想推进的三五件，写完就不用一直惦记了。</div>';
+    list.innerHTML = '<div class="empty">这个月想推进的几件事。</div>';
     return;
   }
   anchors.forEach(a=>{
@@ -1108,7 +1120,7 @@ function renderMonth(){
       const ing = card.querySelector(".splitting");
       ing.style.display = "block";
       try{
-        const sys = `她这个月的一个方向是「${a.text}」。把它拆成3到5个具体的小选项——具体到今天拿出20分钟就能做的程度，每个不超过15个字。直接列出，一行一个，不要编号，不要解释。`;
+        const sys = `用户这个月的一个方向是「${a.text}」。把它拆成3到5个具体的小选项——具体到今天拿出20分钟就能做的程度，每个不超过15个字。直接列出，一行一个，不要编号，不要解释。`;
         const text = await runAI(sys, [{role:"user", content:"拆吧"}]);
         const lines = text.split(/\n+/).map(s=>s.replace(/^[\d\.、\-\*\s]+/,"").trim()).filter(Boolean).slice(0,5);
         if(!lines.length) throw new Error("没拆出来");
@@ -1138,7 +1150,7 @@ $("addAnchor").onclick = ()=>{
   const t = $("anchorText").value.trim();
   if(!t) return;
   const anchors = monthAnchors();
-  if(anchors.length>=5){ alert("五个够多了。这个月先这样——想加，先划掉一个。"); return; }
+  if(anchors.length>=5){ alert("最多五件。想加，先删一个。"); return; }
   anchors.push({id: Date.now(), text: t, splits: []});
   saveMonths();
   $("anchorText").value = "";
@@ -1216,11 +1228,12 @@ function ensureEnough(){
   const today = dayKey(Date.now());
   if(!enough || enough.d !== today){
     if(enough && enough.items && enough.items.some(i=>i.text)){
-      LS.set("qyx_enough_prev", enough);   // 留给昨日小结用
+      LS.set("qyx_enough_prev", enough);
     }
-    enough = {d: today, items:[{text:"",done:false},{text:"",done:false},{text:"",done:false}]};
-    LS.set("qyx_enough", enough);
+    enough = {d: today, items:[{text:"",done:false,subs:[]},{text:"",done:false,subs:[]},{text:"",done:false,subs:[]}]};
+    LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
   }
+  enough.items.forEach(i=>{ if(!i.subs) i.subs=[]; });
 }
 function renderEnough(){
   document.querySelectorAll("#enoughCard input").forEach(inp=>{
@@ -1231,6 +1244,21 @@ function renderEnough(){
   document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
     const i = +c.dataset.i;
     c.classList.toggle("on", enough.items[i].done);
+  });
+  document.querySelectorAll("#enoughCard .esubs").forEach(box=>{
+    const i = +box.dataset.i;
+    box.innerHTML = "";
+    enough.items[i].subs.forEach((t, si)=>{
+      const chip = document.createElement("span");
+      chip.className = "esub";
+      chip.innerHTML = `${t.replace(/</g,"&lt;")}<button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
+      chip.querySelector(".todice").onclick = ()=>{ addToOpts(t); toastDone("排进去了。"); };
+      chip.querySelector(".x").onclick = ()=>{
+        enough.items[i].subs.splice(si,1);
+        LS.set("qyx_enough", enough); renderEnough();
+      };
+      box.appendChild(chip);
+    });
   });
   const filled = enough.items.filter(i=>i.text.trim());
   const allDone = filled.length===3 && filled.every(i=>i.done);
@@ -1253,7 +1281,19 @@ document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
       addLog("done", enough.items[i].text);
       buddySay("done");
       const filled = enough.items.filter(x=>x.text.trim());
-      if(filled.length===3 && filled.every(x=>x.done)) toastDone("三件齐了。今天，够了。");
+      if(filled.length===3 && filled.every(x=>x.done)) toastDone("今天，够了。");
+    }
+  };
+});
+document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
+  b.onclick = ()=>{
+    const i = +b.dataset.i;
+    if(!enough.items[i].text.trim()){ toastDone("先写上这件事。"); return; }
+    const v = prompt("拆一个小项：");
+    if(v && v.trim()){
+      enough.items[i].subs.push(v.trim());
+      LS.set("qyx_enough", enough);
+      renderEnough();
     }
   };
 });
@@ -1277,7 +1317,7 @@ async function makeDailySummary(){
   }
   try{
     const sample = yes.slice(-14).map(e=>`[${TAG[e.type]||e.type}] ${e.text}`.slice(0,50)).join("\n");
-    const sys = `这是她昨天在一个小工具里的记录。写一段温柔但不腻的观察：她昨天主要在哪些事之间打转、有没有什么小小的模式。只观察，不给建议，不打鸡血，不超过60个字。`;
+    const sys = `这是用户昨天在自己的小工具里的记录。用第二人称“你”对用户本人说一句大白话观察：昨天主要在忙什么、在哪犹豫了。像朋友随口一句。禁止抒情、禁止比喻、禁止文艺腔、禁止“她”。只说观察不给建议，不超过50个字。`;
     const obs = await runAI(sys, [{role:"user", content:sample}]);
     if(obs) text += "\n" + obs;
   }catch(e){ /* 没配 key 就只有数字部分 */ }
@@ -1304,8 +1344,8 @@ function renderSumBanner(){
 $("saveNote").onclick = ()=>{
   const t = $("noteText").value.trim();
   if(!t) return;
-  addLog("note", t, parseInt($("noteEst").value)||null, parseInt($("noteAct").value)||null);
-  $("noteText").value=""; $("noteEst").value=""; $("noteAct").value="";
+  addLog("note", t);
+  $("noteText").value="";
   renderLog();
   toastDone("记下了。");
 };
@@ -1535,8 +1575,16 @@ function applyRestore(o){
   ensureEnough(); renderEnough();
   renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderSea(); renderLog();
 }
+function localHasData(){
+  return log.length>0 || bottles.length>0 || opts.length>0 || bench.length>0 || ongoing.length>0
+    || Object.values(months).some(a=>a && a.length);
+}
 async function backupNow(silent){
   const status = $("syncStatus");
+  if(!localHasData()){
+    if(silent) return false;   // 空机静默备份直接跳过，防止覆盖云端
+    if(!confirm("这台设备上几乎没有数据。备份会用空数据覆盖云端，确定？")) return false;
+  }
   try{
     let gistId = LS.get("qyx_gistid","");
     const body = {files:{"chopchop-backup.json":{content: collectBackup()}}};
@@ -1682,6 +1730,14 @@ ensureEnough();
 renderEnough();
 makeDailySummary();
 cloudCheckOnLoad();
+let bootDay = dayKey(Date.now());
+setInterval(()=>{
+  const d = dayKey(Date.now());
+  if(d !== bootDay){
+    bootDay = d;
+    ensureEnough(); renderEnough(); makeDailySummary();
+  }
+}, 60000);
 </script>
 </body>
 </html>
