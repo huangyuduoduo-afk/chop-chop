@@ -142,6 +142,12 @@ header{
   border-radius:999px;padding:4px 4px 4px 11px;font-size:12.5px;color:#8A5F22;
 }
 .esub button{background:none;border:none;cursor:pointer;font-size:11px;padding:2px 5px}
+.esub .chk{
+  width:17px;height:17px;border-radius:50%;border:1.5px solid rgba(138,95,34,.5);
+  padding:0;font-size:10px;color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.esub.sdone .chk{background:var(--sage-deep);border-color:var(--sage-deep)}
+.esub.sdone .stx{text-decoration:line-through;opacity:.6}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
 
@@ -413,6 +419,14 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
   background:rgba(255,255,255,.45);border:1px solid rgba(148,116,66,.3);border-radius:8px;
   font-family:var(--mono);color:#5C4A2E;
 }
+.mood-row{display:flex;gap:8px;margin-top:12px}
+.mood-btn{
+  font-size:19px;line-height:1;background:rgba(255,255,255,.45);
+  border:1px solid rgba(148,116,66,.3);border-radius:11px;padding:6px 9px;cursor:pointer;
+  filter:grayscale(1);opacity:.5;transition:all .13s ease;
+}
+.mood-btn.on{filter:none;opacity:1;border-color:var(--tang);background:#fff;transform:scale(1.08)}
+.emood{margin-right:3px}
 .letter .seal{
   position:absolute;right:16px;bottom:14px;
   width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;
@@ -645,6 +659,14 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div class="letter">
       <div class="letter-date" id="letterDate"></div>
       <textarea id="noteText" rows="3" placeholder="发生了什么、注意到什么，话多正好……"></textarea>
+      <div class="mood-row" id="moodRow">
+        <button class="mood-btn" data-m="😌">😌</button>
+        <button class="mood-btn" data-m="😄">😄</button>
+        <button class="mood-btn" data-m="😫">😫</button>
+        <button class="mood-btn" data-m="😢">😢</button>
+        <button class="mood-btn" data-m="😪">😪</button>
+        <button class="mood-btn" data-m="🔥">🔥</button>
+      </div>
       <button class="seal" id="saveNote">记下</button>
     </div>
     <div id="logList"></div>
@@ -770,8 +792,8 @@ document.querySelectorAll("nav button").forEach(b=>{
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
-function addLog(type, text, est, act){
-  log.push({t: Date.now(), type, text, est: est||null, act: act||null});
+function addLog(type, text, mood){
+  log.push({t: Date.now(), type, text, mood: mood||null});
   LS.set("qyx_log", log);
 }
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
@@ -1256,7 +1278,9 @@ function ensureEnough(){
     enough = {d: today, items:[{text:"",done:false,subs:[]},{text:"",done:false,subs:[]},{text:"",done:false,subs:[]}]};
     LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
   }
-  enough.items.forEach(i=>{ if(!i.subs) i.subs=[]; });
+  enough.items.forEach(i=>{
+    i.subs = (i.subs||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
+  });
 }
 function renderEnough(){
   document.querySelectorAll("#enoughCard input").forEach(inp=>{
@@ -1271,11 +1295,17 @@ function renderEnough(){
   document.querySelectorAll("#enoughCard .esubs").forEach(box=>{
     const i = +box.dataset.i;
     box.innerHTML = "";
-    enough.items[i].subs.forEach((t, si)=>{
+    enough.items[i].subs.forEach((sub, si)=>{
       const chip = document.createElement("span");
-      chip.className = "esub";
-      chip.innerHTML = `${t.replace(/</g,"&lt;")}<button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
-      chip.querySelector(".todice").onclick = ()=>{ addToOpts(t); toastDone("排进去了。"); };
+      chip.className = "esub" + (sub.done ? " sdone" : "");
+      chip.innerHTML = `<button class="chk">${sub.done?"✓":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
+      chip.querySelector(".chk").onclick = ()=>{
+        sub.done = !sub.done;
+        LS.set("qyx_enough", enough);
+        if(sub.done) addLog("done", sub.text);
+        renderEnough();
+      };
+      chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
       chip.querySelector(".x").onclick = ()=>{
         enough.items[i].subs.splice(si,1);
         LS.set("qyx_enough", enough); renderEnough();
@@ -1314,7 +1344,7 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     if(!enough.items[i].text.trim()){ toastDone("先写上这件事。"); return; }
     const v = prompt("拆一个小项：");
     if(v && v.trim()){
-      enough.items[i].subs.push(v.trim());
+      enough.items[i].subs.push({text: v.trim(), done: false});
       LS.set("qyx_enough", enough);
       renderEnough();
     }
@@ -1336,10 +1366,16 @@ async function makeDailySummary(){
   const prev = LS.get("qyx_enough_prev", null);
   if(prev && prev.d===yk){
     const f = prev.items.filter(i=>i.text.trim());
-    if(f.length) text += `「三件就够」完成 ${f.filter(i=>i.done).length}/${f.length}。`;
+    if(f.length){
+      text += `\n三件：` + f.map(i=>`${i.done?"✓":"·"} ${i.text}`).join("　");
+    }
   }
+  const moods = {};
+  yes.forEach(e=>{ if(e.mood) moods[e.mood] = (moods[e.mood]||0)+1; });
+  const mk = Object.keys(moods);
+  if(mk.length) text += `\n情绪：` + mk.map(m=> m + (moods[m]>1 ? "×"+moods[m] : "")).join(" ");
   try{
-    const sample = yes.slice(-14).map(e=>`[${TAG[e.type]||e.type}] ${e.text}`.slice(0,50)).join("\n");
+    const sample = yes.slice(-14).map(e=>`[${TAG[e.type]||e.type}${e.mood||""}] ${e.text}`.slice(0,50)).join("\n");
     const sys = `这是用户昨天在自己的小工具里的记录。用第二人称“你”对用户本人说一句大白话观察：昨天主要在忙什么、在哪犹豫了。像朋友随口一句。禁止抒情、禁止比喻、禁止文艺腔、禁止“她”。只说观察不给建议，不超过50个字。`;
     const obs = await runAI(sys, [{role:"user", content:sample}]);
     if(obs) text += "\n" + obs;
@@ -1364,10 +1400,20 @@ function renderSumBanner(){
 }
 
 /* ---------- 记一笔 ---------- */
+let selectedMood = null;
+document.querySelectorAll(".mood-btn").forEach(b=>{
+  b.onclick = ()=>{
+    if(selectedMood === b.dataset.m){ selectedMood = null; b.classList.remove("on"); return; }
+    selectedMood = b.dataset.m;
+    document.querySelectorAll(".mood-btn").forEach(x=>x.classList.toggle("on", x===b));
+  };
+});
 $("saveNote").onclick = ()=>{
   const t = $("noteText").value.trim();
   if(!t) return;
-  addLog("note", t);
+  addLog("note", t, selectedMood);
+  selectedMood = null;
+  document.querySelectorAll(".mood-btn").forEach(x=>x.classList.remove("on"));
   $("noteText").value="";
   renderLog();
   toastDone("记下了。");
@@ -1422,7 +1468,8 @@ function renderLog(){
         if(e.est&&e.act) bits.push(e.act>e.est? `×${(e.act/e.est).toFixed(1)} 偏乐观` : "预估准了");
         extra = `<div class="est">${bits.join(" · ")}</div>`;
       }
-      row.innerHTML = `<span class="t">${hm}</span><div class="body"><span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${esc(e.text)}${extra}</div>`;
+      const md = e.mood ? `<span class="emood">${e.mood}</span>` : "";
+      row.innerHTML = `<span class="t">${hm}</span><div class="body"><span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${md}${esc(e.text)}${extra}</div>`;
       g.appendChild(row);
     });
     list.appendChild(g);
@@ -1432,11 +1479,24 @@ function renderLog(){
 /* ---------- 导出事件图（2x 高清） ---------- */
 function exportDay(k, entries){
   const es = [...entries].sort((a,b)=>a.t-b.t);
-  const W = 1080, padE = 76, rowH = 114;
-  const H = padE*2 + 210 + es.length*rowH + 70;
-  const SCALE = 2;
+  const W = 1080, padE = 76;
+  const spineX = padE+118;
+  const maxW = W - spineX - 40 - padE;
+  // 先量：每条按内容算行数与高度
+  const meas = document.createElement("canvas").getContext("2d");
+  meas.font = "500 31px 'LXGW WenKai Lite','Kaiti SC','KaiTi',serif";
+  const items = es.map(e=>{
+    const lines = wrapLines(meas, e.text, maxW, 4);
+    return {e, lines, h: 60 + lines.length*40};
+  });
+  const startY = padE + 245;
+  const bodyH = items.reduce((a,b)=>a+b.h, 0);
+  const H = startY + bodyH + 110;
+  // 清晰度自适应：避开浏览器画布上限（约1600万像素/单边8000px）
+  let SCALE = Math.min(2, 8000/H, Math.sqrt(15000000/(W*H)));
+  if(SCALE < 1) SCALE = 1;
   const cv = document.createElement("canvas");
-  cv.width = W*SCALE; cv.height = H*SCALE;
+  cv.width = Math.floor(W*SCALE); cv.height = Math.floor(H*SCALE);
   const ctx = cv.getContext("2d");
   ctx.scale(SCALE, SCALE);
   const grad = ctx.createLinearGradient(0,0,0,H);
@@ -1457,18 +1517,22 @@ function exportDay(k, entries){
   ctx.fillText(`${mm} ${dd} '${yy.slice(2)}`, padE, padE+126);
   ctx.font = "600 26px 'Baloo 2',-apple-system,sans-serif";
   ctx.fillStyle = "#8C8072";
-  ctx.fillText("chop chop!  ·  事件图（进行中的也算数）", padE, padE+168);
-  const spineX = padE+118, startY = padE+245;
+  ctx.fillText("chop chop!", padE, padE+168);
+  // 时间轴
   ctx.strokeStyle = "rgba(75,66,55,.15)"; ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(spineX, startY-12); ctx.lineTo(spineX, startY+es.length*rowH-48); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(spineX, startY-12); ctx.lineTo(spineX, startY+bodyH-46); ctx.stroke();
   const colors = {dice:"#EE8A54", ai:"#5F7F52", draw:"#EE8A54", note:"#BDB2A1", done:"#7C9B6E"};
-  es.forEach((e,i)=>{
-    const y = startY + i*rowH;
+  let y = startY;
+  items.forEach(({e, lines, h})=>{
     const time = new Date(e.t);
     const hm = `${pad(time.getHours())}:${pad(time.getMinutes())}`;
     ctx.font = "600 27px 'SF Mono',Menlo,monospace";
     ctx.fillStyle = "#E8772B";
     ctx.fillText(hm, padE-10, y+9);
+    if(e.mood){
+      ctx.font = "26px -apple-system,'PingFang SC',sans-serif";
+      ctx.fillText(e.mood, padE-4, y+44);
+    }
     ctx.fillStyle = colors[e.type]||"#BDB2A1";
     ctx.beginPath(); ctx.arc(spineX, y, 12, 0, 7); ctx.fill();
     ctx.fillStyle = "#FBF4EA";
@@ -1478,12 +1542,10 @@ function exportDay(k, entries){
     ctx.fillText(TAG[e.type]||e.type, spineX+40, y-10);
     ctx.fillStyle = "#4B4237";
     ctx.font = "500 31px 'LXGW WenKai Lite','Kaiti SC','KaiTi',serif";
-    wrapText(ctx, e.text, spineX+40, y+32, W-spineX-40-padE, 42, 2);
-    if(e.est&&e.act){
-      ctx.fillStyle = "#8C8072";
-      ctx.font = "400 22px 'SF Mono',Menlo,monospace";
-      ctx.fillText(`est ${e.est}m / act ${e.act}m`, spineX+40, y+78);
-    }
+    lines.forEach((ln, li)=>{
+      ctx.fillText(ln, spineX+40, y+32+li*40);
+    });
+    y += h;
   });
   ctx.fillStyle = "#BDB2A1";
   ctx.font = "400 24px 'LXGW WenKai Lite','Kaiti SC','KaiTi',serif";
@@ -1520,16 +1582,21 @@ function drawFish(ctx, x, y, s){
   ctx.beginPath(); ctx.ellipse(87,63,6.5,4,0,0,7); ctx.fill();
   ctx.restore();
 }
-function wrapText(ctx, text, x, y, maxW, lh, maxLines){
-  let line = "", lines = 0;
+function wrapLines(ctx, text, maxW, maxLines){
+  const lines = [];
+  let line = "";
   for(const ch of text){
     if(ctx.measureText(line+ch).width > maxW){
-      ctx.fillText(line, x, y+lines*lh);
-      lines++; line = ch;
-      if(lines>=maxLines-1){ line += "…"; break; }
+      lines.push(line);
+      line = ch;
+      if(lines.length === maxLines){
+        lines[maxLines-1] = lines[maxLines-1].slice(0,-1) + "…";
+        return lines;
+      }
     } else line += ch;
   }
-  ctx.fillText(line, x, y+lines*lh);
+  if(line) lines.push(line);
+  return lines;
 }
 
 /* ---------- toast ---------- */
@@ -1542,7 +1609,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "2.1.0";
+const APP_VERSION = "2.2.0";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -1666,11 +1733,18 @@ function mergeAll(o){
       if(!rit) return;
       if(!it.text.trim() && rit.text) it.text = rit.text;
       it.done = it.done || !!rit.done;
-      it.subs = [...new Set([...(it.subs||[]), ...(rit.subs||[])])];
+      const norm = a=>(a||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
+      const sm = new Map(norm(it.subs).map(x=>[x.text, x]));
+      norm(rit.subs).forEach(x=>{
+        if(sm.has(x.text)) sm.get(x.text).done = sm.get(x.text).done || x.done;
+        else sm.set(x.text, x);
+      });
+      it.subs = [...sm.values()];
     });
     LS.setSilent("qyx_enough", enough);
   } else if(re && re.d===today && (!enough || enough.d!==today)){
-    enough = re; enough.items.forEach(i=>{ if(!i.subs) i.subs=[]; });
+    enough = re;
+    enough.items.forEach(i=>{ i.subs = (i.subs||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x); });
     LS.setSilent("qyx_enough", enough);
   }
   const rp = o.qyx_enough_prev;
