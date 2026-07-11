@@ -71,9 +71,17 @@ header{
 .gear{background:none;border:none;font-size:18px;color:var(--ink-faint);cursor:pointer;padding:6px 2px}
 .sync{
   background:none;border:none;cursor:pointer;padding:6px 2px;
-  color:var(--ink-faint);display:flex;align-items:center;
+  color:var(--ink-faint);display:flex;align-items:center;position:relative;
+}
+.sync.dirty::after{
+  content:"";position:absolute;top:2px;right:-2px;width:7px;height:7px;
+  border-radius:50%;background:var(--tang);
 }
 .sync svg{width:18px;height:18px}
+.sync.pending::after{
+  content:"";position:absolute;top:3px;right:-1px;width:8px;height:8px;border-radius:50%;
+  background:var(--tang);box-shadow:0 0 0 2px var(--bg-a);
+}
 .sync.busy svg{animation:spin 1s linear infinite;color:var(--sea-deep)}
 .sync.ok svg{color:var(--sage-deep)}
 .sync.err svg{color:#C25537}
@@ -689,6 +697,7 @@ const LS = {
     localStorage.setItem(k, JSON.stringify(v));
     if(!["qyx_lastbackup","qyx_lastchange","qyx_gistid","qyx_sumseen","qyx_ghtoken","qyx_key","qyx_provider"].includes(k)){
       localStorage.setItem("qyx_lastchange", JSON.stringify(Date.now()));
+      if(typeof updateDirty==="function") updateDirty();
     }
     scheduleAutoBackup();
   },
@@ -1533,7 +1542,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "2.0.0";
+const APP_VERSION = "2.1.0";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -1676,6 +1685,10 @@ function rerenderAll(){
 
 /* 同步 = 拉云端 → 并进本机 → 推合并结果。任何顺序按都不丢数据 */
 let syncing = false;
+function updatePendingDot(){
+  const lc = LS.get("qyx_lastchange",0), lb = LS.get("qyx_lastbackup",0);
+  $("syncBtn").classList.toggle("pending", lc > lb);
+}
 function setSyncState(st){
   const b = $("syncBtn");
   b.classList.remove("busy","ok","err");
@@ -1698,6 +1711,19 @@ async function syncNow(silent){
       const changed = mergeAll(cloud.data);
       if(changed) rerenderAll();
     }
+    // 手动同步时扫一遍：若历史上意外建过多个备份 gist，全部并入
+    if(!silent){
+      try{
+        const all = await ghFetch("https://api.github.com/gists?per_page=100");
+        const mine = LS.get("qyx_gistid","");
+        const extras = all.filter(g=>g.files && g.files["chopchop-backup.json"] && g.id!==mine).slice(0,3);
+        for(const g of extras){
+          const full = await ghFetch("https://api.github.com/gists/"+g.id);
+          const o = JSON.parse(full.files["chopchop-backup.json"].content);
+          if(mergeAll(o)) rerenderAll();
+        }
+      }catch(e){}
+    }
     // 推合并后的完整数据
     let gistId = LS.get("qyx_gistid","");
     const body = {files:{"chopchop-backup.json":{content: collectBackup()}}};
@@ -1709,7 +1735,8 @@ async function syncNow(silent){
       localStorage.setItem("qyx_gistid", JSON.stringify(data.id));
     }
     localStorage.setItem("qyx_lastbackup", JSON.stringify(Date.now()));
-    if(status) status.textContent = "已同步 " + stampNow();
+    updateDirty();
+    if(status) status.textContent = "已同步 " + stampNow() + " · 共 " + log.length + " 条记录";
     if(!silent) toastDone("同步好了。");
     setSyncState("ok");
   }catch(e){
@@ -1760,6 +1787,10 @@ $("historyBtn").onclick = async ()=>{
 };
 
 /* 页面回到前台：自动合并同步（30秒内不重复）；离开：推一次 */
+function updateDirty(){
+  const lc = LS.get("qyx_lastchange",0), lb = LS.get("qyx_lastbackup",0);
+  $("syncBtn").classList.toggle("dirty", lc > lb);
+}
 let lastAutoSync = 0;
 document.addEventListener("visibilitychange", ()=>{
   if(!localStorage.getItem("qyx_ghtoken")) return;
@@ -1767,14 +1798,39 @@ document.addEventListener("visibilitychange", ()=>{
     if(Date.now()-lastAutoSync > 30000){ lastAutoSync = Date.now(); syncNow(true); }
     checkUpdate();
   }else{
-    syncNow(true);
+    pushKeepalive();
   }
 });
+/* keepalive 推送：页面被切走/关闭后请求仍会完成，专治手机写完就关 */
+function pushKeepalive(){
+  const token = LS.get("qyx_ghtoken","");
+  const gistId = LS.get("qyx_gistid","");
+  if(!token || !gistId) return;
+  const lc = LS.get("qyx_lastchange",0), lb = LS.get("qyx_lastbackup",0);
+  if(lc <= lb) return;   // 没有未同步的改动
+  try{
+    fetch("https://api.github.com/gists/"+gistId, {
+      method:"PATCH",
+      keepalive:true,
+      headers:{
+        "Authorization":"Bearer "+token,
+        "Accept":"application/vnd.github+json",
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({files:{"chopchop-backup.json":{content: collectBackup()}}})
+    }).then(r=>{
+      if(r.ok){
+        localStorage.setItem("qyx_lastbackup", JSON.stringify(Date.now()));
+        updatePendingDot();
+      }
+    }).catch(()=>{});
+  }catch(e){}
+}
 let backupTimer = null;
 function scheduleAutoBackup(){
   if(!localStorage.getItem("qyx_ghtoken")) return;
   clearTimeout(backupTimer);
-  backupTimer = setTimeout(()=>syncNow(true), 20000);
+  backupTimer = setTimeout(()=>syncNow(true), 1500);
 }
 
 /* ---------- 版本自检：app 模式没有刷新键，靠这个拿新版 ---------- */
@@ -1830,8 +1886,10 @@ renderSea();
 ensureEnough();
 renderEnough();
 makeDailySummary();
+updatePendingDot();
 syncNow(true);
 checkUpdate();
+updateDirty();
 let bootDay = dayKey(Date.now());
 setInterval(()=>{
   const d = dayKey(Date.now());
