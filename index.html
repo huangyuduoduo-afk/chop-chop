@@ -181,6 +181,12 @@ h2{
 }
 h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(75,66,55,.14),transparent)}
 h2 .count{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-faint)}
+.fold{cursor:pointer;user-select:none}
+.fold .arr{
+  display:inline-block;font-size:9px;color:var(--ink-faint);
+  margin-right:6px;transition:transform .16s ease;vertical-align:1px;
+}
+.fold.open .arr{transform:rotate(90deg)}
 
 .add-row{display:flex;gap:10px;margin:2px 0 12px}
 .add-row input[type=text]{flex:1}
@@ -339,12 +345,85 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
   border-radius:999px;padding:3px 10px;font-weight:600;
 }
 .split-chip .x{background:none;border:none;color:rgba(61,103,136,.5);font-size:11px;cursor:pointer;padding:2px 5px}
+.split-chip .chk{
+  width:17px;height:17px;border-radius:50%;border:1.5px solid rgba(61,103,136,.45);
+  background:none;padding:0;font-size:10px;color:#fff;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.split-chip.sdone .chk{background:var(--sage-deep);border-color:var(--sage-deep)}
+.split-chip.sdone .st{text-decoration:line-through;opacity:.6}
+.anchor-trail{margin-top:11px;padding-top:9px;border-top:1px dashed rgba(75,66,55,.15)}
+.trail-line{display:flex;gap:9px;font-size:12px;color:var(--ink-soft);padding:2.5px 0;line-height:1.5}
+.trail-t{font-family:var(--mono);color:var(--stamp);font-size:11px;flex-shrink:0;padding-top:1px}
+.anchor-head .trail{background:none;border:none;color:var(--ink-faint);font-size:14px;cursor:pointer;padding:4px}
+.past-month{font-family:var(--kai);font-size:13.5px;color:var(--ink-soft);padding:5px 4px;line-height:1.8}
+.pm-ym{font-weight:700;color:var(--ink);margin-right:10px}
 .split-add{
   display:inline-flex;align-items:center;
   background:none;border:1px dashed rgba(61,103,136,.4);color:var(--sea-deep);
   border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer;
 }
 .splitting{font-size:12.5px;color:var(--sea-deep);margin-top:10px;display:none}
+
+/* ---- 习惯追踪 ---- */
+.habit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:2px 0 22px}
+.habit{
+  position:relative;border:1px solid var(--glass-line);border-radius:20px;cursor:pointer;
+  background:var(--glass-strong);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  padding:14px 8px 12px;text-align:center;box-shadow:var(--shadow);
+  transition:transform .12s ease;font-family:var(--sans);
+}
+.habit:active{transform:scale(.94)}
+.habit .hname{font-family:var(--kai);font-size:13.5px;font-weight:700;color:var(--ink);display:block}
+.habit .cnt{
+  font-family:var(--mono);font-size:26px;font-weight:600;color:var(--tang);
+  display:block;margin-top:3px;line-height:1.2;
+}
+.habit .cnt.pop{animation:cntpop .3s ease}
+@keyframes cntpop{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
+.habit .hx{
+  position:absolute;top:5px;right:7px;background:none;border:none;
+  color:var(--ink-faint);font-size:11px;cursor:pointer;padding:3px;opacity:.55;
+}
+.spark{display:flex;gap:3.5px;justify-content:center;margin-top:7px}
+.spk{width:6px;height:6px;border-radius:50%;background:rgba(75,66,55,.13)}
+.spk.hit{background:var(--tang)}
+.spk.td{box-shadow:0 0 0 1.5px rgba(238,138,84,.45)}
+.habit-add{
+  border:1.5px dashed rgba(75,66,55,.25);border-radius:20px;background:none;cursor:pointer;
+  color:var(--ink-soft);font-size:22px;font-weight:300;min-height:76px;font-family:var(--sans);
+}
+
+/* ---- Bonus ---- */
+.bonus{padding:14px 16px 12px;margin:0 0 16px}
+.bcirc{
+  width:25px;height:25px;border-radius:50%;flex-shrink:0;cursor:pointer;
+  border:2px solid var(--tang);background:transparent;
+  transition:all .15s ease;position:relative;
+}
+.bcirc.on{background:var(--tang);box-shadow:0 3px 10px rgba(238,138,84,.45)}
+.bcirc.on::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+
+/* ---- 撒花 ---- */
+.cfp{position:fixed;width:9px;height:13px;z-index:120;pointer-events:none;border-radius:2px;will-change:transform,opacity}
+
+/* ---- 珍珠 ---- */
+nav button{position:relative}
+.pearl{
+  position:absolute;top:5px;right:calc(50% - 17px);
+  width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff, #CFE7F4 55%, #7FB2D4);
+  animation:pearl 2.2s ease-in-out infinite;
+}
+@keyframes pearl{
+  0%,100%{box-shadow:0 0 4px 1px rgba(127,178,212,.45)}
+  50%{box-shadow:0 0 11px 3.5px rgba(207,231,244,.95)}
+}
+.fish-btn.pearl-glow{animation:btnglow 2.6s ease-in-out infinite}
+@keyframes btnglow{
+  0%,100%{box-shadow:0 2px 4px rgba(75,66,55,.05), 0 14px 38px rgba(75,66,55,.09)}
+  50%{box-shadow:0 2px 4px rgba(75,66,55,.05), 0 0 24px 5px rgba(127,178,212,.5)}
+}
 
 /* ---- 瓶子 ---- */
 .sea-count{font-size:13px;color:var(--ink-soft);margin:14px 4px 10px;font-family:var(--kai)}
@@ -437,6 +516,11 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 }
 .letter .seal:active{transform:scale(.92) rotate(-4deg)}
 .day-group{padding:16px 18px;margin-bottom:18px}
+.day-group.today{
+  border:1px solid rgba(238,138,84,.4);
+  box-shadow:0 2px 4px rgba(75,66,55,.05), 0 14px 38px rgba(238,138,84,.13);
+}
+.day-group.today .day-title{color:var(--tang-deep)}
 .day-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
 .day-title{font-weight:700;font-size:15.5px;letter-spacing:.06em;font-family:var(--kai)}
 .export-btn{
@@ -458,6 +542,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 .tag.ai{background:var(--sage-mist);color:var(--sage-deep)}
 .tag.note{background:rgba(75,66,55,.07);color:var(--ink-soft)}
 .tag.done{background:var(--sage-mist);color:var(--sage-deep)}
+.tag.bonus{background:var(--tang-mist);color:var(--tang-deep)}
 .entry .est{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:3px}
 .empty{color:var(--ink-faint);font-size:13.5px;text-align:center;padding:42px 0}
 
@@ -526,7 +611,7 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 
 <main>
   <!-- 首页 -->
-  <section class="view on" id="v-stuck">
+  <section class="view" id="v-stuck">
     <div class="buddy-row">
       <svg class="buddy" viewBox="0 0 120 110" aria-hidden="true">
         <defs>
@@ -549,9 +634,6 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <div class="bubble" id="buddySay">今天卡在哪儿？写进来。</div>
     </div>
 
-    <div class="cloud-banner" id="cloudBanner"></div>
-    <div id="sumBanner"></div>
-
     <div class="glass enough" id="enoughCard">
       <div class="enough-title">今天做完这三件，就够了</div>
       <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button></div>
@@ -561,6 +643,12 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button></div>
       <div class="esubs" data-i="2"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
+    </div>
+
+    <div class="glass bonus" id="bonusCard">
+      <div class="enough-title">Bonus · 想挑战就写一个</div>
+      <div class="enough-row"><button class="bcirc" data-b="0"></button><input type="text" data-b="0" placeholder="比如：收拾房间"></div>
+      <div class="enough-row"><button class="bcirc" data-b="1"></button><input type="text" data-b="1" placeholder="第二个（可不写）"></div>
     </div>
 
     <button class="hero-btn hero-dice" id="diceBtn">
@@ -583,13 +671,13 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div class="chips" id="optChips"></div>
 
     <div id="benchBlock" style="display:none">
-      <h2>待选 · 这次不掷<span class="count" id="benchCount"></span></h2>
-      <div class="chips" id="benchChips"></div>
+      <h2 class="fold" data-target="benchChips"><span class="arr">▶</span>待选 · 这次不掷<span class="count" id="benchCount"></span></h2>
+      <div class="chips" id="benchChips" style="display:none"></div>
     </div>
 
     <div id="ongoingBlock" style="display:none">
-      <h2>定过的 · 点一下排回</h2>
-      <div class="chips" id="ongoingChips"></div>
+      <h2 class="fold" data-target="ongoingChips"><span class="arr">▶</span>定过的 · 点一下排回<span class="count" id="ongoingCount"></span></h2>
+      <div class="chips" id="ongoingChips" style="display:none"></div>
     </div>
 
     <button class="hero-btn hero-ai" id="aiToggle">
@@ -615,18 +703,23 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     </div>
 
     <div class="micro-row">
-      动不了的时候：
-      <button class="micro-btn" id="microBtn">抽一个最小动作</button>
-      <div class="qian-wrap" id="microWrap"></div>
-      <div class="qian-actions" id="microActions" style="display:none">
-        <button class="chip-btn primary" id="acceptMicro">就这个</button>
-        <button class="chip-btn" id="rerollMicro">再抽</button>
+      <span class="fold" data-target="microBody"><span class="arr">▶</span>动不了的时候</span>
+      <div id="microBody" style="display:none">
+        <button class="micro-btn" id="microBtn">抽一个最小动作</button>
+        <div class="qian-wrap" id="microWrap"></div>
+        <div class="qian-actions" id="microActions" style="display:none">
+          <button class="chip-btn primary" id="acceptMicro">就这个</button>
+          <button class="chip-btn" id="rerollMicro">再抽</button>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 本月 -->
+  <!-- 目标 -->
   <section class="view" id="v-month">
+    <h2 style="margin-top:8px">习惯 · 点一下记一次</h2>
+    <div class="habit-grid" id="habitGrid"></div>
+
     <div class="month-title" id="monthTitle"></div>
     <p class="hint">最多五件。</p>
     <div class="add-row">
@@ -634,6 +727,7 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <button class="plus" id="addAnchor">＋</button>
     </div>
     <div id="anchorList"></div>
+    <div id="pastMonths"></div>
   </section>
 
   <!-- 瓶子 -->
@@ -655,7 +749,9 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
   </section>
 
   <!-- 记录 -->
-  <section class="view" id="v-log">
+  <section class="view on" id="v-log">
+    <div class="cloud-banner" id="cloudBanner"></div>
+    <div id="sumBanner"></div>
     <div class="letter">
       <div class="letter-date" id="letterDate"></div>
       <textarea id="noteText" rows="3" placeholder="发生了什么、注意到什么，话多正好……"></textarea>
@@ -674,10 +770,10 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 </main>
 
 <nav>
-  <button class="on" data-v="v-stuck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>首页</button>
-  <button data-v="v-month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h13l-3.2 4L18 12H5"/></svg>本月</button>
+  <button class="on" data-v="v-log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>记录</button>
+  <button data-v="v-stuck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg>今天</button>
+  <button data-v="v-month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>目标</button>
   <button data-v="v-sea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M10 2v4.5L6.8 11a5.5 5.5 0 0 0-.8 2.9V19a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-5.1a5.5 5.5 0 0 0-.8-2.9L14 6.5V2"/><path d="M8.5 15h7"/></svg>瓶子</button>
-  <button data-v="v-log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>记录</button>
 </nav>
 
 <!-- 设置 -->
@@ -740,6 +836,15 @@ let dicePool = LS.get("qyx_dice", DEFAULT_DICE);
 let log      = LS.get("qyx_log", []);
 let ongoing  = LS.get("qyx_ongoing", []);
 let months   = LS.get("qyx_months", {});
+function normMonths(){
+  Object.keys(months).forEach(ym=>{
+    (months[ym]||[]).forEach(a=>{
+      a.splits = (a.splits||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
+      a.hist = a.hist||[];
+    });
+  });
+}
+normMonths();
 let bottles  = LS.get("qyx_bottles", []);
 let opts     = LS.get("qyx_opts", []);
 let bench    = LS.get("qyx_bench", []);
@@ -785,7 +890,7 @@ document.querySelectorAll("nav button").forEach(b=>{
     b.classList.add("on");
     document.getElementById(b.dataset.v).classList.add("on");
     if(b.dataset.v==="v-log") renderLog();
-    if(b.dataset.v==="v-month") renderMonth();
+    if(b.dataset.v==="v-month"){ renderMonth(); renderHabits(); }
     if(b.dataset.v==="v-sea") renderSea();
   };
 });
@@ -797,6 +902,10 @@ function addLog(type, text, mood){
   LS.set("qyx_log", log);
 }
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+function fmtDT(t){
+  const d = new Date(t);
+  return `${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 function stampNow(){
   const d = new Date();
   return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -818,6 +927,7 @@ function pushOngoing(text){
 }
 function renderOngoing(){
   const block = $("ongoingBlock"), c = $("ongoingChips");
+  $("ongoingCount").textContent = ongoing.length ? " " + ongoing.length : "";
   if(!ongoing.length){ block.style.display="none"; return; }
   block.style.display = "block";
   c.innerHTML = "";
@@ -948,7 +1058,7 @@ let lastMicro = null;
 function microPool(){
   const splits = [];
   const anchors = months[ymNow()]||[];
-  anchors.forEach(a=>(a.splits||[]).forEach(s=>splits.push(s)));
+  anchors.forEach(a=>(a.splits||[]).forEach(s=>splits.push(s.text||s)));
   return [...new Set([...dicePool, ...splits])];
 }
 function rollMicro(){
@@ -1099,6 +1209,11 @@ $("aiAnswerSend").onclick = async ()=>{
 };
 
 /* ---------- 本月 ---------- */
+function aHist(a, ev){
+  a.hist = a.hist||[];
+  a.hist.push({t: Date.now(), ev});
+  if(a.hist.length>60) a.hist = a.hist.slice(-60);
+}
 function monthAnchors(){
   const ym = ymNow();
   if(!months[ym]) months[ym] = [];
@@ -1109,6 +1224,7 @@ function renderMonth(){
   const d = new Date();
   $("monthTitle").innerHTML = `${d.getMonth()+1}月，就这几件<span class="en">${d.toLocaleString("en",{month:"short"}).toLowerCase()} '${String(d.getFullYear()).slice(2)}</span>`;
   const list = $("anchorList"); list.innerHTML = "";
+  renderPastMonths();
   const anchors = monthAnchors();
   if(!anchors.length){
     list.innerHTML = '<div class="empty">这个月想推进的几件事。</div>';
@@ -1121,28 +1237,44 @@ function renderMonth(){
       <div class="anchor-head">
         <span class="txt">${esc(a.text)}</span>
         <button class="split-btn">拆一拆</button>
+        <button class="trail" title="轨迹">◷</button>
         <button class="edit" title="编辑">✎</button>
         <button class="del" title="删除">✕</button>
       </div>
       <div class="splits"></div>
-      <div class="splitting">小鱼在拆…</div>`;
+      <div class="anchor-trail" style="display:none"></div>
+      <div class="splitting">在拆…</div>`;
     const splitsBox = card.querySelector(".splits");
     function renderSplits(){
       splitsBox.innerHTML = "";
-      (a.splits||[]).forEach((s,si)=>{
+      (a.splits||[]).forEach((sp,si)=>{
         const chip = document.createElement("span");
-        chip.className = "split-chip";
-        chip.innerHTML = `<span class="st">${esc(s)}</span><button class="to-today">排进今天</button><button class="x">✕</button>`;
+        chip.className = "split-chip" + (sp.done ? " sdone" : "");
+        chip.innerHTML = `<button class="chk">${sp.done?"✓":""}</button><span class="st">${esc(sp.text)}</span><button class="to-today">排进今天</button><button class="x">✕</button>`;
+        chip.querySelector(".chk").onclick = ()=>{
+          sp.done = !sp.done;
+          if(sp.done){
+            addLog("done", sp.text);
+            aHist(a, "完成：" + sp.text);
+          }
+          saveMonths(); renderSplits();
+        };
         chip.querySelector(".st").onclick = ()=>{
-          const v = prompt("改一改：", s);
-          if(v && v.trim()){ a.splits[si] = v.trim(); saveMonths(); renderSplits(); }
+          const v = prompt("改一改：", sp.text);
+          if(v && v.trim() && v.trim()!==sp.text){
+            aHist(a, "改：" + sp.text + " → " + v.trim());
+            sp.text = v.trim(); saveMonths(); renderSplits();
+          }
         };
         chip.querySelector(".to-today").onclick = ()=>{
-          addToOpts(s);
+          addToOpts(sp.text);
           toastDone("排进今天了。");
         };
         chip.querySelector(".x").onclick = ()=>{
-          a.splits.splice(si,1); saveMonths(); renderSplits();
+          a.splits.splice(si,1);
+          bury("split:"+a.text, sp.text);
+          aHist(a, "删：" + sp.text);
+          saveMonths(); renderSplits();
         };
         splitsBox.appendChild(chip);
       });
@@ -1153,7 +1285,10 @@ function renderMonth(){
         const v = prompt("加一个小选项（具体到今天20分钟能做）：");
         if(v && v.trim()){
           a.splits = a.splits||[];
-          a.splits.push(v.trim()); saveMonths(); renderSplits();
+          unbury("split:"+a.text, v.trim());
+          a.splits.push({text: v.trim(), done: false});
+          aHist(a, "加小项：" + v.trim());
+          saveMonths(); renderSplits();
         }
       };
       splitsBox.appendChild(add);
@@ -1167,7 +1302,14 @@ function renderMonth(){
         const text = await runAI(sys, [{role:"user", content:"拆吧"}]);
         const lines = text.split(/\n+/).map(s=>s.replace(/^[\d\.、\-\*\s]+/,"").trim()).filter(Boolean).slice(0,5);
         if(!lines.length) throw new Error("没拆出来");
-        a.splits = [...new Set([...(a.splits||[]), ...lines])].slice(0,8);
+        lines.forEach(l=>unbury("split:"+a.text, l));
+        const have = new Set((a.splits||[]).map(x=>x.text));
+        lines.forEach(l=>{
+          if(!have.has(l) && a.splits.length<8){
+            a.splits.push({text: l, done: false});
+            aHist(a, "拆出：" + l);
+          }
+        });
         saveMonths();
         renderSplits();
       }catch(e){
@@ -1177,7 +1319,19 @@ function renderMonth(){
     };
     card.querySelector(".edit").onclick = ()=>{
       const v = prompt("改一改：", a.text);
-      if(v && v.trim()){ a.text = v.trim(); saveMonths(); renderMonth(); }
+      if(v && v.trim() && v.trim()!==a.text){
+        aHist(a, "改名：" + a.text + " → " + v.trim());
+        a.text = v.trim(); saveMonths(); renderMonth();
+      }
+    };
+    card.querySelector(".trail").onclick = ()=>{
+      const tb = card.querySelector(".anchor-trail");
+      if(tb.style.display==="none"){
+        tb.innerHTML = (a.hist||[]).length
+          ? [...a.hist].sort((x,y)=>y.t-x.t).map(h=>`<div class="trail-line"><span class="trail-t">${fmtDT(h.t)}</span><span>${h.ev.replace(/</g,"&lt;")}</span></div>`).join("")
+          : '<div class="trail-line"><span>还没有轨迹。</span></div>';
+        tb.style.display = "block";
+      } else tb.style.display = "none";
     };
     card.querySelector(".del").onclick = ()=>{
       if(!confirm("删掉这个月的「"+a.text+"」？")) return;
@@ -1190,13 +1344,41 @@ function renderMonth(){
     list.appendChild(card);
   });
 }
+function renderPastMonths(){
+  const box = $("pastMonths"); box.innerHTML = "";
+  const cur = ymNow();
+  const past = Object.keys(months).filter(k=>k<cur && (months[k]||[]).length).sort().reverse();
+  if(!past.length) return;
+  const h = document.createElement("h2");
+  h.className = "fold";
+  h.innerHTML = '<span class="arr">▶</span>往月';
+  const body = document.createElement("div");
+  body.style.display = "none";
+  h.onclick = ()=>{
+    h.classList.toggle("open");
+    body.style.display = h.classList.contains("open") ? "" : "none";
+  };
+  past.forEach(ym=>{
+    const [y,m] = ym.split("-");
+    const line = document.createElement("div");
+    line.className = "past-month";
+    const parts = (months[ym]||[]).map(a=>{
+      const sp = a.splits||[];
+      const dn = sp.filter(x=>x.done).length;
+      return `${a.text}${sp.length? `（${dn}/${sp.length}）`:""}`;
+    });
+    line.innerHTML = `<span class="pm-ym">${parseInt(m)}月</span>${parts.map(p=>p.replace(/</g,"&lt;")).join("　")}`;
+    body.appendChild(line);
+  });
+  box.appendChild(h); box.appendChild(body);
+}
 $("addAnchor").onclick = ()=>{
   const t = $("anchorText").value.trim();
   if(!t) return;
   const anchors = monthAnchors();
   if(anchors.length>=5){ alert("最多五件。想加，先删一个。"); return; }
   unbury("anchor:"+ymNow(), t);
-  anchors.push({id: Date.now(), text: t, splits: []});
+  anchors.push({id: Date.now(), text: t, splits: [], hist: [{t: Date.now(), ev: "立下"}]});
   saveMonths();
   $("anchorText").value = "";
   renderMonth();
@@ -1208,6 +1390,23 @@ function renderSea(){
   const n = bottles.length;
   $("seaCount").textContent = n ? `海里漂着 ${n} 个瓶子。` : "海里还没有瓶子。";
   $("bottleShow").innerHTML = "";
+  updatePearl();
+}
+function updatePearl(){
+  const today = dayKey(Date.now());
+  const hasOld = bottles.some(b=>dayKey(b.t)!==today);
+  const fishedToday = LS.get("qyx_lastfish","")===today;
+  const on = hasOld && !fishedToday;
+  const seaBtn = document.querySelector('nav button[data-v="v-sea"]');
+  let p = seaBtn.querySelector(".pearl");
+  if(on && !p){
+    p = document.createElement("span");
+    p.className = "pearl";
+    seaBtn.appendChild(p);
+  }else if(!on && p){
+    p.remove();
+  }
+  $("fishBtn").classList.toggle("pearl-glow", on);
 }
 $("throwBtn").onclick = ()=>{
   const t = $("bottleText").value.trim();
@@ -1233,16 +1432,18 @@ function daysAgo(t){
   return d===0 ? "今天" : d===1 ? "昨天" : d+"天前";
 }
 function showBottle(b){
+  LS.setSilent("qyx_lastfish", dayKey(Date.now()));
+  updatePearl();
   const box = $("bottleShow");
   box.innerHTML = "";
   const card = document.createElement("div");
   card.className = "bottle-card glass";
   let fu = "";
   (b.followups||[]).forEach(f=>{
-    fu += `<div class="bottle-follow"><div class="bottle-date">后续 · ${daysAgo(f.t)}</div><div class="bottle-text">${esc(f.text)}</div></div>`;
+    fu += `<div class="bottle-follow"><div class="bottle-date">后续 · ${daysAgo(f.t)} · ${fmtDT(f.t)}</div><div class="bottle-text">${esc(f.text)}</div></div>`;
   });
   card.innerHTML = `
-    <div class="bottle-date">${daysAgo(b.t)}的你，写下了这个</div>
+    <div class="bottle-date">${daysAgo(b.t)}的你 · ${fmtDT(b.t)}</div>
     <div class="bottle-text">${esc(b.text)}</div>
     ${fu}
     <div class="bottle-follow">
@@ -1308,6 +1509,7 @@ function renderEnough(){
       chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
       chip.querySelector(".x").onclick = ()=>{
         enough.items[i].subs.splice(si,1);
+        bury("esub:"+enough.d, sub.text);
         LS.set("qyx_enough", enough); renderEnough();
       };
       box.appendChild(chip);
@@ -1344,12 +1546,141 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     if(!enough.items[i].text.trim()){ toastDone("先写上这件事。"); return; }
     const v = prompt("拆一个小项：");
     if(v && v.trim()){
+      unbury("esub:"+enough.d, v.trim());
       enough.items[i].subs.push({text: v.trim(), done: false});
       LS.set("qyx_enough", enough);
       renderEnough();
     }
   };
 });
+
+/* ---------- 折叠 ---------- */
+document.querySelectorAll(".fold").forEach(h=>{
+  h.addEventListener("click", ()=>{
+    h.classList.toggle("open");
+    const t = document.getElementById(h.dataset.target);
+    if(t) t.style.display = h.classList.contains("open") ? "" : "none";
+  });
+});
+
+/* ---------- 习惯追踪 ---------- */
+let habits = LS.get("qyx_habits", []);   // {id, name, counts:{"2026-07-15": n}}
+function renderHabits(){
+  const g = $("habitGrid"); g.innerHTML = "";
+  const today = dayKey(Date.now());
+  habits.forEach(h=>{
+    const d = document.createElement("button");
+    d.className = "habit";
+    const n = (h.counts||{})[today] || 0;
+    let spark = '<span class="spark">';
+    for(let i=6; i>=0; i--){
+      const dk = dayKey(Date.now() - i*864e5);
+      const hit = ((h.counts||{})[dk]||0) > 0;
+      spark += `<span class="spk${hit?" hit":""}${i===0?" td":""}"></span>`;
+    }
+    spark += '</span>';
+    d.innerHTML = `<span class="hname">${esc(h.name)}</span><span class="cnt">${n}</span>${spark}<button class="hx">✕</button>`;
+    d.onclick = e=>{
+      if(e.target.classList.contains("hx")) return;
+      h.counts = h.counts||{};
+      h.counts[today] = (h.counts[today]||0) + 1;
+      LS.set("qyx_habits", habits);
+      const c = d.querySelector(".cnt");
+      c.textContent = h.counts[today];
+      c.classList.remove("pop"); void c.offsetWidth; c.classList.add("pop");
+      const tdDot = d.querySelector(".spk.td");
+      if(tdDot) tdDot.classList.add("hit");
+    };
+    d.querySelector(".hx").onclick = ()=>{
+      if(!confirm("删掉「"+h.name+"」？历史次数也会没了。")) return;
+      habits = habits.filter(x=>x.id!==h.id);
+      bury("habit", h.name);
+      LS.set("qyx_habits", habits);
+      renderHabits();
+    };
+    g.appendChild(d);
+  });
+  if(habits.length < 3){
+    const add = document.createElement("button");
+    add.className = "habit-add";
+    add.textContent = "＋";
+    add.onclick = ()=>{
+      const v = prompt("追踪什么？（比如：起身）");
+      if(v && v.trim()){
+        unbury("habit", v.trim());
+        habits.push({id: Date.now(), name: v.trim(), counts:{}});
+        LS.set("qyx_habits", habits);
+        renderHabits();
+      }
+    };
+    g.appendChild(add);
+  }
+}
+
+/* ---------- Bonus ---------- */
+let bonus = LS.get("qyx_bonus", null);
+function ensureBonus(){
+  const today = dayKey(Date.now());
+  if(!bonus || bonus.d !== today){
+    if(bonus && bonus.items && bonus.items.some(i=>i.text)){
+      LS.set("qyx_bonus_prev", bonus);
+    }
+    bonus = {d: today, items:[{text:"",done:false},{text:"",done:false}]};
+    LS.setSilent("qyx_bonus", bonus);
+  }
+}
+function renderBonus(){
+  document.querySelectorAll("#bonusCard input").forEach(inp=>{
+    const i = +inp.dataset.b;
+    inp.value = bonus.items[i].text;
+    inp.classList.toggle("donetext", bonus.items[i].done);
+  });
+  document.querySelectorAll("#bonusCard .bcirc").forEach(c=>{
+    c.classList.toggle("on", bonus.items[+c.dataset.b].done);
+  });
+}
+document.querySelectorAll("#bonusCard input").forEach(inp=>{
+  inp.addEventListener("input", ()=>{
+    bonus.items[+inp.dataset.b].text = inp.value;
+    LS.set("qyx_bonus", bonus);
+  });
+});
+document.querySelectorAll("#bonusCard .bcirc").forEach(c=>{
+  c.onclick = ()=>{
+    const i = +c.dataset.b;
+    if(!bonus.items[i].text.trim()) return;
+    bonus.items[i].done = !bonus.items[i].done;
+    LS.set("qyx_bonus", bonus);
+    renderBonus();
+    if(bonus.items[i].done){
+      addLog("bonus", bonus.items[i].text);
+      confetti(c);
+      buddySay("done");
+    }
+  };
+});
+function confetti(fromEl){
+  const r = fromEl.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const colors = ["#EE8A54","#F6CC7E","#7C9B6E","#7FB2D4","#E77F44","#C4E1F0"];
+  for(let i=0;i<36;i++){
+    const p = document.createElement("div");
+    p.className = "cfp";
+    p.style.background = colors[i % colors.length];
+    p.style.left = cx+"px"; p.style.top = cy+"px";
+    document.body.appendChild(p);
+    const ang = Math.random()*Math.PI*2;
+    const v = 90 + Math.random()*160;
+    const vx = Math.cos(ang)*v, vy = Math.sin(ang)*v - 120;
+    const rot = (Math.random()*720-360);
+    const dur = 900 + Math.random()*500;
+    p.animate([
+      {transform:"translate(0,0) rotate(0deg)", opacity:1},
+      {transform:`translate(${vx}px, ${vy+260}px) rotate(${rot}deg)`, opacity:0}
+    ], {duration:dur, easing:"cubic-bezier(.15,.6,.4,1)"});
+    setTimeout(()=>p.remove(), dur);
+  }
+}
 
 /* ---------- 昨日小结 ---------- */
 let summaries = LS.get("qyx_sums", {});
@@ -1369,6 +1700,16 @@ async function makeDailySummary(){
     if(f.length){
       text += `\n三件：` + f.map(i=>`${i.done?"✓":"·"} ${i.text}`).join("　");
     }
+  }
+  const hLine = habits.map(h=>{
+    const n = (h.counts||{})[yk] || 0;
+    return n ? `${h.name}×${n}` : null;
+  }).filter(Boolean);
+  if(hLine.length) text += `\n习惯：` + hLine.join(" ");
+  const bp = LS.get("qyx_bonus_prev", null);
+  if(bp && bp.d===yk){
+    const bf = bp.items.filter(i=>i.text.trim());
+    if(bf.length) text += `\nBonus：` + bf.map(i=>`${i.done?"✓":"·"} ${i.text}`).join("　");
   }
   const moods = {};
   yes.forEach(e=>{ if(e.mood) moods[e.mood] = (moods[e.mood]||0)+1; });
@@ -1420,7 +1761,7 @@ $("saveNote").onclick = ()=>{
 };
 
 /* ---------- 记录 ---------- */
-const TAG = {dice:"骰子", ai:"问一句", draw:"抽签", note:"记录", done:"完成"};
+const TAG = {dice:"骰子", ai:"问一句", draw:"抽签", note:"记录", done:"完成", bonus:"bonus"};
 function dayKey(t){ const d = new Date(t); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function dayTitle(k){
   const today = dayKey(Date.now());
@@ -1442,7 +1783,8 @@ function renderLog(){
     (groups[k] = groups[k]||[]).push(e);
   });
   Object.keys(groups).forEach(k=>{
-    const g = document.createElement("div"); g.className = "day-group glass";
+    const g = document.createElement("div");
+    g.className = "day-group glass" + (k===dayKey(Date.now()) ? " today" : "");
     const head = document.createElement("div"); head.className = "day-head";
     head.innerHTML = `<span class="day-title">${dayTitle(k)}</span>`;
     const exp = document.createElement("button");
@@ -1521,7 +1863,7 @@ function exportDay(k, entries){
   // 时间轴
   ctx.strokeStyle = "rgba(75,66,55,.15)"; ctx.lineWidth = 4;
   ctx.beginPath(); ctx.moveTo(spineX, startY-12); ctx.lineTo(spineX, startY+bodyH-46); ctx.stroke();
-  const colors = {dice:"#EE8A54", ai:"#5F7F52", draw:"#EE8A54", note:"#BDB2A1", done:"#7C9B6E"};
+  const colors = {dice:"#EE8A54", ai:"#5F7F52", draw:"#EE8A54", note:"#BDB2A1", done:"#7C9B6E", bonus:"#D9713C"};
   let y = startY;
   items.forEach(({e, lines, h})=>{
     const time = new Date(e.t);
@@ -1609,8 +1951,8 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "2.2.0";
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_dead"];
+const APP_VERSION = "2.5.0";
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -1710,15 +2052,33 @@ function mergeAll(o){
   LS.setSilent("qyx_dice", dicePool);
   // 月锚点：按月，按文字并，splits 并
   const rm = o.qyx_months||{};
+  const normSp = arr=>(arr||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
   Object.keys(rm).forEach(ym=>{
     if(!months[ym]) months[ym] = [];
     (rm[ym]||[]).forEach(ra=>{
       if(isDead("anchor:"+ym, ra.text)) return;
       const la = months[ym].find(x=>x.text===ra.text);
-      if(!la){ if(months[ym].length<5) months[ym].push(ra); }
-      else la.splits = [...new Set([...(la.splits||[]), ...(ra.splits||[])])];
+      if(!la){
+        if(months[ym].length<5){
+          ra.splits = normSp(ra.splits); ra.hist = ra.hist||[];
+          months[ym].push(ra);
+        }
+      }else{
+        const sm = new Map(normSp(la.splits).map(x=>[x.text, x]));
+        normSp(ra.splits).forEach(x=>{
+          if(isDead("split:"+la.text, x.text)) return;
+          if(sm.has(x.text)) sm.get(x.text).done = sm.get(x.text).done || x.done;
+          else sm.set(x.text, x);
+        });
+        la.splits = [...sm.values()];
+        const hk = h=>h.t+"|"+h.ev;
+        const hm = new Map((la.hist||[]).map(h=>[hk(h), h]));
+        (ra.hist||[]).forEach(h=>{ if(!hm.has(hk(h))) hm.set(hk(h), h); });
+        la.hist = [...hm.values()].sort((x,y)=>x.t-y.t);
+      }
     });
   });
+  normMonths();
   LS.setSilent("qyx_months", months);
   // 小结：补缺
   const rs = o.qyx_sums||{};
@@ -1736,6 +2096,7 @@ function mergeAll(o){
       const norm = a=>(a||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
       const sm = new Map(norm(it.subs).map(x=>[x.text, x]));
       norm(rit.subs).forEach(x=>{
+        if(isDead("esub:"+enough.d, x.text)) return;
         if(sm.has(x.text)) sm.get(x.text).done = sm.get(x.text).done || x.done;
         else sm.set(x.text, x);
       });
@@ -1749,12 +2110,41 @@ function mergeAll(o){
   }
   const rp = o.qyx_enough_prev;
   if(rp && !LS.get("qyx_enough_prev", null)) LS.setSilent("qyx_enough_prev", rp);
+  // 习惯：按名字并，次数逐日取大
+  (o.qyx_habits||[]).forEach(rh=>{
+    if(isDead("habit", rh.name)) return;
+    const lh = habits.find(x=>x.name===rh.name);
+    if(!lh){ if(habits.length<3) habits.push(rh); }
+    else{
+      lh.counts = lh.counts||{};
+      Object.keys(rh.counts||{}).forEach(d=>{
+        lh.counts[d] = Math.max(lh.counts[d]||0, rh.counts[d]);
+      });
+    }
+  });
+  LS.setSilent("qyx_habits", habits);
+  // Bonus：同日逐项并
+  const rb = o.qyx_bonus;
+  if(rb && rb.d===today && bonus && bonus.d===today){
+    bonus.items.forEach((it,i)=>{
+      const rit = (rb.items||[])[i];
+      if(!rit) return;
+      if(!it.text.trim() && rit.text) it.text = rit.text;
+      it.done = it.done || !!rit.done;
+    });
+    LS.setSilent("qyx_bonus", bonus);
+  } else if(rb && rb.d===today && (!bonus || bonus.d!==today)){
+    bonus = rb; LS.setSilent("qyx_bonus", bonus);
+  }
+  const rbp = o.qyx_bonus_prev;
+  if(rbp && !LS.get("qyx_bonus_prev", null)) LS.setSilent("qyx_bonus_prev", rbp);
   const after = JSON.stringify(BACKUP_KEYS.map(k=>LS.get(k,null)));
   return before !== after;
 }
 function rerenderAll(){
   ensureEnough(); renderEnough();
-  renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderSea(); renderLog();
+  ensureBonus(); renderBonus();
+  renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderHabits(); renderSea(); renderLog();
 }
 
 /* 同步 = 拉云端 → 并进本机 → 推合并结果。任何顺序按都不丢数据 */
@@ -1959,6 +2349,11 @@ renderMonth();
 renderSea();
 ensureEnough();
 renderEnough();
+ensureBonus();
+renderBonus();
+renderHabits();
+renderLog();
+updatePearl();
 makeDailySummary();
 updatePendingDot();
 syncNow(true);
@@ -1969,7 +2364,7 @@ setInterval(()=>{
   const d = dayKey(Date.now());
   if(d !== bootDay){
     bootDay = d;
-    ensureEnough(); renderEnough(); makeDailySummary();
+    ensureEnough(); renderEnough(); ensureBonus(); renderBonus(); renderHabits(); updatePearl(); makeDailySummary();
   }
 }, 60000);
 </script>
