@@ -324,8 +324,6 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 }
 
 /* ---- 本月 ---- */
-.month-title{font-family:var(--kai);font-size:22px;font-weight:700;letter-spacing:.08em;margin:8px 4px 2px}
-.month-title .en{font-family:var(--latin);font-size:13px;color:var(--ink-faint);margin-left:8px;letter-spacing:.05em}
 .anchor{padding:15px 17px 13px;margin-bottom:12px}
 .anchor-head{display:flex;align-items:center;gap:8px}
 .anchor-head .txt{flex:1;font-size:15.5px;font-weight:600;font-family:var(--kai)}
@@ -356,6 +354,14 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 .trail-line{display:flex;gap:9px;font-size:12px;color:var(--ink-soft);padding:2.5px 0;line-height:1.5}
 .trail-t{font-family:var(--mono);color:var(--stamp);font-size:11px;flex-shrink:0;padding-top:1px}
 .anchor-head .trail{background:none;border:none;color:var(--ink-faint);font-size:14px;cursor:pointer;padding:4px}
+.anchor-head .achk{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;cursor:pointer;
+  border:2px solid var(--sage);background:transparent;padding:0;
+  font-size:12px;color:#fff;display:flex;align-items:center;justify-content:center;
+  transition:all .15s ease;
+}
+.anchor.adone .achk{background:var(--sage-deep);border-color:var(--sage-deep)}
+.anchor.adone .anchor-head .txt{text-decoration:line-through;opacity:.55}
 .past-month{font-family:var(--kai);font-size:13.5px;color:var(--ink-soft);padding:5px 4px;line-height:1.8}
 .pm-ym{font-weight:700;color:var(--ink);margin-right:10px}
 .split-add{
@@ -544,6 +550,11 @@ nav button{position:relative}
 .tag.done{background:var(--sage-mist);color:var(--sage-deep)}
 .tag.bonus{background:var(--tang-mist);color:var(--tang-deep)}
 .entry .est{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:3px}
+.entry .ex{
+  background:none;border:none;color:var(--ink-faint);font-size:11px;cursor:pointer;
+  padding:4px 2px;opacity:.45;flex-shrink:0;align-self:flex-start;
+}
+.entry .etx{cursor:pointer}
 .empty{color:var(--ink-faint);font-size:13.5px;text-align:center;padding:42px 0}
 
 /* ---- 导航 ---- */
@@ -717,11 +728,10 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 
   <!-- 目标 -->
   <section class="view" id="v-month">
-    <h2 style="margin-top:8px">习惯 · 点一下记一次</h2>
+    <h2 style="margin-top:8px">习惯</h2>
     <div class="habit-grid" id="habitGrid"></div>
 
-    <div class="month-title" id="monthTitle"></div>
-    <p class="hint">最多五件。</p>
+    <h2 id="monthHead"></h2>
     <div class="add-row">
       <input type="text" id="anchorText" placeholder="比如：摄影上有点进展">
       <button class="plus" id="addAnchor">＋</button>
@@ -841,6 +851,7 @@ function normMonths(){
     (months[ym]||[]).forEach(a=>{
       a.splits = (a.splits||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
       a.hist = a.hist||[];
+      a.done = !!a.done;
     });
   });
 }
@@ -1222,7 +1233,7 @@ function monthAnchors(){
 function saveMonths(){ LS.set("qyx_months", months); }
 function renderMonth(){
   const d = new Date();
-  $("monthTitle").innerHTML = `${d.getMonth()+1}月，就这几件<span class="en">${d.toLocaleString("en",{month:"short"}).toLowerCase()} '${String(d.getFullYear()).slice(2)}</span>`;
+  $("monthHead").innerHTML = `${d.getMonth()+1}月目标<span class="count">${monthAnchors().length}/5</span>`;
   const list = $("anchorList"); list.innerHTML = "";
   renderPastMonths();
   const anchors = monthAnchors();
@@ -1232,9 +1243,10 @@ function renderMonth(){
   }
   anchors.forEach(a=>{
     const card = document.createElement("div");
-    card.className = "anchor glass";
+    card.className = "anchor glass" + (a.done ? " adone" : "");
     card.innerHTML = `
       <div class="anchor-head">
+        <button class="achk">${a.done?"✓":""}</button>
         <span class="txt">${esc(a.text)}</span>
         <button class="split-btn">拆一拆</button>
         <button class="trail" title="轨迹">◷</button>
@@ -1324,6 +1336,16 @@ function renderMonth(){
         a.text = v.trim(); saveMonths(); renderMonth();
       }
     };
+    card.querySelector(".achk").onclick = (ev)=>{
+      a.done = !a.done;
+      if(a.done){
+        addLog("done", a.text);
+        aHist(a, "完成 ✓");
+        confetti(ev.target);
+        toastDone("这个月的一件，成了。");
+      }
+      saveMonths(); renderMonth();
+    };
     card.querySelector(".trail").onclick = ()=>{
       const tb = card.querySelector(".anchor-trail");
       if(tb.style.display==="none"){
@@ -1365,7 +1387,7 @@ function renderPastMonths(){
     const parts = (months[ym]||[]).map(a=>{
       const sp = a.splits||[];
       const dn = sp.filter(x=>x.done).length;
-      return `${a.text}${sp.length? `（${dn}/${sp.length}）`:""}`;
+      return `${a.done?"✓ ":""}${a.text}${sp.length? `（${dn}/${sp.length}）`:""}`;
     });
     line.innerHTML = `<span class="pm-ym">${parseInt(m)}月</span>${parts.map(p=>p.replace(/</g,"&lt;")).join("　")}`;
     body.appendChild(line);
@@ -1761,6 +1783,7 @@ $("saveNote").onclick = ()=>{
 };
 
 /* ---------- 记录 ---------- */
+const logKey = e=>e.t+"|"+e.type+"|"+e.text;
 const TAG = {dice:"骰子", ai:"问一句", draw:"抽签", note:"记录", done:"完成", bonus:"bonus"};
 function dayKey(t){ const d = new Date(t); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function dayTitle(k){
@@ -1811,7 +1834,24 @@ function renderLog(){
         extra = `<div class="est">${bits.join(" · ")}</div>`;
       }
       const md = e.mood ? `<span class="emood">${e.mood}</span>` : "";
-      row.innerHTML = `<span class="t">${hm}</span><div class="body"><span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${md}${esc(e.text)}${extra}</div>`;
+      row.innerHTML = `<span class="t">${hm}</span><div class="body"><span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${md}<span class="etx">${esc(e.text)}</span>${extra}</div><button class="ex" title="删除">✕</button>`;
+      row.querySelector(".ex").onclick = ()=>{
+        if(!confirm("删掉这条？")) return;
+        bury("log", logKey(e));
+        log = log.filter(x=>x!==e);
+        LS.set("qyx_log", log);
+        renderLog();
+        toastDone("删了。");
+      };
+      row.querySelector(".etx").onclick = ()=>{
+        const v = prompt("改一改：", e.text);
+        if(v && v.trim() && v.trim()!==e.text){
+          bury("log", logKey(e));
+          e.text = v.trim();
+          LS.set("qyx_log", log);
+          renderLog();
+        }
+      };
       g.appendChild(row);
     });
     list.appendChild(g);
@@ -1951,7 +1991,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "2.5.0";
+const APP_VERSION = "2.6.0";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -2018,9 +2058,11 @@ function mergeAll(o){
   if(dead.length>300) dead = dead.slice(-300);
   LS.setSilent("qyx_dead", dead);
   // 日志：按 时间+类型+内容 去重取并集
-  const logKey = e=>e.t+"|"+e.type+"|"+e.text;
   const logMap = new Map(log.map(e=>[logKey(e), e]));
-  (o.qyx_log||[]).forEach(e=>{ if(!logMap.has(logKey(e))) logMap.set(logKey(e), e); });
+  (o.qyx_log||[]).forEach(e=>{
+    const k = logKey(e);
+    if(!logMap.has(k) && !isDead("log", k)) logMap.set(k, e);
+  });
   log = [...logMap.values()].sort((a,b)=>a.t-b.t);
   LS.setSilent("qyx_log", log);
   // 瓶子：按 id 并，后续也并
@@ -2071,6 +2113,7 @@ function mergeAll(o){
           else sm.set(x.text, x);
         });
         la.splits = [...sm.values()];
+        la.done = la.done || !!ra.done;
         const hk = h=>h.t+"|"+h.ev;
         const hm = new Map((la.hist||[]).map(h=>[hk(h), h]));
         (ra.hist||[]).forEach(h=>{ if(!hm.has(hk(h))) hm.set(hk(h), h); });
