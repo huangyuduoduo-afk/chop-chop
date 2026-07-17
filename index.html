@@ -109,6 +109,23 @@ header{
   position:absolute;right:10px;top:9px;background:none;border:none;
   color:rgba(74,95,61,.5);font-size:13px;cursor:pointer;padding:4px;
 }
+.sum-stats{
+  font-family:var(--mono);font-size:11.5px;color:#5F7F52;
+  letter-spacing:.05em;font-weight:600;margin-bottom:2px;
+}
+.sum-sec{
+  font-size:10.5px;letter-spacing:.16em;color:rgba(74,95,61,.6);
+  margin:8px 0 3px;font-weight:700;
+}
+.sum-row{display:flex;gap:8px;font-size:13.5px;line-height:1.75;color:#4A5F3D}
+.sum-row .si{flex-shrink:0;font-size:12px;padding-top:1px;color:rgba(74,95,61,.45)}
+.sum-row.ok .si{color:var(--sage-deep);font-weight:700}
+.sum-line{font-size:12.5px;margin-top:8px;color:#5F7F52}
+.sum-obs{
+  margin-top:9px;padding-top:9px;border-top:1px dashed rgba(94,122,76,.3);
+  font-size:13.5px;line-height:1.8;
+}
+.sum-old{white-space:pre-wrap}
 .sum-inline{
   margin:2px 0 10px;padding:11px 14px;
   background:rgba(231,238,223,.6);border-radius:14px;
@@ -159,6 +176,9 @@ main{flex:1;overflow-y:auto;overflow-x:clip;-webkit-overflow-scrolling:touch;ove
 
 /* ---- 小鱼（侧面） ---- */
 .buddy-row{display:flex;align-items:flex-end;gap:12px;margin:10px 2px 20px}
+.buddy-row.mini{margin:6px 2px 16px}
+.buddy-row.mini .buddy{width:62px;height:57px}
+.buddy-row.mini .bubble{font-size:14.5px;padding:10px 15px}
 .buddy{width:88px;height:80px;flex-shrink:0;animation:bob 3.8s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .bubble{
@@ -292,6 +312,18 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 
 /* ---- AI ---- */
 .ai-panel{padding:16px;margin:10px 0 4px}
+.ai-panel.prime{
+  margin:0 0 16px;
+  border-color:rgba(124,155,110,.4);
+  box-shadow:0 2px 4px rgba(75,66,55,.05), 0 14px 38px rgba(95,127,82,.16);
+}
+.ai-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:11px;
+  font-family:var(--kai);font-weight:700;font-size:15px;
+  color:var(--sage-deep);letter-spacing:.12em;
+}
+.ai-head .ah-dot{font-size:17px}
+.ai-head::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(124,155,110,.3),transparent)}
 .send{
   margin-top:11px;width:100%;border:none;border-radius:17px;padding:13px;cursor:pointer;
   background:var(--sage-deep);color:#F5F4EA;font-size:15px;font-weight:600;
@@ -305,6 +337,15 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
   display:none;
 }
 .ai-reply.show{display:block;animation:fade .3s ease}
+.ai-reply{white-space:pre-wrap}
+.rule-line{
+  display:flex;align-items:flex-start;gap:8px;
+  font-family:var(--kai);font-size:13.5px;color:var(--ink-soft);
+  padding:5px 4px;line-height:1.6;border-bottom:1px dashed rgba(75,66,55,.1);
+}
+.rule-line:last-child{border-bottom:none}
+.rule-line .rtx{flex:1}
+.rule-line .rx{background:none;border:none;color:var(--ink-faint);font-size:11px;cursor:pointer;padding:3px;opacity:.5}
 .ai-actions{display:none;gap:10px;margin-top:12px}
 .ai-actions.show{display:flex}
 .ai-actions button{
@@ -555,6 +596,18 @@ nav button{position:relative}
   padding:4px 2px;opacity:.45;flex-shrink:0;align-self:flex-start;
 }
 .entry .etx{cursor:pointer}
+.esrc{
+  font-size:10px;color:var(--ink-faint);margin-right:6px;vertical-align:1.5px;
+  letter-spacing:.03em;
+}
+.aiq{
+  font-size:13px;color:var(--ink-soft);margin:5px 0 4px;padding-left:9px;
+  border-left:2px solid rgba(75,66,55,.15);white-space:pre-wrap;line-height:1.6;
+}
+.aia{
+  font-family:var(--kai);font-weight:700;font-size:15px;color:var(--sage-deep);
+  white-space:pre-wrap;line-height:1.7;
+}
 .empty{color:var(--ink-faint);font-size:13.5px;text-align:center;padding:42px 0}
 
 /* ---- 导航 ---- */
@@ -645,6 +698,28 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <div class="bubble" id="buddySay">今天卡在哪儿？写进来。</div>
     </div>
 
+    <div class="ai-panel glass prime" id="aiPanel">
+      <div class="ai-head"><span class="ah-dot">◍</span>问一句</div>
+      <textarea id="aiInput" rows="2" placeholder="背景 + 选项 + 你的想法，一两句就够"></textarea>
+      <button class="send" id="aiSend">切</button>
+      <div class="ai-reply" id="aiReply"></div>
+      <div class="ai-actions" id="aiActions">
+        <button class="obey" id="aiObey">照做</button>
+        <button id="aiArgue">不服</button>
+        <button id="aiRule">存准则</button>
+      </div>
+      <div id="aiFollow" style="display:none;margin-top:12px">
+        <textarea id="aiAnswer" rows="2" placeholder="说吧"></textarea>
+        <button class="send" id="aiAnswerSend">再切一次</button>
+      </div>
+      <div class="err" id="aiErr"></div>
+      <div id="rulesBlock" style="display:none;margin-top:14px">
+        <h2 class="fold" data-target="rulesList" style="margin:0 0 8px"><span class="arr">▶</span>我的准则<span class="count" id="ruleCount"></span></h2>
+        <div id="rulesList" style="display:none"></div>
+      </div>
+    </div>
+
+
     <div class="glass enough" id="enoughCard">
       <div class="enough-title">今天做完这三件，就够了</div>
       <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button></div>
@@ -689,28 +764,6 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div id="ongoingBlock" style="display:none">
       <h2 class="fold" data-target="ongoingChips"><span class="arr">▶</span>定过的 · 点一下排回<span class="count" id="ongoingCount"></span></h2>
       <div class="chips" id="ongoingChips" style="display:none"></div>
-    </div>
-
-    <button class="hero-btn hero-ai" id="aiToggle">
-      <span>
-        <span class="name">问一句</span>
-        <span class="sub">一句话拍板</span>
-      </span>
-      <span class="glyph">◍</span>
-    </button>
-    <div class="ai-panel glass" id="aiPanel" style="display:none">
-      <textarea id="aiInput" rows="2" placeholder="卡在什么上？"></textarea>
-      <button class="send" id="aiSend">切</button>
-      <div class="ai-reply" id="aiReply"></div>
-      <div class="ai-actions" id="aiActions">
-        <button class="obey" id="aiObey">照做</button>
-        <button id="aiArgue">不服，我说两句</button>
-      </div>
-      <div id="aiFollow" style="display:none;margin-top:12px">
-        <textarea id="aiAnswer" rows="2" placeholder="说吧"></textarea>
-        <button class="send" id="aiAnswerSend">再切一次</button>
-      </div>
-      <div class="err" id="aiErr"></div>
     </div>
 
     <div class="micro-row">
@@ -760,6 +813,27 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 
   <!-- 记录 -->
   <section class="view on" id="v-log">
+    <div class="buddy-row mini">
+      <svg class="buddy" viewBox="0 0 120 110" aria-hidden="true">
+        <defs>
+          <radialGradient id="budg2" cx="34%" cy="26%" r="85%">
+            <stop offset="0%" stop-color="#FFD3A3"/>
+            <stop offset="55%" stop-color="#F4A26B"/>
+            <stop offset="100%" stop-color="#E77F44"/>
+          </radialGradient>
+        </defs>
+        <path d="M60 7 C96 7 113 37 111 66 C109 95 89 105 60 105 C31 105 11 95 9 66 C7 37 24 7 60 7 Z" fill="url(#budg2)"/>
+        <ellipse cx="42" cy="26" rx="20" ry="11" fill="rgba(255,255,255,.4)" transform="rotate(-18 42 26)"/>
+        <circle cx="44" cy="53" r="4.6" fill="#4B3320"/>
+        <circle cx="76" cy="53" r="4.6" fill="#4B3320"/>
+        <circle cx="45.6" cy="51.4" r="1.4" fill="#fff"/>
+        <circle cx="77.6" cy="51.4" r="1.4" fill="#fff"/>
+        <path d="M50 66 Q60 75 70 66" stroke="#4B3320" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <ellipse cx="33" cy="63" rx="6.5" ry="4" fill="rgba(255,110,70,.4)"/>
+        <ellipse cx="87" cy="63" rx="6.5" ry="4" fill="rgba(255,110,70,.4)"/>
+      </svg>
+      <div class="bubble" id="logSay"></div>
+    </div>
     <div class="cloud-banner" id="cloudBanner"></div>
     <div id="sumBanner"></div>
     <div class="letter">
@@ -793,7 +867,8 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <label>服务</label>
     <select id="provider">
       <option value="anthropic">Claude（Anthropic）</option>
-      <option value="deepseek">DeepSeek</option>
+      <option value="deepseek">DeepSeek V3（快）</option>
+      <option value="deepseek-r1">DeepSeek R1（更懂，稍慢）</option>
     </select>
     <label>API key</label>
     <input type="password" id="apiKey" placeholder="sk-…">
@@ -908,8 +983,8 @@ document.querySelectorAll("nav button").forEach(b=>{
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
-function addLog(type, text, mood){
-  log.push({t: Date.now(), type, text, mood: mood||null});
+function addLog(type, text, mood, src, q){
+  log.push({t: Date.now(), type, text, mood: mood||null, src: src||null, q: q||null});
   LS.set("qyx_log", log);
 }
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
@@ -955,7 +1030,7 @@ function renderOngoing(){
       ongoing = ongoing.filter(x=>x.id!==o.id);
       LS.set("qyx_ongoing", ongoing);
       bury("ongoing", o.text);
-      addLog("done", o.text);
+      addLog("done", o.text, null, "定过的");
       renderOngoing();
       buddySay("done");
       toastDone("划掉了。");
@@ -1096,22 +1171,38 @@ $("acceptMicro").onclick = ()=>{
   toastDone("定了。去。");
 };
 
+/* ---------- 准则库 ---------- */
+let rules = LS.get("qyx_rules", []);   // {id, t, text}
+function renderRules(){
+  const block = $("rulesBlock"), list = $("rulesList");
+  $("ruleCount").textContent = rules.length ? " " + rules.length : "";
+  block.style.display = rules.length ? "block" : "none";
+  list.innerHTML = "";
+  rules.forEach(r=>{
+    const d = document.createElement("div");
+    d.className = "rule-line";
+    d.innerHTML = `<span class="rtx">${esc(r.text)}</span><button class="rx">✕</button>`;
+    d.querySelector(".rx").onclick = ()=>{
+      rules = rules.filter(x=>x.id!==r.id);
+      bury("rule", r.text);
+      LS.set("qyx_rules", rules);
+      renderRules();
+    };
+    list.appendChild(d);
+  });
+}
+
 /* ---------- AI：一个入口，切完可以不服 ---------- */
 let aiHistory = [];
 function resetAI(){
   aiHistory = [];
+  $("aiArgue").style.display = "";
   $("aiFollow").style.display = "none";
   $("aiAnswer").value = "";
   $("aiReply").classList.remove("show");
   $("aiActions").classList.remove("show");
   $("aiErr").style.display = "none";
 }
-$("aiToggle").onclick = ()=>{
-  const p = $("aiPanel");
-  p.style.display = p.style.display==="none" ? "block" : "none";
-  if(p.style.display==="block") p.scrollIntoView({behavior:"smooth", block:"nearest"});
-  else resetAI();
-};
 
 async function callAnthropic(sys, messages, key){
   const headers = {"Content-Type":"application/json"};
@@ -1128,12 +1219,12 @@ async function callAnthropic(sys, messages, key){
   if(data.error) throw new Error(data.error.message || "API 错误");
   return (data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join("").trim();
 }
-async function callDeepSeek(sys, messages, key){
+async function callDeepSeek(sys, messages, key, model){
   if(!key) throw new Error("DeepSeek 需要在设置里填 key");
   const res = await fetch("https://api.deepseek.com/chat/completions", {
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
-    body: JSON.stringify({ model:"deepseek-chat", max_tokens:300, messages:[{role:"system",content:sys}, ...messages] })
+    body: JSON.stringify({ model: model||"deepseek-chat", max_tokens:600, messages:[{role:"system",content:sys}, ...messages] })
   });
   const data = await res.json();
   if(data.error) throw new Error(data.error.message || "API 错误");
@@ -1142,15 +1233,18 @@ async function callDeepSeek(sys, messages, key){
 async function runAI(sys, messages){
   const key = LS.get("qyx_key", "");
   const provider = LS.get("qyx_provider", "anthropic");
-  return provider==="deepseek"
-    ? await callDeepSeek(sys, messages, key)
-    : await callAnthropic(sys, messages, key);
+  if(provider==="deepseek") return await callDeepSeek(sys, messages, key, "deepseek-chat");
+  if(provider==="deepseek-r1") return await callDeepSeek(sys, messages, key, "deepseek-reasoner");
+  return await callAnthropic(sys, messages, key);
 }
 function aiContext(){
   const now = new Date();
   const timeStr = `现在是${now.getHours()}点${pad(now.getMinutes())}分`;
-  const optStr = opts.length ? `用户此刻在这几件事之间犹豫：${opts.map((o,i)=>`${i+1}.${o}`).join("；")}。` : "";
-  return {timeStr, optStr};
+  const optStr = opts.length ? `用户今天的事项区里有：${opts.map((o,i)=>`${i+1}.${o}`).join("；")}。` : "";
+  const threeArr = (enough && enough.items || []).filter(i=>i.text.trim());
+  const threeStr = threeArr.length ? `用户今天定的三件：${threeArr.map(i=>`${i.text}${i.done?"（已完成）":""}`).join("；")}。` : "";
+  const ruleStr = rules.length ? `用户给自己立过的决策准则：${rules.slice(0,12).map((r,i)=>`${i+1}.${r.text}`).join("；")}。` : "";
+  return {timeStr, optStr, threeStr, ruleStr};
 }
 function showErr(e){
   const err = $("aiErr");
@@ -1168,8 +1262,18 @@ $("aiSend").onclick = async ()=>{
   $("aiActions").classList.remove("show");
   $("aiErr").style.display = "none";
   $("aiFollow").style.display = "none";
-  const {timeStr, optStr} = aiContext();
-  const sys = `${timeStr}。${optStr}用户卡住了。直接对用户（用“你”，或不用人称）拍板此刻先做什么，只回一句话（考虑时间，晚上九点后偏向能收尾、不兴奋的选项）。格式如「先X，就这个」。可以直接砍掉某些选项（比如「今晚不听课了」）。大白话，不解释，不分析，不安慰，不抒情，不超过30个字。`;
+  const {timeStr, optStr, threeStr, ruleStr} = aiContext();
+  const sys = `${timeStr}。${threeStr}${optStr}${ruleStr}用户带着一个小纠结来。
+第一步（在心里做，不输出）：认真读完整条消息，找出真正的卡点——它经常藏在中后段，比如某个担心（"怕手动打印搞砸"）或她自己已经流露的倾向。选项表面之争往往不是重点。
+第二步，输出（总共不超过50字，大白话）：
+第一行：针对真正卡点的结论，不超过20字。如果她其实已有倾向，直接确认她的倾向：「你已经想选X了，就X」。
+第二行（可省略）：「下次：」加一条可复用的准则，不超过20字。
+规则：
+- 有适用的旧准则就直接用并点明：「按你的准则：X」。
+- 纠结成本明显高于事情本身时，直说「这题不值得纠结」然后随便定一个。
+- 可逆的、能更快开始的、步骤少的优先。晚上九点后偏向能收尾、不兴奋的。
+- 只有涉及大额金钱、健康、重要关系时才可以不拍板，改说「这个值得慢慢想」加一句原因。
+- 不复述她的话，不解释利弊，不列选项，不安慰，不抒情，不用「她」。`;
   const userMsg = ctx || (opts.length ? "（没写背景，看选项和时间直接切）" : "（没写选项也没写背景，就是卡住了，给一个此刻就能动的最小动作）");
   aiHistory = [{role:"user", content:userMsg}];
   try{
@@ -1179,16 +1283,32 @@ $("aiSend").onclick = async ()=>{
     reply.textContent = text;
     reply.classList.add("show");
     $("aiActions").classList.add("show");
-    addLog("ai", (ctx? ctx+" → " : "") + text);
+    addLog("ai", text, null, null, ctx || "（没写背景，直接切）");
   }catch(e){ showErr(e); }
   btn.disabled = false; btn.textContent = "切";
 };
 $("aiObey").onclick = ()=>{
   resetAI();
-  $("aiPanel").style.display = "none";
   $("aiInput").value = "";
   buddySay("accepted");
   toastDone("去吧。");
+};
+$("aiRule").onclick = ()=>{
+  const r = $("aiReply").textContent || "";
+  if(!r.trim()) return;
+  const nl = r.split("\n").find(l=>l.includes("下次"));
+  const seed = nl ? nl.replace(/^下次[：:]?\s*/, "").trim() : r.trim();
+  const v = prompt("存这条准则（可以改成你的话）：", seed);
+  if(v && v.trim()){
+    unbury("rule", v.trim());
+    if(!rules.some(x=>x.text===v.trim())){
+      rules.unshift({id: Date.now(), t: Date.now(), text: v.trim()});
+      if(rules.length>30) rules = rules.slice(0,30);
+      LS.set("qyx_rules", rules);
+      renderRules();
+      toastDone("存了。以后同类的，按这条来。");
+    }
+  }
 };
 $("aiArgue").onclick = ()=>{
   $("aiActions").classList.remove("show");
@@ -1200,20 +1320,20 @@ $("aiAnswerSend").onclick = async ()=>{
   if(!ans) return;
   const btn = $("aiAnswerSend"), reply = $("aiReply");
   btn.disabled = true; btn.textContent = "…";
-  const {timeStr, optStr} = aiContext();
-  const sys = `${timeStr}。${optStr}你刚才拍了板，用户不服，说了理由。听完给最终裁决——可以改判也可以维持原判，对用户（用“你”，或不用人称）只回一句大白话，不超过30个字。不解释，不安慰，不抒情。这是最后一句。`;
+  const {timeStr, optStr, threeStr, ruleStr} = aiContext();
+  const sys = `${timeStr}。${threeStr}${optStr}${ruleStr}你刚才拍了板，用户不服，说了理由。先认真理解她的理由里真正的顾虑（可能她自己刚刚才想明白），再给最终裁决——可以改判也可以维持。第一行结论不超过20字；可加一行「下次：」准则（不超过20字）。总共不超过50字，大白话，不复述，不解释，不安慰。这是最后一句。`;
   aiHistory.push({role:"user", content:ans});
   try{
     const text = await runAI(sys, aiHistory);
     if(!text) throw new Error("没有返回内容");
     reply.textContent = text;
     reply.classList.add("show");
-    addLog("ai", "不服：" + ans + " → " + text);
+    addLog("ai", text, null, null, "不服：" + ans);
     $("aiFollow").style.display = "none";
     $("aiAnswer").value = "";
     const acts = $("aiActions");
     acts.classList.add("show");
-    $("aiArgue").style.display = "none";   // 终审后只剩照做
+    $("aiArgue").style.display = "none";   // 终审后只剩照做与存准则
     aiHistory = [];
   }catch(e){ showErr(e); }
   btn.disabled = false; btn.textContent = "再切一次";
@@ -1266,7 +1386,7 @@ function renderMonth(){
         chip.querySelector(".chk").onclick = ()=>{
           sp.done = !sp.done;
           if(sp.done){
-            addLog("done", sp.text);
+            addLog("done", sp.text, null, "月目标·小项");
             aHist(a, "完成：" + sp.text);
           }
           saveMonths(); renderSplits();
@@ -1339,7 +1459,7 @@ function renderMonth(){
     card.querySelector(".achk").onclick = (ev)=>{
       a.done = !a.done;
       if(a.done){
-        addLog("done", a.text);
+        addLog("done", a.text, null, "月目标");
         aHist(a, "完成 ✓");
         confetti(ev.target);
         toastDone("这个月的一件，成了。");
@@ -1525,7 +1645,7 @@ function renderEnough(){
       chip.querySelector(".chk").onclick = ()=>{
         sub.done = !sub.done;
         LS.set("qyx_enough", enough);
-        if(sub.done) addLog("done", sub.text);
+        if(sub.done) addLog("done", sub.text, null, "三件·小项");
         renderEnough();
       };
       chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
@@ -1555,7 +1675,7 @@ document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
     LS.set("qyx_enough", enough);
     renderEnough();
     if(enough.items[i].done){
-      addLog("done", enough.items[i].text);
+      addLog("done", enough.items[i].text, null, "三件");
       buddySay("done");
       const filled = enough.items.filter(x=>x.text.trim());
       if(filled.length===3 && filled.every(x=>x.done)) toastDone("今天，够了。");
@@ -1715,37 +1835,46 @@ async function makeDailySummary(){
   const ai = yes.filter(e=>e.type==="ai").length;
   const done = yes.filter(e=>e.type==="done").length;
   const notes = yes.filter(e=>e.type==="note").length;
-  let text = `切了 ${dice+ai} 次（骰子 ${dice} · 问一句 ${ai}），记录 ${notes} 条，划掉 ${done} 件。`;
+  const sum = {t: Date.now(), v2: 1,
+    stats: {cut: dice+ai, notes, done},
+    three: [], bonus: [], habits: [], moods: [], obs: ""};
   const prev = LS.get("qyx_enough_prev", null);
   if(prev && prev.d===yk){
-    const f = prev.items.filter(i=>i.text.trim());
-    if(f.length){
-      text += `\n三件：` + f.map(i=>`${i.done?"✓":"·"} ${i.text}`).join("　");
-    }
+    sum.three = prev.items.filter(i=>i.text.trim()).map(i=>({text: i.text, done: !!i.done}));
   }
-  const hLine = habits.map(h=>{
+  sum.habits = habits.map(h=>{
     const n = (h.counts||{})[yk] || 0;
-    return n ? `${h.name}×${n}` : null;
+    return n ? `${h.name} ×${n}` : null;
   }).filter(Boolean);
-  if(hLine.length) text += `\n习惯：` + hLine.join(" ");
   const bp = LS.get("qyx_bonus_prev", null);
   if(bp && bp.d===yk){
-    const bf = bp.items.filter(i=>i.text.trim());
-    if(bf.length) text += `\nBonus：` + bf.map(i=>`${i.done?"✓":"·"} ${i.text}`).join("　");
+    sum.bonus = bp.items.filter(i=>i.text.trim()).map(i=>({text: i.text, done: !!i.done}));
   }
   const moods = {};
   yes.forEach(e=>{ if(e.mood) moods[e.mood] = (moods[e.mood]||0)+1; });
-  const mk = Object.keys(moods);
-  if(mk.length) text += `\n情绪：` + mk.map(m=> m + (moods[m]>1 ? "×"+moods[m] : "")).join(" ");
+  sum.moods = Object.keys(moods).map(m=> m + (moods[m]>1 ? "×"+moods[m] : ""));
   try{
     const sample = yes.slice(-14).map(e=>`[${TAG[e.type]||e.type}${e.mood||""}] ${e.text}`.slice(0,50)).join("\n");
     const sys = `这是用户昨天在自己的小工具里的记录。用第二人称“你”对用户本人说一句大白话观察：昨天主要在忙什么、在哪犹豫了。像朋友随口一句。禁止抒情、禁止比喻、禁止文艺腔、禁止“她”。只说观察不给建议，不超过50个字。`;
     const obs = await runAI(sys, [{role:"user", content:sample}]);
-    if(obs) text += "\n" + obs;
+    if(obs) sum.obs = obs;
   }catch(e){ /* 没配 key 就只有数字部分 */ }
-  summaries[yk] = {t: Date.now(), text};
+  summaries[yk] = sum;
   LS.set("qyx_sums", summaries);
   renderSumBanner();
+}
+function buildSumHTML(sum){
+  if(!sum.v2) return `<div class="sum-old">${esc(sum.text||"")}</div>`;
+  let h = `<div class="sum-stats">切 ${sum.stats.cut} · 记 ${sum.stats.notes} · 划掉 ${sum.stats.done}</div>`;
+  const rows = (arr)=>arr.map(i=>`<div class="sum-row${i.done?" ok":""}"><span class="si">${i.done?"✓":"○"}</span><span>${esc(i.text)}</span></div>`).join("");
+  if(sum.three.length) h += `<div class="sum-sec">三件</div>` + rows(sum.three);
+  if(sum.bonus.length) h += `<div class="sum-sec">Bonus</div>` + rows(sum.bonus);
+  const tail = [];
+  if(sum.habits.length) tail.push(sum.habits.join("　"));
+  if(sum.moods.length) tail.push(sum.moods.join(" "));
+  if(tail.length) h += `<div class="sum-line">${esc(tail.join("　·　"))}</div>`;
+  if(sum.obs) h += `<div class="sum-obs">${esc(sum.obs)}</div>`;
+  return h;
 }
 function renderSumBanner(){
   const yk = dayKey(Date.now()-864e5);
@@ -1754,7 +1883,7 @@ function renderSumBanner(){
   if(!summaries[yk] || LS.get("qyx_sumseen","")===yk) return;
   const d = document.createElement("div");
   d.className = "sum-card";
-  d.innerHTML = `<div class="sum-day">昨天 · ${yk.slice(5).replace("-","/")}</div>${esc(summaries[yk].text)}<button class="close">✕</button>`;
+  d.innerHTML = `<div class="sum-day">昨天 · ${yk.slice(5).replace("-","/")}</div>${buildSumHTML(summaries[yk])}<button class="close">✕</button>`;
   d.querySelector(".close").onclick = ()=>{
     localStorage.setItem("qyx_sumseen", JSON.stringify(yk));
     box.innerHTML = "";
@@ -1795,7 +1924,26 @@ function dayTitle(k){
   if(k===yest) return "昨天 · "+base;
   return base;
 }
+const LOG_GREETS = [
+  {h:[5,11],  arr:["早。今天从哪一笔开始？","早上好。","醒了？先记一笔。"]},
+  {h:[11,14], arr:["中午好。","吃了吗？顺手记一笔。"]},
+  {h:[14,18], arr:["下午了。","下午好，记点什么？"]},
+  {h:[18,22], arr:["晚上好。","今天过得怎么样，写两句？"]},
+  {h:[22,29], arr:["夜里了，写完早点睡。","还没睡？记完就收。"]}
+];
+let sessionGreet = null;
+function logGreet(){
+  let hr = new Date().getHours();
+  if(hr < 5) hr += 24;
+  if(!sessionGreet){
+    const g = LOG_GREETS.find(x=>hr>=x.h[0] && hr<x.h[1]) || LOG_GREETS[0];
+    sessionGreet = g.arr[Math.floor(Math.random()*g.arr.length)];
+  }
+  const n = log.filter(e=>dayKey(e.t)===dayKey(Date.now())).length;
+  $("logSay").textContent = sessionGreet + (n ? ` 今天已记 ${n} 笔。` : "");
+}
 function renderLog(){
+  logGreet();
   const d = new Date();
   $("letterDate").textContent = `${pad(d.getMonth()+1)} ${pad(d.getDate())} '${String(d.getFullYear()).slice(2)}  ${stampNow()}`;
   const list = $("logList"); list.innerHTML = "";
@@ -1818,7 +1966,7 @@ function renderLog(){
     if(summaries[k]){
       const s = document.createElement("div");
       s.className = "sum-inline";
-      s.textContent = summaries[k].text;
+      s.innerHTML = buildSumHTML(summaries[k]);
       g.appendChild(s);
     }
     groups[k].forEach(e=>{
@@ -1834,7 +1982,14 @@ function renderLog(){
         extra = `<div class="est">${bits.join(" · ")}</div>`;
       }
       const md = e.mood ? `<span class="emood">${e.mood}</span>` : "";
-      row.innerHTML = `<span class="t">${hm}</span><div class="body"><span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${md}<span class="etx">${esc(e.text)}</span>${extra}</div><button class="ex" title="删除">✕</button>`;
+      const src = e.src ? `<span class="esrc">${esc(e.src)}</span>` : "";
+      let inner;
+      if(e.type==="ai" && e.q){
+        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="aiq">${esc(e.q)}</div><div class="aia">${esc(e.text)}</div>${extra}`;
+      }else{
+        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<span class="etx">${esc(e.text)}</span>${extra}`;
+      }
+      row.innerHTML = `<span class="t">${hm}</span><div class="body">${inner}</div><button class="ex" title="删除">✕</button>`;
       row.querySelector(".ex").onclick = ()=>{
         if(!confirm("删掉这条？")) return;
         bury("log", logKey(e));
@@ -1843,7 +1998,8 @@ function renderLog(){
         renderLog();
         toastDone("删了。");
       };
-      row.querySelector(".etx").onclick = ()=>{
+      const etx = row.querySelector(".etx");
+      if(etx) etx.onclick = ()=>{
         const v = prompt("改一改：", e.text);
         if(v && v.trim() && v.trim()!==e.text){
           bury("log", logKey(e));
@@ -1991,8 +2147,8 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "2.6.0";
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_dead"];
+const APP_VERSION = "2.8.0";
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -2181,13 +2337,21 @@ function mergeAll(o){
   }
   const rbp = o.qyx_bonus_prev;
   if(rbp && !LS.get("qyx_bonus_prev", null)) LS.setSilent("qyx_bonus_prev", rbp);
+  // 准则：按文字并集，过滤墓碑
+  (o.qyx_rules||[]).forEach(rr=>{
+    if(isDead("rule", rr.text)) return;
+    if(!rules.some(x=>x.text===rr.text)) rules.push(rr);
+  });
+  rules.sort((a,b)=>b.t-a.t);
+  if(rules.length>30) rules = rules.slice(0,30);
+  LS.setSilent("qyx_rules", rules);
   const after = JSON.stringify(BACKUP_KEYS.map(k=>LS.get(k,null)));
   return before !== after;
 }
 function rerenderAll(){
   ensureEnough(); renderEnough();
   ensureBonus(); renderBonus();
-  renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderHabits(); renderSea(); renderLog();
+  renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderHabits(); renderSea(); renderRules(); renderLog();
 }
 
 /* 同步 = 拉云端 → 并进本机 → 推合并结果。任何顺序按都不丢数据 */
@@ -2395,6 +2559,7 @@ renderEnough();
 ensureBonus();
 renderBonus();
 renderHabits();
+renderRules();
 renderLog();
 updatePearl();
 makeDailySummary();
@@ -2407,6 +2572,7 @@ setInterval(()=>{
   const d = dayKey(Date.now());
   if(d !== bootDay){
     bootDay = d;
+    sessionGreet = null;
     ensureEnough(); renderEnough(); ensureBonus(); renderBonus(); renderHabits(); updatePearl(); makeDailySummary();
   }
 }, 60000);
