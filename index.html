@@ -682,21 +682,20 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
   background:radial-gradient(circle,rgba(145,168,124,.22),transparent 68%)}
 .v3-review-head{display:flex;align-items:center;gap:9px;margin-bottom:8px;position:relative;z-index:1}
 .v3-review-icon{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#E5ECD9;color:#708A59;font-size:14px}
-.v3-review-head h2{font:600 15px var(--sans);letter-spacing:.05em}.v3-review-head p{font-size:10px;color:var(--ink-soft);letter-spacing:.03em}
+.v3-review-head h2{font:600 15px "Noto Serif SC",var(--kai);letter-spacing:.05em}.v3-review-head p{font-size:10px;color:var(--ink-soft);letter-spacing:.03em}
 .v3-yesterday-body{position:relative;z-index:1}.v3-yesterday-empty{font-family:var(--kai);color:var(--ink-soft);padding:8px 2px}
 .v3-yesterday .sum-row{padding:4px 0}.v3-yesterday .sum-stats{margin-bottom:8px}.v3-yesterday .sum-obs{font-size:13px}
 #sumBanner{display:none!important}
 .v3-overall{margin:0 0 4px}.v3-overall-line,.v3-task-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.v3-overall-line b{font:500 12px var(--sans);color:#667A58;letter-spacing:.045em}.v3-overall-line strong{font:700 13px var(--sans);color:#6E8958;letter-spacing:.02em}
+.v3-overall-line b{font:600 12px "Noto Serif SC",var(--kai);color:#667A58;letter-spacing:.045em}.v3-overall-line strong{font:700 13px "Noto Serif SC",var(--kai);color:#6E8958;letter-spacing:.02em}
 .v3-task-progress{display:flex;align-items:center;gap:8px;padding:4px 0}
 .v3-task-circle{width:17px;height:17px;flex:0 0 17px;border:1.5px solid #AAB8A0;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:10px}
 .v3-task-progress.complete .v3-task-circle{border-color:#7F9A67;background:#7F9A67}.v3-task-main{min-width:0;flex:1}
-.v3-task-line span{font-family:var(--sans);font-size:12.5px;line-height:1.55;letter-spacing:.035em;color:#526548}.v3-task-line em{font-style:normal;font-size:10px;color:#839178;white-space:nowrap}
-.v3-yesterday-meta{display:none}
-#v-log{letter-spacing:.025em}
-#v-log .v3-page-title h1,#v-log .v3-log-actions h2,#v-log .habit-reminder b,#v-log .polish-title b{font-family:var(--sans);letter-spacing:.055em}
-#v-log .v3-page-title p,#v-log .bubble,#v-log .voice-status,#v-log button{font-family:var(--sans);letter-spacing:.035em}
-#v-log .letter textarea,#v-log .entry .body{font-family:var(--sans);font-weight:400;letter-spacing:.045em;line-height:1.9}
+.v3-task-line span{font-family:"Noto Serif SC",var(--kai);font-size:12.5px;line-height:1.55;letter-spacing:.035em;color:#526548}.v3-task-line em{font-style:normal;font-size:10px;color:#839178;white-space:nowrap}
+.v3-summary-stats{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:600 10.5px "Noto Serif SC",var(--kai);letter-spacing:.07em;color:#718466}
+.v3-bonus-compact{display:flex;align-items:flex-start;gap:8px;margin-top:5px;font:500 10.5px/1.65 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#6F7868}
+.v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:flex;flex-wrap:wrap;gap:2px 10px}
+#v-log>.buddy-row.mini{margin:0 2px 12px;align-items:center}
 .buddy-row.mini{margin:0 2px 13px}.buddy-row.mini .buddy{filter:none;width:58px;height:53px}
 .letter{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.67),rgba(255,249,240,.5));
   border:1px solid rgba(242,139,82,.28);box-shadow:var(--v3-shadow);padding:21px 20px 18px}
@@ -767,10 +766,6 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 /* 久坐提醒始终显示，动作由用户在设置里编辑 */
 .habit-reminder{display:flex!important;background:linear-gradient(145deg,rgba(246,249,237,.88),rgba(255,255,255,.53));padding:15px 18px}.habit-reminder .fish{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#E5EEDB;color:#6A8955}.habit-reminder b{font-size:15px}.habit-reminder button{background:rgba(255,255,255,.6)}
 .habit-reminder.done{animation:reminder-done .85s ease}@keyframes reminder-done{35%{transform:translateY(-5px);box-shadow:0 16px 32px rgba(112,146,84,.2)}70%{transform:translateY(1px)}}
-/* 记录页统一使用系统中文字体，避免远程字体加载差异造成混排 */
-#v-log .v3-page-title h1,#v-log .v3-review-head h2,#v-log .v3-overall-line b,#v-log .v3-task-line span,#v-log .v3-log-actions h2,#v-log .habit-reminder b,#v-log .polish-title b{font-family:var(--sans)}
-#v-log .letter textarea{font-family:var(--sans);font-weight:400;letter-spacing:.055em;line-height:40px}
-#v-log .entry .body{font-family:var(--sans);font-weight:400;letter-spacing:.045em;line-height:1.9}
 @media(max-width:430px){.polish-compare{grid-template-columns:1fr}.v3-yesterday{padding:12px 14px 11px}.v3-page-title h1{font-size:22px}.version-pill{display:none}.head-clock{font-size:10px}.mood-row{gap:6px}.mood-btn{width:34px;height:34px}.v3-record-tools{padding-right:68px}.v3-today-ask{padding:18px}.v3-today-ask .buddy-row{right:5px;top:58px;transform:scale(.62)}.v3-today-ask textarea{padding-right:58px}.v3-throw-card textarea{width:67%;font-size:16px}.v3-bottle-art{right:8px;transform:scale(.78) rotate(14deg)}.fish-btn{min-height:145px;padding:24px}.fish-btn .glyph{font-size:56px}.memory-map .node{width:57px}.memory-map .orb{width:49px;height:49px}}
 </style>
 </head>
@@ -942,19 +937,14 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     </section>
     <div class="ai-review-card glass">
       <div class="head"><h2>本周回顾 · AI 望望</h2><span class="beta">BETA</span></div>
-      <p>从你的记录和瓶子里，看看最近反复出现的主题。</p>
-      <button id="aiReviewBtn">生成我的近期回望</button>
+      <p>从最近 7 天的记录和瓶子里，看看反复出现的主题。</p>
+      <button id="aiReviewBtn">生成我的本周回望</button>
       <div class="ai-review-result" id="aiReviewResult"></div>
     </div>
   </section>
 
   <!-- 记录 -->
   <section class="view on" id="v-log">
-    <div class="v3-page-title"><div><h1>记录</h1><p>写下当下，剩下的交给时间。</p></div><span class="leaf">✎</span></div>
-    <section class="v3-yesterday glass" id="yesterdayReview">
-      <div class="v3-review-head"><span class="v3-review-icon">✓</span><div><h2>昨日总结</h2><p id="yesterdayDate"></p></div></div>
-      <div class="v3-yesterday-body" id="yesterdayBody"></div>
-    </section>
     <div class="buddy-row mini">
       <svg class="buddy" viewBox="0 0 120 110" aria-hidden="true">
         <defs>
@@ -976,6 +966,10 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       </svg>
       <div class="bubble" id="logSay"></div>
     </div>
+    <section class="v3-yesterday glass" id="yesterdayReview">
+      <div class="v3-review-head"><span class="v3-review-icon">✓</span><div><h2>昨日总结</h2><p id="yesterdayDate"></p></div></div>
+      <div class="v3-yesterday-body" id="yesterdayBody"></div>
+    </section>
     <div class="cloud-banner" id="cloudBanner"></div>
     <div id="sumBanner"></div>
     <div class="letter">
@@ -1699,7 +1693,7 @@ function renderSea(){
   $("seaCount").textContent = n ? `海里漂着 ${n} 个瓶子。` : "海里还没有瓶子。";
   $("bottleShow").innerHTML = "";
   const savedReview = LS.get("qyx_ai_review", null);
-  if(savedReview && savedReview.text){
+  if(savedReview && savedReview.v===2 && savedReview.text){
     $("aiReviewResult").textContent = savedReview.text;
     $("aiReviewResult").classList.add("show");
   }
@@ -1821,11 +1815,11 @@ function localReviewFallback(recentLog, recentBottles){
   const topMood = Object.keys(moodCounts).sort((a,b)=>moodCounts[b]-moodCounts[a])[0];
   const done = recentLog.filter(e=>e.type==="done").length;
   const notes = recentLog.filter(e=>e.type==="note").length;
-  return `最近30天，你留下了 ${notes} 条记录，完成了 ${done} 件事，海里新增了 ${recentBottles.length} 个瓶子。${topMood?`\n最常出现的情绪是 ${topMood}。`:""}\n再多记几天，主题脉络会越来越清楚。`;
+  return `最近7天，你留下了 ${notes} 条记录，完成了 ${done} 件事，海里新增了 ${recentBottles.length} 个瓶子。${topMood?`\n最常出现的情绪是 ${topMood}。`:""}\n再多记几天，主题脉络会越来越清楚。`;
 }
 $("aiReviewBtn").onclick = async ()=>{
   const btn = $("aiReviewBtn"), out = $("aiReviewResult");
-  const cutoff = Date.now()-30*864e5;
+  const cutoff = Date.now()-7*864e5;
   const recentLog = log.filter(e=>e.t>=cutoff);
   const recentBottles = bottles.filter(b=>b.t>=cutoff);
   if(!recentLog.length && !recentBottles.length){ out.textContent="最近还没有足够记录。先正常使用几天，回望会慢慢长出来。";out.classList.add("show");return; }
@@ -1836,11 +1830,11 @@ $("aiReviewBtn").onclick = async ()=>{
   ].join("\n");
   let text;
   try{
-    text = await runAI(`你在为用户生成私人手账的近30天回望。只根据材料，输出四小段：高频主题、情绪变化、重复关注点、给此刻的她一句具体观察。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}]);
+    text = await runAI(`你是我的私人手账回望助手。只根据我提供的最近7天材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}]);
   }catch(e){ text = localReviewFallback(recentLog,recentBottles); }
   out.textContent=text;out.classList.add("show");
-  LS.set("qyx_ai_review",{t:Date.now(),text});
-  btn.disabled=false;btn.textContent="重新生成近期回望";
+  LS.set("qyx_ai_review",{t:Date.now(),v:2,text});
+  btn.disabled=false;btn.textContent="重新生成本周回望";
 };
 
 /* ---------- 今天做完哪三件就够了 ---------- */
@@ -2180,6 +2174,8 @@ function renderV3Yesterday(){
   html += items.map(i=>{
     return `<div class="v3-task-progress${i.complete?" complete":""}"><span class="v3-task-circle">${i.complete?"✓":""}</span><div class="v3-task-main"><div class="v3-task-line"><span>${esc(i.text)}</span></div></div></div>`;
   }).join("");
+  if(sum&&sum.stats) html += `<div class="v3-summary-stats">切 ${sum.stats.cut} · 记 ${sum.stats.notes} · 划掉 ${sum.stats.done}</div>`;
+  if(sum&&sum.bonus&&sum.bonus.length) html += `<div class="v3-bonus-compact"><b>Bonus</b><span class="v3-bonus-items">${sum.bonus.map(i=>`<span>${i.done?"✓":"○"} ${esc(i.text)}</span>`).join("")}</span></div>`;
   body.innerHTML = html;
 }
 
