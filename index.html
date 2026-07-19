@@ -6,14 +6,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FBF4EA">
-<title>chop chop!</title>
+<title>chop chop! 3.0</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <meta name="apple-mobile-web-app-title" content="chop chop!">
 <meta name="format-detection" content="telephone=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.1.0/style.css">
 <style>
 :root{
@@ -656,6 +656,106 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
   font-family:var(--mono);letter-spacing:.03em;
 }
 #historyList .hl-hint{font-size:12px;color:var(--ink-soft);margin-bottom:8px}
+
+/* ---------- 3.0 · Soft Glass Garden ---------- */
+:root{
+  --v3-paper:#F8F4EC;--v3-orange:#F28B52;--v3-green:#91A87C;
+  --v3-blue:#9CBFD0;--v3-ink:#403832;--v3-card:rgba(255,255,255,.58);
+  --v3-shadow:0 18px 48px rgba(104,83,58,.09),inset 0 1px rgba(255,255,255,.92);
+}
+body{background:
+  radial-gradient(circle at 8% 0,rgba(255,255,255,.9),transparent 34%),
+  radial-gradient(circle at 94% 40%,rgba(156,191,208,.18),transparent 28%),
+  linear-gradient(155deg,#FBF7F0,var(--v3-paper) 52%,#F5EBDD);color:var(--v3-ink)}
+header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-pill{
+  display:inline-flex;margin-left:9px;vertical-align:5px;padding:2px 8px;border-radius:999px;
+  background:rgba(145,168,124,.16);color:#71875F;font:700 9px var(--sans);letter-spacing:.12em
+}
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,251,245,.48));
+  border:1px solid rgba(255,255,255,.88);box-shadow:var(--v3-shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.view.on{animation:v3-enter .34s ease both}@keyframes v3-enter{from{opacity:0;transform:translateY(8px)}}
+.v3-page-title{display:flex;align-items:end;justify-content:space-between;margin:4px 2px 18px}
+.v3-page-title h1{font:600 25px "Noto Serif SC",var(--kai);letter-spacing:.04em}
+.v3-page-title p{font-size:12px;color:var(--ink-soft);margin-top:3px}.v3-page-title .leaf{font-size:28px;color:var(--v3-green)}
+.v3-yesterday{padding:22px 21px;margin:2px 0 18px;position:relative;overflow:hidden;border-radius:24px}
+.v3-yesterday::after{content:"";position:absolute;right:-24px;bottom:-35px;width:145px;height:145px;border-radius:50%;
+  background:radial-gradient(circle,rgba(145,168,124,.22),transparent 68%)}
+.v3-review-head{display:flex;align-items:center;gap:13px;margin-bottom:14px;position:relative;z-index:1}
+.v3-review-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#E5ECD9;color:#708A59;font-size:20px}
+.v3-review-head h2{font:600 19px "Noto Serif SC",var(--kai)}.v3-review-head p{font-size:12px;color:var(--ink-soft)}
+.v3-yesterday-body{position:relative;z-index:1}.v3-yesterday-empty{font-family:var(--kai);color:var(--ink-soft);padding:8px 2px}
+.v3-yesterday .sum-row{padding:4px 0}.v3-yesterday .sum-stats{margin-bottom:8px}.v3-yesterday .sum-obs{font-size:13px}
+.buddy-row.mini{margin:0 2px 13px}.buddy-row.mini .buddy{filter:none;width:58px;height:53px}
+.letter{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.67),rgba(255,249,240,.5));
+  border:1px solid rgba(242,139,82,.28);box-shadow:var(--v3-shadow);padding:21px 20px 18px}
+.letter::before{display:none}.letter textarea{font-family:"Noto Serif SC",var(--kai);color:var(--v3-ink);background-image:repeating-linear-gradient(transparent,transparent 39px,rgba(171,145,111,.16) 39px,rgba(171,145,111,.16) 40px);line-height:40px}
+.v3-record-tools{display:flex;align-items:center;gap:10px;margin-top:8px;padding-right:72px}
+.v3-voice{border:1px solid rgba(156,191,208,.45);background:rgba(255,255,255,.5);color:#5683A0;border-radius:999px;padding:8px 14px;cursor:pointer}
+.v3-voice.recording{background:#FFF0E7;color:var(--tang-deep);border-color:rgba(242,139,82,.5);animation:v3-pulse 1.2s infinite}
+@keyframes v3-pulse{50%{box-shadow:0 0 0 7px rgba(242,139,82,.08)}}
+.voice-status{font-size:11px;color:var(--ink-soft)}
+.polish-panel{margin-top:15px;padding:15px;border-radius:18px;background:rgba(246,249,241,.76);border:1px solid rgba(145,168,124,.28)}
+.polish-panel[hidden]{display:none}.polish-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.polish-title b{font:600 15px "Noto Serif SC",var(--kai);color:#60784F}.polish-title small{color:var(--ink-soft)}
+.polish-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.polish-modes button{border:1px solid rgba(75,66,55,.1);background:rgba(255,255,255,.58);border-radius:14px;padding:9px 5px;font-size:11px;cursor:pointer}.polish-modes button.on{border-color:var(--v3-green);background:#EDF3E8;color:#5E774E}
+.polish-compare{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.polish-compare>div{background:rgba(255,255,255,.65);border-radius:13px;padding:10px;min-height:72px}.polish-compare small{color:var(--ink-soft)}.polish-compare p{font-family:var(--kai);font-size:12.5px;white-space:pre-wrap;margin-top:4px}.apply-polish{width:100%;margin-top:9px;border:0;border-radius:13px;padding:9px;background:var(--v3-green);color:#fff;cursor:pointer}
+.mood-btn{border-radius:50%;width:38px;height:38px;padding:0}.letter .seal{border-radius:20px;width:64px;height:48px;right:16px;bottom:15px;box-shadow:0 8px 18px rgba(217,113,60,.28)}
+.v3-log-actions{display:flex;justify-content:space-between;align-items:center;margin:23px 2px 12px}.v3-log-actions h2{font:600 19px "Noto Serif SC",var(--kai);color:var(--tang-deep)}
+.v3-log-actions button{border:1px solid rgba(75,66,55,.12);background:rgba(255,255,255,.5);border-radius:999px;padding:7px 13px;color:var(--ink-soft);cursor:pointer}
+.day-group{border-radius:23px;padding:18px 19px}.entry{padding:13px 0;line-height:1.75}.entry .body{font-family:"Noto Serif SC",var(--kai)}
+#logList.collapsed .day-group:nth-child(n+3){display:none}.all-records{width:100%;border:1px solid rgba(75,66,55,.1);border-radius:18px;background:rgba(255,255,255,.45);padding:11px;color:var(--ink-soft);cursor:pointer;margin:-4px 0 18px}
+.habit-reminder{display:none;align-items:center;gap:12px;padding:14px 16px;margin:0 0 18px;border-radius:22px;background:rgba(242,247,235,.72);border:1px solid rgba(145,168,124,.28);box-shadow:var(--v3-shadow)}
+.habit-reminder.show{display:flex}.habit-reminder .fish{font-size:28px;animation:v3-float 2.8s ease-in-out infinite}@keyframes v3-float{50%{transform:translateY(-4px)}}
+.habit-reminder div{flex:1}.habit-reminder b{font:600 14px "Noto Serif SC",var(--kai)}.habit-reminder p{font-size:11px;color:var(--ink-soft)}.habit-reminder button{border:1px solid #91A87C;background:transparent;color:#667E54;border-radius:999px;padding:8px 12px;cursor:pointer}
+#v-stuck .ai-panel.prime,#enoughCard,#bonusCard,#v-month .anchor,#v-sea>.glass{border-radius:24px;padding:20px;box-shadow:var(--v3-shadow)}
+#v-stuck .buddy{filter:none}.ai-head{font:600 18px "Noto Serif SC",var(--kai)}
+.hero-dice .name{font-family:"Noto Serif SC",var(--kai)}.hero-dice .glyph{color:var(--tang)}
+.habit-grid{gap:12px}.habit{border-radius:22px;min-height:103px}.anchor{border-radius:24px!important}.anchor-head .txt{font-family:"Noto Serif SC",var(--kai)}
+.v3-sea-hero{margin:0 0 16px;padding:20px;border-radius:24px;background:linear-gradient(145deg,rgba(226,240,247,.8),rgba(255,255,255,.55));border:1px solid rgba(156,191,208,.45)}
+.v3-sea-hero h2{font:600 21px "Noto Serif SC",var(--kai);color:#507D99}.v3-sea-hero p{font-size:12px;color:#7190A3;margin-top:4px}
+.ai-review-card{padding:20px;margin:18px 0;border-radius:24px}.ai-review-card .head{display:flex;justify-content:space-between;align-items:center}.ai-review-card h2{font:600 19px "Noto Serif SC",var(--kai)}.ai-review-card .beta{font-size:9px;background:#E7EEDF;color:#60784F;padding:3px 7px;border-radius:9px}.ai-review-card>p{font-size:12px;color:var(--ink-soft);margin:5px 0 12px}.ai-review-card button{width:100%;border:0;border-radius:17px;padding:12px;background:linear-gradient(135deg,#A4B891,#78985F);color:#fff;cursor:pointer}.ai-review-result{display:none;margin-top:13px;padding:14px;border-radius:15px;background:rgba(239,245,234,.72);font-family:var(--kai);font-size:13.5px;line-height:1.8;white-space:pre-wrap}.ai-review-result.show{display:block}
+nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{border-radius:25px;padding:8px 0 7px}nav button.on{background:linear-gradient(135deg,#FF955B,var(--v3-orange))}
+.modal{background:rgba(255,252,247,.96)}
+
+/* 3.0 今天页：不再沿用旧页面的散装布局 */
+.v3-card-label{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.v3-card-label>span{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:#E6EEDC;color:#668653;font-size:18px;flex-shrink:0}
+.v3-card-label b,.v3-card-label small{display:block}.v3-card-label b{font:600 18px "Noto Serif SC",var(--kai)}.v3-card-label small{font-size:11px;color:var(--ink-soft);margin-top:2px}
+.v3-today-ask{padding:21px;margin-bottom:18px;border-radius:25px;position:relative;overflow:hidden}
+.v3-today-ask::after{content:"";position:absolute;width:170px;height:170px;right:-65px;top:-60px;border-radius:50%;background:radial-gradient(circle,rgba(145,168,124,.22),transparent 68%);pointer-events:none}
+.v3-today-ask .buddy-row{position:absolute;right:13px;top:56px;margin:0;z-index:2;transform:scale(.72);transform-origin:right top}
+.v3-today-ask .buddy-row .bubble{display:none}.v3-today-ask .ai-panel{padding:0!important;margin:0!important;background:none;border:0;box-shadow:none!important;backdrop-filter:none}
+.v3-today-ask .ai-head{font:500 11px var(--sans);color:var(--ink-soft);margin-bottom:8px}.v3-today-ask .ai-head .ah-dot{display:none}
+.v3-today-ask textarea{min-height:126px;padding:15px 74px 15px 15px;background:rgba(255,255,255,.52);border:1px solid rgba(151,136,117,.16);border-radius:19px;font-family:"Noto Serif SC",var(--kai);line-height:1.8}
+.v3-today-ask .send{width:48%;margin:13px 0 0 auto;background:linear-gradient(135deg,#7DA56A,#5F8F51);border-radius:18px;box-shadow:0 8px 18px rgba(95,143,81,.2)}
+#enoughCard{margin-bottom:15px!important;padding:21px!important}.enough{counter-reset:v3task}
+#enoughCard .enough-row{counter-increment:v3task;padding:12px 0;margin:0;border-bottom:1px solid rgba(75,66,55,.08)}
+#enoughCard .enough-row::before{content:counter(v3task);width:27px;height:27px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--v3-green);font:700 12px var(--sans);flex-shrink:0}
+#enoughCard .enough-row:nth-of-type(4)::before{background:var(--v3-orange)}
+#enoughCard .enough-row:nth-of-type(6)::before{background:#ACA498}
+#enoughCard .ecirc{width:28px;height:28px}#enoughCard input{font-family:"Noto Serif SC",var(--kai);font-size:14px}
+#bonusCard{padding:16px 20px!important;background:rgba(255,255,255,.4);box-shadow:none!important;border-style:dashed!important}.bonus .enough-title{color:var(--ink-soft);font-size:12px}.bonus .enough-row{margin-bottom:5px}
+.v3-random{padding:21px;margin-top:3px;border-radius:25px}.v3-random .v3-card-label>span{background:#FFF0E5;color:var(--v3-orange)}
+.v3-random .hero-dice{margin:4px 0 15px;padding:14px 18px;border:0;border-radius:19px;background:linear-gradient(135deg,#FF995E,var(--v3-orange));color:#fff;box-shadow:0 10px 22px rgba(242,139,82,.24)}
+.v3-random .hero-dice .name{color:#fff;font-size:16px}.v3-random .hero-dice .sub{color:rgba(255,255,255,.82)}.v3-random .hero-dice .glyph{color:#fff}
+.v3-random .add-row{margin-top:10px}.v3-random .add-row input{background:rgba(255,255,255,.58);border-radius:18px}.v3-random .micro-row{margin-top:14px}
+
+/* 3.0 瓶子页：加入真实的瓶子视觉与回望地图 */
+.v3-throw-card{min-height:305px;position:relative;overflow:hidden;padding:24px!important}.v3-throw-card textarea{width:62%;min-height:145px;padding:7px 4px;background:transparent;border:0;font:500 18px/1.85 "Noto Serif SC",var(--kai);position:relative;z-index:2}
+.v3-bottle-art{position:absolute;right:32px;top:58px;width:110px;height:160px;transform:rotate(14deg);filter:drop-shadow(0 18px 17px rgba(80,140,170,.17))}
+.v3-bottle-art .glass-body{position:absolute;left:22px;top:20px;width:67px;height:126px;border:4px solid rgba(112,178,205,.4);border-radius:18px 18px 30px 30px;background:linear-gradient(100deg,rgba(255,255,255,.72),rgba(162,216,237,.16));box-shadow:inset 9px 0 rgba(255,255,255,.35)}
+.v3-bottle-art .cork{position:absolute;left:36px;top:2px;width:40px;height:21px;background:#CFA477;border-radius:5px;z-index:2}.v3-bottle-art .glass-body b{position:absolute;width:28px;height:54px;left:18px;top:47px;background:#F2DDB9;border:2px solid #DAB687;border-radius:4px;transform:rotate(-7deg)}.v3-bottle-art>span{position:absolute;right:-2px;top:48px;color:#fff;font-size:25px}
+.bottle-voice{position:absolute;left:23px;bottom:25px;border:1px solid rgba(156,191,208,.55);background:rgba(255,255,255,.55);color:#5284A2;border-radius:999px;padding:8px 14px;z-index:2}.bottle-voice.recording{color:var(--v3-orange);border-color:rgba(242,139,82,.5)}
+.v3-throw-card .throw-btn{position:absolute;left:31%;right:22px;bottom:22px;width:auto;margin:0;border-radius:20px;padding:14px;background:linear-gradient(135deg,#6CA9D0,#4F88B1)}
+.fish-btn{min-height:165px;padding:28px 30px;background:radial-gradient(circle at 64% 10%,rgba(255,255,255,.62),transparent 28%),linear-gradient(145deg,#B8DBED,#71AFD0 58%,#609DC0);position:relative;overflow:hidden}
+.fish-btn::after{content:"";position:absolute;left:-10%;right:-10%;bottom:-34px;height:90px;border:2px solid rgba(255,255,255,.2);border-radius:50%}.fish-btn .name{font-size:23px}.fish-btn .glyph{font-size:68px;transform:rotate(13deg);filter:drop-shadow(0 10px 10px rgba(61,110,140,.2))}
+.memory-map-card{padding:21px!important;margin:18px 0;border-radius:25px}.memory-map-card h2{font:600 18px "Noto Serif SC",var(--kai)}.memory-map-card h2 span{font:700 9px var(--sans);background:#DDEAF2;color:#5682A1;padding:3px 7px;border-radius:8px}.memory-map-card p{font-size:11px;color:var(--ink-soft);margin-top:3px}
+.memory-map{display:flex;align-items:center;justify-content:space-between;gap:3px;margin:24px 0 8px;min-height:108px}.memory-map .node{width:66px;flex-shrink:0;text-align:center;position:relative}.memory-map .orb{width:55px;height:55px;margin:auto;border-radius:50%;display:grid;place-items:center;background:#E6EEF2;color:#5689A8;font-size:20px;box-shadow:0 6px 16px rgba(82,132,162,.14)}.memory-map .node:nth-child(3n+2) .orb{background:#E6EEDF;color:#718E5C}.memory-map .node:nth-child(3n) .orb{background:#FFF0E5;color:#E98245}.memory-map .node b,.memory-map .node small{display:block}.memory-map .node b{font:600 12px "Noto Serif SC",var(--kai);margin-top:7px}.memory-map .node small{font-size:10px;color:var(--ink-soft)}.memory-map .path{height:2px;flex:1;background:linear-gradient(90deg,#A9CEE1,#BED6AA,#F2C3A3);margin-top:-29px;min-width:10px}
+
+/* 久坐提醒始终显示，动作由用户在设置里编辑 */
+.habit-reminder{display:flex!important;background:linear-gradient(145deg,rgba(246,249,237,.88),rgba(255,255,255,.53));padding:15px 18px}.habit-reminder .fish{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#E5EEDB;color:#6A8955}.habit-reminder b{font-size:15px}.habit-reminder button{background:rgba(255,255,255,.6)}
+.habit-reminder.done{animation:reminder-done .85s ease}@keyframes reminder-done{35%{transform:translateY(-5px);box-shadow:0 16px 32px rgba(112,146,84,.2)}70%{transform:translateY(1px)}}
+@media(max-width:430px){.polish-compare{grid-template-columns:1fr}.v3-yesterday{padding:18px}.v3-page-title h1{font-size:22px}.version-pill{display:none}.head-clock{font-size:10px}.mood-row{gap:6px}.mood-btn{width:34px;height:34px}.v3-record-tools{padding-right:68px}.v3-today-ask{padding:18px}.v3-today-ask .buddy-row{right:5px;top:58px;transform:scale(.62)}.v3-today-ask textarea{padding-right:58px}.v3-throw-card textarea{width:67%;font-size:16px}.v3-bottle-art{right:8px;transform:scale(.78) rotate(14deg)}.fish-btn{min-height:145px;padding:24px}.fish-btn .glyph{font-size:56px}.memory-map .node{width:57px}.memory-map .orb{width:49px;height:49px}}
 </style>
 </head>
 <body>
@@ -663,7 +763,7 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 <div class="aura a"></div><div class="aura b"></div><div class="aura c"></div>
 
 <header>
-  <div class="wordmark">chop chop<span class="bang">!</span></div>
+  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill">3.0</span></div>
   <div class="head-meta">
     <span class="head-clock" id="headClock"></span>
     <button class="sync" id="syncBtn" aria-label="同步" title="同步到云端">
@@ -676,6 +776,9 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 <main>
   <!-- 首页 -->
   <section class="view" id="v-stuck">
+    <div class="v3-page-title"><div><h1>今天</h1><p>先理清，再把注意力放回眼前。</p></div><span class="leaf">☀</span></div>
+    <section class="v3-today-ask glass">
+      <div class="v3-card-label"><span>●</span><div><b>问一问</b><small>今天卡在哪儿？我帮你理一下。</small></div></div>
     <div class="buddy-row">
       <svg class="buddy" viewBox="0 0 120 110" aria-hidden="true">
         <defs>
@@ -698,10 +801,10 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <div class="bubble" id="buddySay">今天卡在哪儿？写进来。</div>
     </div>
 
-    <div class="ai-panel glass prime" id="aiPanel">
-      <div class="ai-head"><span class="ah-dot">◍</span>问一句</div>
+    <div class="ai-panel prime" id="aiPanel">
+      <div class="ai-head"><span class="ah-dot">◍</span>背景 + 选项 + 你的想法</div>
       <textarea id="aiInput" rows="2" placeholder="背景 + 选项 + 你的想法，一两句就够"></textarea>
-      <button class="send" id="aiSend">切</button>
+      <button class="send" id="aiSend">开始梳理 ✦</button>
       <div class="ai-reply" id="aiReply"></div>
       <div class="ai-actions" id="aiActions">
         <button class="obey" id="aiObey">照做</button>
@@ -718,10 +821,11 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
         <div id="rulesList" style="display:none"></div>
       </div>
     </div>
+    </section>
 
 
     <div class="glass enough" id="enoughCard">
-      <div class="enough-title">今天做完这三件，就够了</div>
+      <div class="v3-card-label"><span>✦</span><div><b>今天只做三件事</b><small>聚焦重点，少即是多。</small></div></div>
       <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button></div>
       <div class="esubs" data-i="0"></div>
       <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button></div>
@@ -737,10 +841,12 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <div class="enough-row"><button class="bcirc" data-b="1"></button><input type="text" data-b="1" placeholder="第二个（可不写）"></div>
     </div>
 
+    <section class="v3-random glass">
+      <div class="v3-card-label"><span>⚄</span><div><b>交给随机</b><small>选择困难的时候，让它温和地帮你选。</small></div></div>
     <button class="hero-btn hero-dice" id="diceBtn">
       <span>
-        <span class="name">掷骰子</span>
-        <span class="sub">从下面的事项里掷一件</span>
+        <span class="name">交给随机</span>
+        <span class="sub">不知道先做什么时，让它温和地帮你选</span>
       </span>
       <span class="glyph">⚄</span>
     </button>
@@ -777,10 +883,12 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
         </div>
       </div>
     </div>
+    </section>
   </section>
 
   <!-- 目标 -->
   <section class="view" id="v-month">
+    <div class="v3-page-title"><div><h1>成长地图</h1><p>习惯、月目标，以及正在长大的自己。</p></div><span class="leaf">⌁</span></div>
     <h2 style="margin-top:8px">习惯</h2>
     <div class="habit-grid" id="habitGrid"></div>
 
@@ -795,9 +903,12 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 
   <!-- 瓶子 -->
   <section class="view" id="v-sea">
-    <p class="hint">写下来，扔进去。过几天捞回来看。</p>
-    <div class="glass" style="padding:16px">
+    <div class="v3-page-title"><div><h1>瓶子</h1><p>保存未来会想回看的自己。</p></div><span class="leaf">♙</span></div>
+    <div class="v3-sea-hero"><h2>写下来，扔进海里</h2><p>担心、灵感和贪心都可以。过些日子再回来看看。</p></div>
+    <div class="glass v3-throw-card" style="padding:16px">
       <textarea id="bottleText" rows="3" placeholder="担心的、贪心的，都行"></textarea>
+      <div class="v3-bottle-art" aria-hidden="true"><i class="cork"></i><i class="glass-body"><b></b></i><span>✦</span></div>
+      <button class="bottle-voice" id="bottleVoiceBtn">♩ 按住说</button>
       <button class="throw-btn" id="throwBtn">扔进海里</button>
     </div>
     <div class="sea-count" id="seaCount"></div>
@@ -809,10 +920,25 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       <span class="glyph">🫙</span>
     </button>
     <div id="bottleShow"></div>
+    <section class="memory-map-card glass">
+      <div class="head"><div><h2>事件图回望 <span>AI回望</span></h2><p>看看最近哪些主题反复出现。</p></div></div>
+      <div class="memory-map" id="memoryMap"></div>
+    </section>
+    <div class="ai-review-card glass">
+      <div class="head"><h2>本周回顾 · AI 望望</h2><span class="beta">BETA</span></div>
+      <p>从你的记录和瓶子里，看看最近反复出现的主题。</p>
+      <button id="aiReviewBtn">生成我的近期回望</button>
+      <div class="ai-review-result" id="aiReviewResult"></div>
+    </div>
   </section>
 
   <!-- 记录 -->
   <section class="view on" id="v-log">
+    <div class="v3-page-title"><div><h1>记录</h1><p>写下当下，剩下的交给时间。</p></div><span class="leaf">✎</span></div>
+    <section class="v3-yesterday glass" id="yesterdayReview">
+      <div class="v3-review-head"><span class="v3-review-icon">✓</span><div><h2>昨日总结</h2><p id="yesterdayDate"></p></div></div>
+      <div class="v3-yesterday-body" id="yesterdayBody"></div>
+    </section>
     <div class="buddy-row mini">
       <svg class="buddy" viewBox="0 0 120 110" aria-hidden="true">
         <defs>
@@ -839,6 +965,23 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div class="letter">
       <div class="letter-date" id="letterDate"></div>
       <textarea id="noteText" rows="3" placeholder="发生了什么、注意到什么，话多正好……"></textarea>
+      <div class="v3-record-tools">
+        <button class="v3-voice" id="recordVoiceBtn">♩ 按住说</button>
+        <span class="voice-status" id="voiceStatus">也可以先说，松开后整理</span>
+      </div>
+      <div class="polish-panel" id="polishPanel" hidden>
+        <div class="polish-title"><b>✦ AI 帮我整理</b><small>文字仍然像你</small></div>
+        <div class="polish-modes">
+          <button data-polish="keep">保留原话</button>
+          <button data-polish="tidy">稍微整理</button>
+          <button data-polish="deep">帮我润色</button>
+        </div>
+        <div class="polish-compare">
+          <div><small>你的原话</small><p id="polishOriginal"></p></div>
+          <div><small>整理后</small><p id="polishOutput"></p></div>
+        </div>
+        <button class="apply-polish" id="applyPolish">应用到这条记录</button>
+      </div>
       <div class="mood-row" id="moodRow">
         <button class="mood-btn" data-m="😌">😌</button>
         <button class="mood-btn" data-m="😄">😄</button>
@@ -849,7 +992,10 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
       </div>
       <button class="seal" id="saveNote">记下</button>
     </div>
-    <div id="logList"></div>
+    <aside class="habit-reminder" id="habitReminder"><span class="fish">⌁</span><div><b id="habitReminderName"></b><p id="habitReminderText"></p></div><button id="habitReminderBtn"></button></aside>
+    <div class="v3-log-actions"><h2>最近事件</h2><button id="toggleLogBtn">查看全部记录</button></div>
+    <div class="collapsed" id="logList"></div>
+    <button class="all-records" id="toggleLogBottom">查看全部记录　›</button>
   </section>
 </main>
 
@@ -884,6 +1030,10 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
     <div id="historyList"></div>
     <div class="sync-status" id="syncStatus"></div>
     <p style="margin-top:8px" id="verLine"></p>
+
+    <h3 style="margin-top:20px">久坐提醒</h3>
+    <p>记录页底部的小提醒，可以改成你当下最需要的动作。</p>
+    <input type="text" id="sitReminderText" placeholder="比如：站起来走走">
 
     <h3 style="margin-top:20px">最小动作池</h3>
     <p>一行一个，全是「一点点」级别的动作。本月里拆出来的小选项也会自动混进抽签池。</p>
@@ -1285,7 +1435,7 @@ $("aiSend").onclick = async ()=>{
     $("aiActions").classList.add("show");
     addLog("ai", text, null, null, ctx || "（没写背景，直接切）");
   }catch(e){ showErr(e); }
-  btn.disabled = false; btn.textContent = "切";
+  btn.disabled = false; btn.textContent = "开始梳理 ✦";
 };
 $("aiObey").onclick = ()=>{
   resetAI();
@@ -1532,7 +1682,28 @@ function renderSea(){
   const n = bottles.length;
   $("seaCount").textContent = n ? `海里漂着 ${n} 个瓶子。` : "海里还没有瓶子。";
   $("bottleShow").innerHTML = "";
+  const savedReview = LS.get("qyx_ai_review", null);
+  if(savedReview && savedReview.text){
+    $("aiReviewResult").textContent = savedReview.text;
+    $("aiReviewResult").classList.add("show");
+  }
+  renderMemoryMap();
   updatePearl();
+}
+
+function renderMemoryMap(){
+  const box = $("memoryMap"); if(!box) return;
+  const cutoff = Date.now()-30*864e5;
+  const texts = [...log.filter(e=>e.t>=cutoff).map(e=>e.text),...bottles.filter(b=>b.t>=cutoff).map(b=>b.text)];
+  const groups = [
+    {name:"学习",icon:"▣",keys:["学","课","读","书","MBCT","复习"]},
+    {name:"身体",icon:"♧",keys:["身体","睡","累","血糖","吃","走","运动","孕"]},
+    {name:"创作",icon:"✎",keys:["写","画","创作","公众号","产品","设计","版本"]},
+    {name:"情绪",icon:"♡",keys:["担心","焦虑","开心","难过","怕","情绪","期待"]}
+  ].map(g=>({...g,count:texts.reduce((n,t)=>n+(g.keys.some(k=>(t||"").includes(k))?1:0),0)}));
+  if(!texts.length){ box.innerHTML='<div class="v3-yesterday-empty">多留几笔，主题会在这里慢慢连起来。</div>'; return; }
+  const top = groups.sort((a,b)=>b.count-a.count).slice(0,4);
+  box.innerHTML = top.map((g,i)=>`${i?'<i class="path"></i>':''}<div class="node"><span class="orb">${g.icon}</span><b>${g.name}</b><small>${g.count} 次</small></div>`).join("");
 }
 function updatePearl(){
   const today = dayKey(Date.now());
@@ -1559,6 +1730,23 @@ $("throwBtn").onclick = ()=>{
   renderSea();
   toastDone("扔出去了。不用管它了。");
 };
+
+let bottleRecognition = null;
+function startBottleVoice(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toastDone("这个浏览器暂不支持语音识别，可以使用系统听写。"); return; }
+  if(bottleRecognition) return;
+  const rec = new SR(); bottleRecognition=rec; rec.lang="zh-CN";rec.continuous=true;rec.interimResults=true;
+  const before=$("bottleText").value.trim();let finalText=before?before+" ":"";
+  rec.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)finalText+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;}$("bottleText").value=finalText+interim;};
+  rec.onend=()=>{bottleRecognition=null;$("bottleVoiceBtn").classList.remove("recording");$("bottleVoiceBtn").textContent="♩ 按住说";};
+  rec.onerror=()=>toastDone("没有听清，再试一次。");
+  rec.start();$("bottleVoiceBtn").classList.add("recording");$("bottleVoiceBtn").textContent="● 正在听…";
+}
+function stopBottleVoice(){if(bottleRecognition)try{bottleRecognition.stop();}catch(e){}}
+$("bottleVoiceBtn").addEventListener("pointerdown",e=>{e.preventDefault();startBottleVoice();});
+$("bottleVoiceBtn").addEventListener("pointerup",stopBottleVoice);
+$("bottleVoiceBtn").addEventListener("pointercancel",stopBottleVoice);
 $("fishBtn").onclick = ()=>{
   const todayKey = dayKey(Date.now());
   const eligible = bottles.filter(b=>dayKey(b.t)!==todayKey);
@@ -1609,6 +1797,35 @@ function showBottle(b){
   box.appendChild(card);
   card.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
+
+/* ---------- 3.0 AI 回望 ---------- */
+function localReviewFallback(recentLog, recentBottles){
+  const moodCounts = {};
+  recentLog.forEach(e=>{ if(e.mood) moodCounts[e.mood]=(moodCounts[e.mood]||0)+1; });
+  const topMood = Object.keys(moodCounts).sort((a,b)=>moodCounts[b]-moodCounts[a])[0];
+  const done = recentLog.filter(e=>e.type==="done").length;
+  const notes = recentLog.filter(e=>e.type==="note").length;
+  return `最近30天，你留下了 ${notes} 条记录，完成了 ${done} 件事，海里新增了 ${recentBottles.length} 个瓶子。${topMood?`\n最常出现的情绪是 ${topMood}。`:""}\n再多记几天，主题脉络会越来越清楚。`;
+}
+$("aiReviewBtn").onclick = async ()=>{
+  const btn = $("aiReviewBtn"), out = $("aiReviewResult");
+  const cutoff = Date.now()-30*864e5;
+  const recentLog = log.filter(e=>e.t>=cutoff);
+  const recentBottles = bottles.filter(b=>b.t>=cutoff);
+  if(!recentLog.length && !recentBottles.length){ out.textContent="最近还没有足够记录。先正常使用几天，回望会慢慢长出来。";out.classList.add("show");return; }
+  btn.disabled=true;btn.textContent="正在回望…";
+  const material = [
+    ...recentLog.slice(-80).map(e=>`[${dayKey(e.t)} ${TAG[e.type]||e.type}${e.mood?" "+e.mood:""}] ${e.text}`),
+    ...recentBottles.slice(-30).map(b=>`[瓶子 ${dayKey(b.t)}] ${b.text}`)
+  ].join("\n");
+  let text;
+  try{
+    text = await runAI(`你在为用户生成私人手账的近30天回望。只根据材料，输出四小段：高频主题、情绪变化、重复关注点、给此刻的她一句具体观察。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}]);
+  }catch(e){ text = localReviewFallback(recentLog,recentBottles); }
+  out.textContent=text;out.classList.add("show");
+  LS.set("qyx_ai_review",{t:Date.now(),text});
+  btn.disabled=false;btn.textContent="重新生成近期回望";
+};
 
 /* ---------- 今天做完哪三件就够了 ---------- */
 let enough = LS.get("qyx_enough", null);
@@ -1757,6 +1974,30 @@ function renderHabits(){
     };
     g.appendChild(add);
   }
+  renderHabitReminder();
+}
+
+/* 记录页沿用用户自己编辑的习惯，不再写死“站起来走走” */
+function renderHabitReminder(){
+  const box = $("habitReminder");
+  if(!box) return;
+  const reminder = LS.get("qyx_sit_reminder","站起来走走") || "站起来走走";
+  const habit = habits.find(h=>/站|走|起身|活动|运动/.test(h.name));
+  const today = dayKey(Date.now());
+  const count = habit ? ((habit.counts||{})[today] || 0) : 0;
+  $("habitReminderName").textContent = "久坐提醒";
+  $("habitReminderText").textContent = count ? `今天已经活动 ${count} 次，身体会记得。` : "坐久了，身体也想换口气。";
+  $("habitReminderBtn").textContent = reminder;
+  $("habitReminderBtn").onclick = ()=>{
+    if(habit){
+      habit.counts = habit.counts||{}; habit.counts[today]=(habit.counts[today]||0)+1;
+      LS.set("qyx_habits",habits);
+    }
+    box.classList.remove("done");void box.offsetWidth;box.classList.add("done");
+    setTimeout(()=>box.classList.remove("done"),900);
+    renderHabitReminder(); toastDone("好，起来动一动。");
+  };
+  box.classList.add("show");
 }
 
 /* ---------- Bonus ---------- */
@@ -1891,6 +2132,28 @@ function renderSumBanner(){
   box.appendChild(d);
 }
 
+/* ---------- 3.0 昨日回顾卡：持续可见，不再只是一次性提示 ---------- */
+function renderV3Yesterday(){
+  const key = dayKey(Date.now()-864e5);
+  const d = new Date(Date.now()-864e5);
+  const week = ["周日","周一","周二","周三","周四","周五","周六"][d.getDay()];
+  $("yesterdayDate").textContent = `昨天 ${pad(d.getMonth()+1)}/${pad(d.getDate())} ${week}`;
+  const body = $("yesterdayBody");
+  const sum = summaries[key];
+  const prev = LS.get("qyx_enough_prev", null);
+  if(sum){
+    body.innerHTML = buildSumHTML(sum);
+    return;
+  }
+  if(prev && prev.d===key && (prev.items||[]).some(i=>i.text&&i.text.trim())){
+    body.innerHTML = `<div class="sum-sec">三件完成进度</div>` + (prev.items||[]).filter(i=>i.text&&i.text.trim()).map(i=>
+      `<div class="sum-row${i.done?" ok":""}"><span class="si">${i.done?"✓":"○"}</span><span>${esc(i.text)}</span></div>`
+    ).join("");
+    return;
+  }
+  body.innerHTML = '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
+}
+
 /* ---------- 记一笔 ---------- */
 let selectedMood = null;
 document.querySelectorAll(".mood-btn").forEach(b=>{
@@ -1909,6 +2172,74 @@ $("saveNote").onclick = ()=>{
   $("noteText").value="";
   renderLog();
   toastDone("记下了。");
+};
+
+/* ---------- 3.0 语音记录 → AI 整理 ---------- */
+let recordRecognition = null;
+let voiceOriginal = "";
+let polishResult = "";
+function localTidy(text){
+  return text.replace(/\s+/g," ").replace(/然后然后/g,"然后").replace(/([。！？])(?=\S)/g,"$1 ").trim();
+}
+function showPolish(text){
+  if(!text.trim()) return;
+  voiceOriginal = text.trim(); polishResult = voiceOriginal;
+  $("polishOriginal").textContent = voiceOriginal;
+  $("polishOutput").textContent = polishResult;
+  $("polishPanel").hidden = false;
+  document.querySelectorAll("[data-polish]").forEach(b=>b.classList.toggle("on",b.dataset.polish==="keep"));
+}
+function startRecordVoice(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ $("voiceStatus").textContent = "这个浏览器暂不支持语音识别，可以先用系统听写"; return; }
+  if(recordRecognition) return;
+  const rec = new SR(); recordRecognition = rec;
+  rec.lang = "zh-CN"; rec.continuous = true; rec.interimResults = true;
+  const before = $("noteText").value.trim(); let finalText = before ? before+" " : "";
+  rec.onresult = e=>{
+    let interim = "";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    $("noteText").value = finalText + interim;
+  };
+  rec.onerror = ()=>{ $("voiceStatus").textContent = "没有听清，再按一次试试"; };
+  rec.onend = ()=>{
+    recordRecognition = null; $("recordVoiceBtn").classList.remove("recording");
+    $("recordVoiceBtn").textContent = "♩ 按住说"; $("voiceStatus").textContent = "已转成文字，可以选择整理方式";
+    showPolish($("noteText").value);
+  };
+  rec.start(); $("recordVoiceBtn").classList.add("recording");
+  $("recordVoiceBtn").textContent = "● 正在听…"; $("voiceStatus").textContent = "松开结束";
+}
+function stopRecordVoice(){ if(recordRecognition) try{ recordRecognition.stop(); }catch(e){} }
+$("recordVoiceBtn").addEventListener("pointerdown",e=>{e.preventDefault();startRecordVoice();});
+$("recordVoiceBtn").addEventListener("pointerup",stopRecordVoice);
+$("recordVoiceBtn").addEventListener("pointercancel",stopRecordVoice);
+document.querySelectorAll("[data-polish]").forEach(btn=>{
+  btn.onclick = async ()=>{
+    if(!voiceOriginal) showPolish($("noteText").value);
+    if(!voiceOriginal) return;
+    document.querySelectorAll("[data-polish]").forEach(b=>b.classList.toggle("on",b===btn));
+    const mode = btn.dataset.polish;
+    if(mode==="keep") polishResult = voiceOriginal;
+    else if(mode==="tidy"){
+      try{
+        polishResult = await runAI("只整理标点、断句和明显语病。保持原词、原意和说话习惯，不增加内容。只输出整理后的正文。",[{role:"user",content:voiceOriginal}]);
+      }catch(e){ polishResult = localTidy(voiceOriginal); }
+    }else{
+      try{
+        polishResult = await runAI("把这段口述整理得更流畅、有层次，但必须保留用户原本的语气、观点和细节，不拔高、不写成公文。只输出正文。",[{role:"user",content:voiceOriginal}]);
+      }catch(e){ polishResult = localTidy(voiceOriginal); }
+    }
+    $("polishOutput").textContent = polishResult || voiceOriginal;
+  };
+});
+$("applyPolish").onclick = ()=>{
+  $("noteText").value = polishResult || voiceOriginal;
+  $("polishPanel").hidden = true;
+  toastDone("整理结果已放回记录框。你确认后再记下。");
 };
 
 /* ---------- 记录 ---------- */
@@ -1944,10 +2275,16 @@ function logGreet(){
 }
 function renderLog(){
   logGreet();
+  renderV3Yesterday();
+  renderHabitReminder();
   const d = new Date();
   $("letterDate").textContent = `${pad(d.getMonth()+1)} ${pad(d.getDate())} '${String(d.getFullYear()).slice(2)}  ${stampNow()}`;
   const list = $("logList"); list.innerHTML = "";
-  if(!log.length){ list.innerHTML = '<div class="empty">还没有记录。第一笔随时可以来。</div>'; return; }
+  if(!log.length){
+    list.innerHTML = '<div class="empty">还没有记录。第一笔随时可以来。</div>';
+    $("toggleLogBtn").style.display="none"; $("toggleLogBottom").style.display="none";
+    return;
+  }
   const groups = {};
   [...log].sort((a,b)=>b.t-a.t).forEach(e=>{
     const k = dayKey(e.t);
@@ -2012,7 +2349,24 @@ function renderLog(){
     });
     list.appendChild(g);
   });
+  applyLogCollapse();
 }
+
+let logExpanded = false;
+function applyLogCollapse(){
+  const list = $("logList");
+  list.classList.toggle("collapsed",!logExpanded);
+  const groups = list.querySelectorAll(".day-group");
+  const showToggle = groups.length>2;
+  $("toggleLogBtn").style.display = showToggle ? "" : "none";
+  $("toggleLogBottom").style.display = showToggle ? "" : "none";
+  const label = logExpanded ? "收起较早记录" : "查看全部记录";
+  $("toggleLogBtn").textContent = label;
+  $("toggleLogBottom").textContent = label + (logExpanded?"　⌃":"　›");
+}
+function toggleAllLogs(){ logExpanded=!logExpanded; applyLogCollapse(); }
+$("toggleLogBtn").onclick = toggleAllLogs;
+$("toggleLogBottom").onclick = toggleAllLogs;
 
 /* ---------- 导出事件图（2x 高清） ---------- */
 function exportDay(k, entries){
@@ -2147,8 +2501,8 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "2.8.0";
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_dead"];
+const APP_VERSION = "3.0.0";
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_sit_reminder","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -2345,6 +2699,15 @@ function mergeAll(o){
   rules.sort((a,b)=>b.t-a.t);
   if(rules.length>30) rules = rules.slice(0,30);
   LS.setSilent("qyx_rules", rules);
+  // AI 回望：保留更新时间较新的结果
+  const localReview = LS.get("qyx_ai_review", null);
+  const remoteReview = o.qyx_ai_review;
+  if(remoteReview && (!localReview || (remoteReview.t||0)>(localReview.t||0))){
+    LS.setSilent("qyx_ai_review", remoteReview);
+  }
+  if(o.qyx_sit_reminder && !LS.get("qyx_sit_reminder","")){
+    LS.setSilent("qyx_sit_reminder", o.qyx_sit_reminder);
+  }
   const after = JSON.stringify(BACKUP_KEYS.map(k=>LS.get(k,null)));
   return before !== after;
 }
@@ -2529,6 +2892,7 @@ $("gearBtn").onclick = ()=>{
   $("provider").value = LS.get("qyx_provider","anthropic");
   $("ghToken").value = LS.get("qyx_ghtoken","");
   $("dicePool").value = dicePool.join("\n");
+  $("sitReminderText").value = LS.get("qyx_sit_reminder","站起来走走");
   const lb = LS.get("qyx_lastbackup", null);
   $("syncStatus").textContent = lb ? "上次同步：" + new Date(lb).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
   $("verLine").textContent = "版本 " + APP_VERSION;
@@ -2540,12 +2904,14 @@ $("saveSettings").onclick = ()=>{
   LS.set("qyx_key", $("apiKey").value.trim());
   LS.set("qyx_provider", $("provider").value);
   LS.set("qyx_ghtoken", $("ghToken").value.trim());
+  LS.set("qyx_sit_reminder", $("sitReminderText").value.trim() || "站起来走走");
   const newPool = $("dicePool").value.split("\n").map(s=>s.trim()).filter(Boolean);
   dicePool.forEach(old=>{ if(!newPool.includes(old)) bury("dice", old); });
   newPool.forEach(v=>unbury("dice", v));
   dicePool = newPool.length ? newPool : DEFAULT_DICE;
   LS.set("qyx_dice", dicePool);
   $("settingsBg").classList.remove("show");
+  renderHabitReminder();
   toastDone("保存了。");
 };
 
