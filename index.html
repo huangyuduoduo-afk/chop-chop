@@ -685,6 +685,17 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-review-head h2{font:600 19px "Noto Serif SC",var(--kai)}.v3-review-head p{font-size:12px;color:var(--ink-soft)}
 .v3-yesterday-body{position:relative;z-index:1}.v3-yesterday-empty{font-family:var(--kai);color:var(--ink-soft);padding:8px 2px}
 .v3-yesterday .sum-row{padding:4px 0}.v3-yesterday .sum-stats{margin-bottom:8px}.v3-yesterday .sum-obs{font-size:13px}
+#sumBanner{display:none!important}
+.v3-overall{margin:2px 0 14px}.v3-overall-line,.v3-task-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.v3-overall-line b{font:600 14px "Noto Serif SC",var(--kai);color:#60784F}.v3-overall-line strong{font-size:14px;color:#6E8958}
+.v3-progress,.v3-mini-progress{height:7px;border-radius:999px;background:rgba(111,137,88,.14);overflow:hidden;margin-top:8px}
+.v3-progress i,.v3-mini-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#91AB78,#6F8D59);transition:width .35s ease}
+.v3-task-progress{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid rgba(129,111,86,.09)}
+.v3-task-circle{width:20px;height:20px;flex:0 0 20px;margin-top:1px;border:1.7px solid #AAB8A0;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px}
+.v3-task-progress.complete .v3-task-circle{border-color:#7F9A67;background:#7F9A67}.v3-task-main{min-width:0;flex:1}
+.v3-task-line span{font-family:var(--kai);font-size:14px;color:#4F6744}.v3-task-line em{font-style:normal;font-size:11px;color:#839178;white-space:nowrap}
+.v3-mini-progress{height:5px;margin-top:6px}.v3-sub-summary{font-size:10px;color:#9A958A;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v3-yesterday-meta{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(129,111,86,.16);font-size:11px;color:#78886E}
 .buddy-row.mini{margin:0 2px 13px}.buddy-row.mini .buddy{filter:none;width:58px;height:53px}
 .letter{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.67),rgba(255,249,240,.5));
   border:1px solid rgba(242,139,82,.28);box-shadow:var(--v3-shadow);padding:21px 20px 18px}
@@ -2081,7 +2092,11 @@ async function makeDailySummary(){
     three: [], bonus: [], habits: [], moods: [], obs: ""};
   const prev = LS.get("qyx_enough_prev", null);
   if(prev && prev.d===yk){
-    sum.three = prev.items.filter(i=>i.text.trim()).map(i=>({text: i.text, done: !!i.done}));
+    sum.three = prev.items.filter(i=>i.text.trim()).map(i=>({
+      text: i.text,
+      done: !!i.done,
+      subs: (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text, done:!!s.done}))
+    }));
   }
   sum.habits = habits.map(h=>{
     const n = (h.counts||{})[yk] || 0;
@@ -2141,17 +2156,29 @@ function renderV3Yesterday(){
   const body = $("yesterdayBody");
   const sum = summaries[key];
   const prev = LS.get("qyx_enough_prev", null);
-  if(sum){
-    body.innerHTML = buildSumHTML(sum);
+  const source = prev && prev.d===key ? (prev.items||[]) : ((sum&&sum.three)||[]);
+  const items = source.filter(i=>i.text&&i.text.trim()).map(i=>{
+    const subs = (i.subs||[]).filter(s=>s.text&&s.text.trim());
+    const total = subs.length || 1;
+    const doneCount = i.done ? total : (subs.length ? subs.filter(s=>s.done).length : 0);
+    const pct = Math.round(doneCount/total*100);
+    return {...i, subs, total, doneCount, pct, complete:pct===100};
+  });
+  if(!items.length){
+    body.innerHTML = '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
     return;
   }
-  if(prev && prev.d===key && (prev.items||[]).some(i=>i.text&&i.text.trim())){
-    body.innerHTML = `<div class="sum-sec">三件完成进度</div>` + (prev.items||[]).filter(i=>i.text&&i.text.trim()).map(i=>
-      `<div class="sum-row${i.done?" ok":""}"><span class="si">${i.done?"✓":"○"}</span><span>${esc(i.text)}</span></div>`
-    ).join("");
-    return;
-  }
-  body.innerHTML = '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
+  const totalUnits = items.reduce((n,i)=>n+i.total,0);
+  const doneUnits = items.reduce((n,i)=>n+i.doneCount,0);
+  const overall = totalUnits ? Math.round(doneUnits/totalUnits*100) : 0;
+  let html = `<div class="v3-overall"><div class="v3-overall-line"><b>三件完成进度</b><strong>${overall}%</strong></div><div class="v3-progress"><i style="width:${overall}%"></i></div></div>`;
+  html += items.map(i=>{
+    const count = i.subs.length ? `${i.doneCount}/${i.total}` : `${i.pct}%`;
+    const subText = i.subs.map(s=>`${s.done?"✓":"○"} ${esc(s.text)}`).join("　");
+    return `<div class="v3-task-progress${i.complete?" complete":""}"><span class="v3-task-circle">${i.complete?"✓":""}</span><div class="v3-task-main"><div class="v3-task-line"><span>${esc(i.text)}</span><em>${count}</em></div>${i.subs.length?`<div class="v3-mini-progress"><i style="width:${i.pct}%"></i></div><div class="v3-sub-summary">${subText}</div>`:""}</div></div>`;
+  }).join("");
+  if(sum&&sum.stats) html += `<div class="v3-yesterday-meta">切 ${sum.stats.cut} · 记 ${sum.stats.notes} · 划掉 ${sum.stats.done}</div>`;
+  body.innerHTML = html;
 }
 
 /* ---------- 记一笔 ---------- */
