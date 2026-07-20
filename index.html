@@ -687,7 +687,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
   background:radial-gradient(circle,rgba(145,168,124,.22),transparent 68%)}
 .v3-review-head{display:flex;align-items:center;gap:9px;margin-bottom:4px;position:relative;z-index:1;padding-right:54px}.v3-yesterday.expanded .v3-review-head{margin-bottom:9px}
 .v3-review-icon{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#E5ECD9;color:#708A59;font-size:14px}
-.v3-review-head h2{font:600 15px "Noto Serif SC",var(--kai);letter-spacing:.05em}.v3-review-head p{font-size:10px;color:var(--ink-soft);letter-spacing:.03em}
+.v3-review-head h2{margin:0;font:600 15px/1.35 "Noto Serif SC",var(--kai);letter-spacing:.05em}.v3-review-head p{margin:2px 0 0;font-size:10px;color:var(--ink-soft);letter-spacing:.03em}
 .v3-yesterday-body{position:relative;z-index:1}.v3-yesterday-empty{font-family:var(--kai);color:var(--ink-soft);padding:8px 2px}
 .v3-yesterday .sum-row{padding:4px 0}.v3-yesterday .sum-stats{margin-bottom:8px}.v3-yesterday .sum-obs{font-size:13px}
 #sumBanner{display:none!important}
@@ -700,6 +700,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-completion-copy{display:flex;align-items:baseline;gap:7px;margin-bottom:3px}.v3-completion-copy strong{font:700 15px "Noto Serif SC",var(--kai);color:#657C55}.v3-completion-copy span{font-size:10px;color:#8B9284}
 .v3-yesterday-body{transition:padding .25s ease}.v3-yesterday.expanded .v3-yesterday-body{padding-bottom:2px}
 .v3-yesterday:not(.expanded) #yesterdayDate,.v3-yesterday:not(.expanded) .v3-yesterday-body{display:none}.v3-yesterday:not(.expanded) .v3-review-head{margin-bottom:0}
+.v3-yesterday:not(.expanded) .v3-review-head>div{height:31px;display:flex;align-items:center}
 .v3-summary-stats{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:600 10.5px "Noto Serif SC",var(--kai);letter-spacing:.07em;color:#718466}
 .v3-bonus-compact{display:flex;align-items:flex-start;gap:8px;margin-top:5px;font:500 10.5px/1.65 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#6F7868}
 .v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:grid;gap:3px;font:500 10.5px/1.7 "Noto Serif SC",var(--kai);letter-spacing:.025em;color:#6F6A61}.v3-bonus-items span{display:block}
@@ -2985,7 +2986,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.2";
+const APP_VERSION = "3.5.3";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -3405,7 +3406,7 @@ $('mergeTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId)
 $('deleteTag').onclick=()=>{if(!activeTagId)return;const ids=descendantTagIds(activeTagId),name=tagPath(activeTagId);if(!confirm('删除 #'+name+' 及其子标签的关联？原记录不会删除。'))return;const removed=new Set(ids);replaceRelationIds(recordTags,{},removed);replaceRelationIds(goalTags,{},removed);replaceRelationIds(taskTags,{},removed);ids.forEach(id=>bury('tag',id));tags=tags.filter(t=>!removed.has(t.id));saveTagData();$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();toastDone('只删了标签关系，原记录还在。');};
 
 function updateTagSuggest(){
-  const el=$('noteText'),box=$('tagSuggest'),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|\s)#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
+  const el=$('noteText'),box=$('tagSuggest'),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|[\s，。！？；：、,.!?;:])#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
   const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,6),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
   box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('');box.classList.toggle('show',!!items.length);
 }
