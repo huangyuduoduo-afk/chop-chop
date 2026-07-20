@@ -167,7 +167,7 @@ header{
 }
 .esub.sdone .chk{background:var(--sage-deep);border-color:var(--sage-deep)}
 .esub.sdone .stx{text-decoration:line-through;opacity:.6}
-.esub .stx{cursor:text}.task-actions{display:flex;align-items:center;gap:5px;margin:-3px 0 6px 37px}.task-actions button{border:0;background:transparent;color:#918678;font:500 10px var(--sans);padding:3px 7px;border-radius:999px;cursor:pointer}.task-actions button:hover{background:rgba(145,168,124,.1)}.task-actions .complete.active{color:#617D50;background:#EAF1E4}.task-actions .expire.active{color:#B06F4D;background:#FFF0E6}.task-actions .delete{color:#A89587}.task-actions.empty{visibility:hidden;height:0;margin-top:0;margin-bottom:0}
+.esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
 
@@ -680,10 +680,11 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-page-title{display:flex;align-items:end;justify-content:space-between;margin:4px 2px 18px}
 .v3-page-title h1{font:600 25px "Noto Serif SC",var(--kai);letter-spacing:.04em}
 .v3-page-title p{font-size:12px;color:var(--ink-soft);margin-top:3px}.v3-page-title .leaf{font-size:28px;color:var(--v3-green)}
-.v3-yesterday{padding:13px 15px 12px;margin:0 0 12px;position:relative;overflow:hidden;border-radius:19px}
+.v3-yesterday{padding:11px 15px 10px;margin:0 0 12px;position:relative;overflow:hidden;border-radius:19px;cursor:pointer;transition:padding .3s ease}
+.v3-yesterday.expanded{padding:13px 15px 14px}
 .v3-yesterday::after{content:"";position:absolute;right:-24px;bottom:-35px;width:145px;height:145px;border-radius:50%;
   background:radial-gradient(circle,rgba(145,168,124,.22),transparent 68%)}
-.v3-review-head{display:flex;align-items:center;gap:9px;margin-bottom:8px;position:relative;z-index:1;padding-right:54px}
+.v3-review-head{display:flex;align-items:center;gap:9px;margin-bottom:4px;position:relative;z-index:1;padding-right:54px}.v3-yesterday.expanded .v3-review-head{margin-bottom:9px}
 .v3-review-icon{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#E5ECD9;color:#708A59;font-size:14px}
 .v3-review-head h2{font:600 15px "Noto Serif SC",var(--kai);letter-spacing:.05em}.v3-review-head p{font-size:10px;color:var(--ink-soft);letter-spacing:.03em}
 .v3-yesterday-body{position:relative;z-index:1}.v3-yesterday-empty{font-family:var(--kai);color:var(--ink-soft);padding:8px 2px}
@@ -691,9 +692,9 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 #sumBanner{display:none!important}
 .v3-overall{margin:0 0 4px}.v3-overall-line,.v3-task-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .v3-overall-line b{font:600 12px "Noto Serif SC",var(--kai);color:#667A58;letter-spacing:.045em}.v3-overall-line strong{font:700 13px "Noto Serif SC",var(--kai);color:#6E8958;letter-spacing:.02em}
-.v3-summary-item{padding:4px 0}.v3-summary-row{display:flex;align-items:center;gap:8px;min-width:0}.v3-summary-title{font:500 12.5px/1.55 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#526548;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v3-yesterday-collapsed{font:500 11px "Noto Serif SC",var(--kai);letter-spacing:.08em;color:#77836F;padding-left:40px}.v3-expanded-content{max-height:0;opacity:0;overflow:hidden;transition:max-height .34s ease,opacity .22s ease}.v3-yesterday.expanded .v3-expanded-content{max-height:900px;opacity:1}.v3-yesterday.expanded .v3-yesterday-collapsed{display:none}.v3-summary-item{padding:7px 0;border-top:1px solid rgba(116,130,103,.1)}.v3-summary-row{display:flex;align-items:center;gap:9px;min-width:0}.v3-summary-title{flex:1;font:500 12.5px/1.55 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#526548;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v3-progress-ring{--p:0;--ring:#7F9A67;width:19px;height:19px;flex:0 0 19px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--ring) calc(var(--p) * 1%),rgba(156,166,148,.2) 0)}.v3-progress-ring::before{content:"";position:absolute;inset:2.5px;border-radius:50%;background:#FBF8F1}.v3-progress-ring>span{position:relative;z-index:1;font:700 9px var(--sans);color:var(--ring)}.v3-progress-ring.expired{--ring:#C48663}.v3-progress-ring.large{width:34px;height:34px;flex-basis:34px}.v3-progress-ring.large::before{inset:4px}.v3-progress-ring.large>span{font-size:11px}
-.v3-item-detail{max-height:0;opacity:0;overflow:hidden;margin-left:27px;transition:max-height .32s ease,opacity .24s ease,margin-top .32s ease}.v3-yesterday.expanded .v3-item-detail{max-height:230px;opacity:1;margin-top:6px}.v3-detail-head{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:12px;background:rgba(246,242,234,.62)}.v3-detail-copy{min-width:0}.v3-detail-copy b,.v3-detail-copy small{display:block}.v3-detail-copy b{font:600 11px "Noto Serif SC",var(--kai);color:#5D7051}.v3-detail-copy small{font-size:9.5px;color:#918A80}.v3-detail-subs{margin-top:5px;padding-left:9px;display:grid;gap:2px}.v3-detail-subs span{font-size:10px;line-height:1.75;color:#7E796F}.v3-detail-subs .done{color:#657C55}
+.v3-detail-subs{margin:5px 0 0 42px;display:grid;gap:2px}.v3-detail-subs span{font-size:10px;line-height:1.75;color:#7E796F}.v3-detail-subs .done{color:#657C55}
 .v3-yesterday-toggle{position:absolute;right:0;top:4px;border:0;background:transparent;color:#728465;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:5px 0}
 .v3-completion-copy{display:flex;align-items:baseline;gap:7px;margin-bottom:3px}.v3-completion-copy strong{font:700 15px "Noto Serif SC",var(--kai);color:#657C55}.v3-completion-copy span{font-size:10px;color:#8B9284}
 .v3-yesterday-body{transition:padding .25s ease}.v3-yesterday.expanded .v3-yesterday-body{padding-bottom:2px}
@@ -846,14 +847,11 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 
     <div class="glass enough" id="enoughCard">
       <div class="v3-card-label"><span>✦</span><div><b>今天只做三件事</b><small>聚焦重点，少即是多。</small></div></div>
-      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button></div>
-      <div class="task-actions" data-i="0"><button class="complete" data-task-action="complete" data-i="0">完成</button><button class="expire" data-task-action="expire" data-i="0">标记结束</button><button class="delete" data-task-action="delete" data-i="0">删除</button></div>
+      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-delete" data-task-action="delete" data-i="0">删除</button></div>
       <div class="esubs" data-i="0"></div>
-      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button></div>
-      <div class="task-actions" data-i="1"><button class="complete" data-task-action="complete" data-i="1">完成</button><button class="expire" data-task-action="expire" data-i="1">标记结束</button><button class="delete" data-task-action="delete" data-i="1">删除</button></div>
+      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-delete" data-task-action="delete" data-i="1">删除</button></div>
       <div class="esubs" data-i="1"></div>
-      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button></div>
-      <div class="task-actions" data-i="2"><button class="complete" data-task-action="complete" data-i="2">完成</button><button class="expire" data-task-action="expire" data-i="2">标记结束</button><button class="delete" data-task-action="delete" data-i="2">删除</button></div>
+      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div>
       <div class="esubs" data-i="2"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
     </div>
@@ -1966,13 +1964,7 @@ function renderEnough(){
     const status=enoughStatus(enough.items[i]);
     c.classList.toggle("on",status==="completed");
     c.classList.toggle("expired",status==="expired");
-    c.title=status==="completed"?"已完成":status==="expired"?"时间结束":"标记完成";
-  });
-  document.querySelectorAll("#enoughCard .task-actions").forEach(row=>{
-    const i=+row.dataset.i,item=enough.items[i],status=enoughStatus(item),empty=!item.text.trim();
-    row.classList.toggle("empty",empty);
-    row.querySelector(".complete").classList.toggle("active",status==="completed");
-    row.querySelector(".expire").classList.toggle("active",status==="expired");
+    c.title=status==="completed"?"再次点击标记时间结束":status==="expired"?"再次点击恢复空心":"点击标记完成";
   });
   document.querySelectorAll("#enoughCard .esubs").forEach(box=>{
     const i = +box.dataset.i;
@@ -2016,8 +2008,6 @@ document.querySelectorAll("#enoughCard input").forEach(inp=>{
     item.text=inp.value;
     if(item.status==="deleted") item.status="incomplete";
     item.done=item.status==="completed";
-    const actions=document.querySelector(`#enoughCard .task-actions[data-i="${i}"]`);
-    if(actions) actions.classList.toggle("empty",!inp.value.trim());
     saveEnough();
   });
 });
@@ -2035,14 +2025,15 @@ function setEnoughStatus(i,status){
   }else if(item.status==="expired") toastDone("这件事先停在这里，留给以后回望。");
 }
 document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
-  c.onclick = ()=>setEnoughStatus(+c.dataset.i,"completed");
+  c.onclick = ()=>{
+    const i=+c.dataset.i,status=enoughStatus(enough.items[i]);
+    setEnoughStatus(i,status==="incomplete"?"completed":status==="completed"?"expired":"incomplete");
+  };
 });
 document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
   b.onclick=()=>{
     const i=+b.dataset.i,action=b.dataset.taskAction,item=enough.items[i];
     if(!item.text.trim()) return;
-    if(action==="complete") return setEnoughStatus(i,"completed");
-    if(action==="expire") return setEnoughStatus(i,"expired");
     if(action==="delete"){
       if(!confirm("删除这件事？删除后不会进入昨日总结。")) return;
       (item.subs||[]).forEach(s=>bury("esub:"+enough.d,s.text));
@@ -2291,27 +2282,24 @@ function renderSumBanner(){
 
 /* ---------- 3.0 昨日回顾卡：持续可见，不再只是一次性提示 ---------- */
 let yesterdayExpanded = false;
-try{ yesterdayExpanded = JSON.parse(localStorage.getItem("qyx_yesterday_expanded")||"false"); }catch(e){}
 function syncYesterdayFold(){
   $("yesterdayReview").classList.toggle("expanded",yesterdayExpanded);
   $("yesterdayToggle").textContent = yesterdayExpanded ? "收起" : "展开";
 }
 $("yesterdayToggle").onclick = ()=>{
   yesterdayExpanded = !yesterdayExpanded;
-  localStorage.setItem("qyx_yesterday_expanded",JSON.stringify(yesterdayExpanded));
   syncYesterdayFold();
 };
 $("yesterdayReview").onclick = e=>{
   if(e.target.closest("#yesterdayToggle")) return;
   yesterdayExpanded=!yesterdayExpanded;
-  localStorage.setItem("qyx_yesterday_expanded",JSON.stringify(yesterdayExpanded));
   syncYesterdayFold();
 };
 function renderV3Yesterday(){
   const key = dayKey(Date.now()-864e5);
   const d = new Date(Date.now()-864e5);
   const week = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][d.getDay()];
-  $("yesterdayDate").textContent = `昨天 ${pad(d.getMonth()+1)}/${pad(d.getDate())} ${week}`;
+  $("yesterdayDate").textContent = `${pad(d.getMonth()+1)}/${pad(d.getDate())} ${week}`;
   syncYesterdayFold();
   const body = $("yesterdayBody");
   const sum = summaries[key];
@@ -2324,19 +2312,18 @@ function renderV3Yesterday(){
     return {...i,status,subs,progress};
   });
   if(!items.length){
-    body.innerHTML = '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
+    body.innerHTML = '<div class="v3-yesterday-collapsed">昨日事项</div><div class="v3-expanded-content"><div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div></div>';
     return;
   }
   const completed = items.filter(i=>i.status==="completed").length;
-  const overall = Math.round(completed/items.length*100);
-  let html = `<div class="v3-completion-copy"><strong>${completed} / ${items.length} 完成</strong><span>完成率 ${overall}%</span></div>`;
+  const overall = Math.round(completed/3*100);
+  let html = `<div class="v3-yesterday-collapsed">昨日事项</div><div class="v3-expanded-content"><div class="v3-completion-copy"><strong>${completed} / 3 完成</strong><span>完成率 ${overall}%</span></div>`;
   html += items.map(i=>{
-    const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress===100?"✓":"");
-    const label=i.status==="completed"?"已完成":expired?"时间结束":"未完成";
-    const ring=(large=false)=>`<span class="v3-progress-ring${expired?" expired":""}${large?" large":""}" style="--p:${i.progress}" aria-label="完成比例 ${i.progress}%"><span>${symbol}</span></span>`;
+    const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress>0?i.progress+"%":"");
+    const ring=()=>`<span class="v3-progress-ring large${expired?" expired":""}" style="--p:${i.progress}" aria-label="完成比例 ${i.progress}%"><span>${symbol}</span></span>`;
     const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map(s=>`<span>${s.done?"✓":"○"} ${esc(s.text)}</span>`).join("")}</div>`:"";
-    return `<div class="v3-summary-item"><div class="v3-summary-row">${ring()}<span class="v3-summary-title">${esc(i.text)}</span></div><div class="v3-item-detail"><div class="v3-detail-head">${ring(true)}<div class="v3-detail-copy"><b>${esc(i.text)}</b><small>完成比例 ${i.progress}% · ${label}</small></div></div>${subs}</div></div>`;
-  }).join("");
+    return `<div class="v3-summary-item"><div class="v3-summary-row">${ring()}<span class="v3-summary-title">${esc(i.text)}</span></div>${subs}</div>`;
+  }).join("")+`</div>`;
   body.innerHTML = html;
 }
 
@@ -2845,7 +2832,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.0.2";
+const APP_VERSION = "3.0.3";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
