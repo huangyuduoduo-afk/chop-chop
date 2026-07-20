@@ -699,6 +699,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-yesterday-toggle{position:absolute;right:0;top:4px;border:0;background:transparent;color:#728465;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:5px 0}
 .v3-completion-copy{display:flex;align-items:baseline;gap:7px;margin-bottom:3px}.v3-completion-copy strong{font:700 15px "Noto Serif SC",var(--kai);color:#657C55}.v3-completion-copy span{font-size:10px;color:#8B9284}
 .v3-yesterday-body{transition:padding .25s ease}.v3-yesterday.expanded .v3-yesterday-body{padding-bottom:2px}
+.v3-yesterday:not(.expanded) #yesterdayDate,.v3-yesterday:not(.expanded) .v3-yesterday-body{display:none}.v3-yesterday:not(.expanded) .v3-review-head{margin-bottom:0}
 .v3-summary-stats{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:600 10.5px "Noto Serif SC",var(--kai);letter-spacing:.07em;color:#718466}
 .v3-bonus-compact{display:flex;align-items:flex-start;gap:8px;margin-top:5px;font:500 10.5px/1.65 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#6F7868}
 .v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:grid;gap:3px;font:500 10.5px/1.7 "Noto Serif SC",var(--kai);letter-spacing:.025em;color:#6F6A61}.v3-bonus-items span{display:block}
@@ -1191,16 +1192,17 @@ function tagById(id){return tags.find(t=>t.id===id);}
 function tagPath(id){
   const parts=[],seen=new Set();let t=tagById(id);while(t&&!seen.has(t.id)){seen.add(t.id);parts.unshift(t.name);t=t.parent_id?tagById(t.parent_id):null;}return parts.join("/");
 }
-function ensureTagPath(raw){
-  const path=normalizeTagPath(raw);if(!path)return null;let parent=null,full="";
-  path.split("/").forEach(name=>{full=full?full+"/"+name:name;let t=tags.find(x=>x.parent_id===parent&&x.name===name);if(!t){const now=Date.now();t={id:stableId("tag_",full),name,parent_id:parent,created_time:now,updated_time:now};tags.push(t);}parent=t.id;});
-  return parent;
+function ensureTagPath(raw,revive=true){
+  const path=normalizeTagPath(raw);if(!path)return null;let parent=null,full="",blocked=false;
+  path.split("/").forEach(name=>{if(blocked)return;full=full?full+"/"+name:name;const id=stableId("tag_",full);if(!revive&&isDead("tag",id)){blocked=true;return;}if(revive)unbury("tag",id);let t=tags.find(x=>x.id===id||x.parent_id===parent&&x.name===name);if(!t){const now=Date.now();t={id,name,parent_id:parent,created_time:now,updated_time:now};tags.push(t);}parent=t.id;});
+  return blocked?null:parent;
 }
 function descendantTagIds(id){const set=new Set([id]);let changed=true;while(changed){changed=false;tags.forEach(t=>{if(t.parent_id&&set.has(t.parent_id)&&!set.has(t.id)){set.add(t.id);changed=true;}});}return [...set];}
 function saveTagData(silent=false){const fn=silent?LS.setSilent:LS.set;fn("qyx_tags",tags);fn("qyx_record_tags",recordTags);fn("qyx_goal_tags",goalTags);fn("qyx_task_tags",taskTags);}
 function ensureRecordId(e,i){if(!e.id)e.id=entityId("rec_",(e.t||0)+"|"+(e.type||"")+"|"+(e.text||"")+"|"+i);return e.id;}
 function indexRecordTags(e,force=false){
-  const id=ensureRecordId(e,log.indexOf(e));if(force||recordTags[id]===undefined)recordTags[id]=parseTagPaths(e.text).map(ensureTagPath).filter(Boolean);return recordTags[id]||[];
+  const id=ensureRecordId(e,log.indexOf(e)),parsed=parseTagPaths(e.text).map(p=>ensureTagPath(p,force)).filter(Boolean);
+  recordTags[id]=force||recordTags[id]===undefined?parsed:[...new Set([...(recordTags[id]||[]),...parsed])];return recordTags[id]||[];
 }
 function renderTagChips(ids){return [...new Set(ids||[])].filter(tagById).map(id=>`<button class="tag-chip" data-open-tag="${id}">#${esc(tagPath(id))}</button>`).join("");}
 function allTagPaths(){return tags.map(t=>({id:t.id,path:tagPath(t.id)})).filter(x=>x.path).sort((a,b)=>a.path.localeCompare(b.path,"zh-CN"));}
@@ -2427,7 +2429,7 @@ function renderV3Yesterday(){
   });
   const completed = items.filter(i=>i.status==="completed").length;
   const overall = Math.round(completed/3*100);
-  let html = `<div class="v3-yesterday-collapsed">昨日事项</div><div class="v3-expanded-content"><div class="v3-completion-copy"><strong>${completed} / 3 完成</strong><span>完成率 ${overall}%</span></div>`;
+  let html = `<div class="v3-expanded-content"><div class="v3-completion-copy"><strong>${completed} / 3 完成</strong><span>完成率 ${overall}%</span></div>`;
   if(!items.length) html += '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
   html += items.map(i=>{
     const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress>0?i.progress+"%":"");
@@ -2983,7 +2985,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.1-preview";
+const APP_VERSION = "3.5.2-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
