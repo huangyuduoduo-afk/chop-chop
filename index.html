@@ -144,8 +144,10 @@ header{
 }
 .ecirc.on{background:var(--sage-deep);border-color:var(--sage-deep);box-shadow:0 3px 10px rgba(95,127,82,.4)}
 .ecirc.on::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.ecirc.expired{border-color:#C99070;background:#FFF2E9;box-shadow:none}.ecirc.expired::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B87451;font-size:15px}
 .enough-row input{padding:8px 13px;font-size:14px;border-radius:12px}
 .enough-row input.donetext{text-decoration:line-through;color:var(--ink-faint)}
+.enough-row input.expiredtext{color:#9C8C7F;background:rgba(247,239,231,.55)}
 .enough-fin{font-family:var(--kai);color:var(--sage-deep);font-size:13.5px;text-align:center;padding:6px 0 2px;display:none;letter-spacing:.1em}
 .esub-add{
   flex-shrink:0;background:none;border:1px dashed rgba(75,66,55,.25);color:var(--ink-soft);
@@ -165,6 +167,7 @@ header{
 }
 .esub.sdone .chk{background:var(--sage-deep);border-color:var(--sage-deep)}
 .esub.sdone .stx{text-decoration:line-through;opacity:.6}
+.esub .stx{cursor:text}.task-actions{display:flex;align-items:center;gap:5px;margin:-3px 0 6px 37px}.task-actions button{border:0;background:transparent;color:#918678;font:500 10px var(--sans);padding:3px 7px;border-radius:999px;cursor:pointer}.task-actions button:hover{background:rgba(145,168,124,.1)}.task-actions .complete.active{color:#617D50;background:#EAF1E4}.task-actions .expire.active{color:#B06F4D;background:#FFF0E6}.task-actions .delete{color:#A89587}.task-actions.empty{visibility:hidden;height:0;margin-top:0;margin-bottom:0}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
 
@@ -688,14 +691,12 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 #sumBanner{display:none!important}
 .v3-overall{margin:0 0 4px}.v3-overall-line,.v3-task-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .v3-overall-line b{font:600 12px "Noto Serif SC",var(--kai);color:#667A58;letter-spacing:.045em}.v3-overall-line strong{font:700 13px "Noto Serif SC",var(--kai);color:#6E8958;letter-spacing:.02em}
-.v3-task-progress{display:flex;align-items:center;gap:8px;padding:4px 0}
-.v3-task-circle{width:17px;height:17px;flex:0 0 17px;border:1.5px solid #AAB8A0;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:10px}
-.v3-task-progress.complete .v3-task-circle{border-color:#7F9A67;background:#7F9A67}.v3-task-main{min-width:0;flex:1}
-.v3-task-progress.missed .v3-task-circle{border-color:#C99A83;background:#FFF3EC;color:#B76F4F}.v3-task-state{margin-left:auto;font-size:9.5px;white-space:nowrap;color:#8C9586}.v3-task-progress.missed .v3-task-state{color:#B77A5E}
-.v3-task-line span{font-family:"Noto Serif SC",var(--kai);font-size:12.5px;line-height:1.55;letter-spacing:.035em;color:#526548}.v3-task-line em{font-style:normal;font-size:10px;color:#839178;white-space:nowrap}
+.v3-summary-item{padding:4px 0}.v3-summary-row{display:flex;align-items:center;gap:8px;min-width:0}.v3-summary-title{font:500 12.5px/1.55 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#526548;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v3-progress-ring{--p:0;--ring:#7F9A67;width:19px;height:19px;flex:0 0 19px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--ring) calc(var(--p) * 1%),rgba(156,166,148,.2) 0)}.v3-progress-ring::before{content:"";position:absolute;inset:2.5px;border-radius:50%;background:#FBF8F1}.v3-progress-ring>span{position:relative;z-index:1;font:700 9px var(--sans);color:var(--ring)}.v3-progress-ring.expired{--ring:#C48663}.v3-progress-ring.large{width:34px;height:34px;flex-basis:34px}.v3-progress-ring.large::before{inset:4px}.v3-progress-ring.large>span{font-size:11px}
+.v3-item-detail{max-height:0;opacity:0;overflow:hidden;margin-left:27px;transition:max-height .32s ease,opacity .24s ease,margin-top .32s ease}.v3-yesterday.expanded .v3-item-detail{max-height:230px;opacity:1;margin-top:6px}.v3-detail-head{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:12px;background:rgba(246,242,234,.62)}.v3-detail-copy{min-width:0}.v3-detail-copy b,.v3-detail-copy small{display:block}.v3-detail-copy b{font:600 11px "Noto Serif SC",var(--kai);color:#5D7051}.v3-detail-copy small{font-size:9.5px;color:#918A80}.v3-detail-subs{margin-top:5px;padding-left:9px;display:grid;gap:2px}.v3-detail-subs span{font-size:10px;line-height:1.75;color:#7E796F}.v3-detail-subs .done{color:#657C55}
 .v3-yesterday-toggle{position:absolute;right:0;top:4px;border:0;background:transparent;color:#728465;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:5px 0}
 .v3-completion-copy{display:flex;align-items:baseline;gap:7px;margin-bottom:3px}.v3-completion-copy strong{font:700 15px "Noto Serif SC",var(--kai);color:#657C55}.v3-completion-copy span{font-size:10px;color:#8B9284}
-.v3-yesterday-detail{display:none}.v3-yesterday.expanded .v3-yesterday-detail{display:block}.v3-sub-detail{margin:2px 0 3px 25px;font-size:9.5px;color:#979285;line-height:1.55}
+.v3-yesterday-body{transition:padding .25s ease}.v3-yesterday.expanded .v3-yesterday-body{padding-bottom:2px}
 .v3-summary-stats{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:600 10.5px "Noto Serif SC",var(--kai);letter-spacing:.07em;color:#718466}
 .v3-bonus-compact{display:flex;align-items:flex-start;gap:8px;margin-top:5px;font:500 10.5px/1.65 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#6F7868}
 .v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:flex;flex-wrap:wrap;gap:2px 10px}
@@ -750,8 +751,8 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 #enoughCard{margin-bottom:15px!important;padding:21px!important}.enough{counter-reset:v3task}
 #enoughCard .enough-row{counter-increment:v3task;padding:12px 0;margin:0;border-bottom:1px solid rgba(75,66,55,.08)}
 #enoughCard .enough-row::before{content:counter(v3task);width:27px;height:27px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--v3-green);font:700 12px var(--sans);flex-shrink:0}
-#enoughCard .enough-row:nth-of-type(4)::before{background:var(--v3-orange)}
-#enoughCard .enough-row:nth-of-type(6)::before{background:#ACA498}
+#enoughCard .enough-row:has(input[data-i="1"])::before{background:var(--v3-orange)}
+#enoughCard .enough-row:has(input[data-i="2"])::before{background:#ACA498}
 #enoughCard .ecirc{width:28px;height:28px}#enoughCard input{font-family:"Noto Serif SC",var(--kai);font-size:14px}
 #bonusCard{padding:16px 20px!important;background:rgba(255,255,255,.4);box-shadow:none!important;border-style:dashed!important}.bonus .enough-title{color:var(--ink-soft);font-size:12px}.bonus .enough-row{margin-bottom:5px}
 .v3-random{padding:21px;margin-top:3px;border-radius:25px}.v3-random .v3-card-label>span{background:#FFF0E5;color:var(--v3-orange)}
@@ -846,10 +847,13 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <div class="glass enough" id="enoughCard">
       <div class="v3-card-label"><span>✦</span><div><b>今天只做三件事</b><small>聚焦重点，少即是多。</small></div></div>
       <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button></div>
+      <div class="task-actions" data-i="0"><button class="complete" data-task-action="complete" data-i="0">完成</button><button class="expire" data-task-action="expire" data-i="0">标记结束</button><button class="delete" data-task-action="delete" data-i="0">删除</button></div>
       <div class="esubs" data-i="0"></div>
       <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button></div>
+      <div class="task-actions" data-i="1"><button class="complete" data-task-action="complete" data-i="1">完成</button><button class="expire" data-task-action="expire" data-i="1">标记结束</button><button class="delete" data-task-action="delete" data-i="1">删除</button></div>
       <div class="esubs" data-i="1"></div>
       <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button></div>
+      <div class="task-actions" data-i="2"><button class="complete" data-task-action="complete" data-i="2">完成</button><button class="expire" data-task-action="expire" data-i="2">标记结束</button><button class="delete" data-task-action="delete" data-i="2">删除</button></div>
       <div class="esubs" data-i="2"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
     </div>
@@ -1457,7 +1461,7 @@ function aiContext(){
   const timeStr = `现在是${now.getHours()}点${pad(now.getMinutes())}分`;
   const optStr = opts.length ? `用户今天的事项区里有：${opts.map((o,i)=>`${i+1}.${o}`).join("；")}。` : "";
   const threeArr = (enough && enough.items || []).filter(i=>i.text.trim());
-  const threeStr = threeArr.length ? `用户今天定的三件：${threeArr.map(i=>`${i.text}${i.done?"（已完成）":""}`).join("；")}。` : "";
+  const threeStr = threeArr.length ? `用户今天留下的三件：${threeArr.filter(i=>enoughStatus(i)!=="deleted").map(i=>`${i.text}${enoughStatus(i)==="completed"?"（已完成）":enoughStatus(i)==="expired"?"（时间结束）":""}`).join("；")}。` : "";
   const ruleStr = rules.length ? `用户给自己立过的决策准则：${rules.slice(0,12).map((r,i)=>`${i+1}.${r.text}`).join("；")}。` : "";
   return {timeStr, optStr, threeStr, ruleStr};
 }
@@ -1922,28 +1926,53 @@ $("aiReviewBtn").onclick = async ()=>{
 
 /* ---------- 今天做完哪三件就够了 ---------- */
 let enough = LS.get("qyx_enough", null);
+const ENOUGH_STATUSES = ["completed","incomplete","expired","deleted"];
+function blankEnoughItem(){ return {text:"",done:false,status:"incomplete",subs:[]}; }
+function enoughStatus(item){
+  return item && ENOUGH_STATUSES.includes(item.status) ? item.status : (item&&item.done ? "completed" : "incomplete");
+}
+function normalizeEnoughItem(item){
+  item = item || blankEnoughItem();
+  item.text = item.text || "";
+  item.subs = (item.subs||[]).map(x=>typeof x==="string" ? {text:x,done:false} : {text:x.text||"",done:!!x.done});
+  item.status = enoughStatus(item);
+  item.done = item.status === "completed";
+  return item;
+}
+function saveEnough(){ LS.set("qyx_enough", enough); }
 function ensureEnough(){
   const today = dayKey(Date.now());
   if(!enough || enough.d !== today){
     if(enough && enough.items && enough.items.some(i=>i.text)){
-      LS.set("qyx_enough_prev", enough);
+      const previous = Object.assign({},enough,{items:enough.items.map(normalizeEnoughItem).filter(i=>i.text.trim()&&i.status!=="deleted")});
+      if(previous.items.length) LS.set("qyx_enough_prev", previous);
     }
-    enough = {d: today, items:[{text:"",done:false,subs:[]},{text:"",done:false,subs:[]},{text:"",done:false,subs:[]}]};
+    enough = {d:today,items:[blankEnoughItem(),blankEnoughItem(),blankEnoughItem()]};
     LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
   }
-  enough.items.forEach(i=>{
-    i.subs = (i.subs||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
-  });
+  enough.items = (enough.items||[]).map(normalizeEnoughItem).slice(0,3);
+  while(enough.items.length<3) enough.items.push(blankEnoughItem());
 }
 function renderEnough(){
   document.querySelectorAll("#enoughCard input").forEach(inp=>{
     const i = +inp.dataset.i;
-    inp.value = enough.items[i].text;
-    inp.classList.toggle("donetext", enough.items[i].done);
+    const item=normalizeEnoughItem(enough.items[i]);
+    inp.value = item.text;
+    inp.classList.toggle("donetext", item.status==="completed");
+    inp.classList.toggle("expiredtext", item.status==="expired");
   });
   document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
     const i = +c.dataset.i;
-    c.classList.toggle("on", enough.items[i].done);
+    const status=enoughStatus(enough.items[i]);
+    c.classList.toggle("on",status==="completed");
+    c.classList.toggle("expired",status==="expired");
+    c.title=status==="completed"?"已完成":status==="expired"?"时间结束":"标记完成";
+  });
+  document.querySelectorAll("#enoughCard .task-actions").forEach(row=>{
+    const i=+row.dataset.i,item=enough.items[i],status=enoughStatus(item),empty=!item.text.trim();
+    row.classList.toggle("empty",empty);
+    row.querySelector(".complete").classList.toggle("active",status==="completed");
+    row.querySelector(".expire").classList.toggle("active",status==="expired");
   });
   document.querySelectorAll("#enoughCard .esubs").forEach(box=>{
     const i = +box.dataset.i;
@@ -1954,41 +1983,71 @@ function renderEnough(){
       chip.innerHTML = `<button class="chk">${sub.done?"✓":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
       chip.querySelector(".chk").onclick = ()=>{
         sub.done = !sub.done;
-        LS.set("qyx_enough", enough);
+        const item=enough.items[i];
+        if(item.subs.length&&item.subs.every(s=>s.done)){ item.status="completed";item.done=true; }
+        else if(item.status==="completed"){ item.status="incomplete";item.done=false; }
+        saveEnough();
         if(sub.done) addLog("done", sub.text, null, "三件·小项");
         renderEnough();
+      };
+      chip.querySelector(".stx").onclick = ()=>{
+        const value=prompt("修改小项：",sub.text);
+        if(value===null) return;
+        const next=value.trim();
+        if(!next){ toastDone("小项文字不能为空，可以用右侧 × 删除。");return; }
+        sub.text=next;saveEnough();renderEnough();
       };
       chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
       chip.querySelector(".x").onclick = ()=>{
         enough.items[i].subs.splice(si,1);
         bury("esub:"+enough.d, sub.text);
-        LS.set("qyx_enough", enough); renderEnough();
+        saveEnough(); renderEnough();
       };
       box.appendChild(chip);
     });
   });
-  const filled = enough.items.filter(i=>i.text.trim());
-  const allDone = filled.length===3 && filled.every(i=>i.done);
+  const filled = enough.items.filter(i=>i.text.trim()&&enoughStatus(i)!=="deleted");
+  const allDone = filled.length===3 && filled.every(i=>enoughStatus(i)==="completed");
   $("enoughFin").style.display = allDone ? "block" : "none";
 }
 document.querySelectorAll("#enoughCard input").forEach(inp=>{
   inp.addEventListener("input", ()=>{
-    enough.items[+inp.dataset.i].text = inp.value;
-    LS.set("qyx_enough", enough);
+    const i=+inp.dataset.i,item=enough.items[i];
+    item.text=inp.value;
+    if(item.status==="deleted") item.status="incomplete";
+    item.done=item.status==="completed";
+    const actions=document.querySelector(`#enoughCard .task-actions[data-i="${i}"]`);
+    if(actions) actions.classList.toggle("empty",!inp.value.trim());
+    saveEnough();
   });
 });
+function setEnoughStatus(i,status){
+  const item=enough.items[i];
+  if(!item.text.trim()) return;
+  const before=enoughStatus(item);
+  item.status=before===status?"incomplete":status;
+  item.done=item.status==="completed";
+  saveEnough();renderEnough();
+  if(item.status==="completed"&&before!=="completed"){
+    addLog("done",item.text,null,"三件");buddySay("done");
+    const filled=enough.items.filter(x=>x.text.trim()&&enoughStatus(x)!=="deleted");
+    if(filled.length===3&&filled.every(x=>enoughStatus(x)==="completed")) toastDone("今天，够了。");
+  }else if(item.status==="expired") toastDone("这件事先停在这里，留给以后回望。");
+}
 document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
-  c.onclick = ()=>{
-    const i = +c.dataset.i;
-    if(!enough.items[i].text.trim()) return;
-    enough.items[i].done = !enough.items[i].done;
-    LS.set("qyx_enough", enough);
-    renderEnough();
-    if(enough.items[i].done){
-      addLog("done", enough.items[i].text, null, "三件");
-      buddySay("done");
-      const filled = enough.items.filter(x=>x.text.trim());
-      if(filled.length===3 && filled.every(x=>x.done)) toastDone("今天，够了。");
+  c.onclick = ()=>setEnoughStatus(+c.dataset.i,"completed");
+});
+document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
+  b.onclick=()=>{
+    const i=+b.dataset.i,action=b.dataset.taskAction,item=enough.items[i];
+    if(!item.text.trim()) return;
+    if(action==="complete") return setEnoughStatus(i,"completed");
+    if(action==="expire") return setEnoughStatus(i,"expired");
+    if(action==="delete"){
+      if(!confirm("删除这件事？删除后不会进入昨日总结。")) return;
+      (item.subs||[]).forEach(s=>bury("esub:"+enough.d,s.text));
+      enough.items[i]=blankEnoughItem();saveEnough();renderEnough();
+      toastDone("删掉了，不会进入昨日总结。");
     }
   };
 });
@@ -2000,7 +2059,7 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     if(v && v.trim()){
       unbury("esub:"+enough.d, v.trim());
       enough.items[i].subs.push({text: v.trim(), done: false});
-      LS.set("qyx_enough", enough);
+      saveEnough();
       renderEnough();
     }
   };
@@ -2174,9 +2233,10 @@ async function makeDailySummary(){
     three: [], bonus: [], habits: [], moods: [], obs: ""};
   const prev = LS.get("qyx_enough_prev", null);
   if(prev && prev.d===yk){
-    sum.three = prev.items.filter(i=>i.text.trim()).map(i=>({
+    sum.three = prev.items.map(normalizeEnoughItem).filter(i=>i.text.trim()&&i.status!=="deleted").map(i=>({
       text: i.text,
-      done: !!i.done,
+      status: enoughStatus(i),
+      done: enoughStatus(i)==="completed",
       subs: (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text, done:!!s.done}))
     }));
   }
@@ -2241,6 +2301,12 @@ $("yesterdayToggle").onclick = ()=>{
   localStorage.setItem("qyx_yesterday_expanded",JSON.stringify(yesterdayExpanded));
   syncYesterdayFold();
 };
+$("yesterdayReview").onclick = e=>{
+  if(e.target.closest("#yesterdayToggle")) return;
+  yesterdayExpanded=!yesterdayExpanded;
+  localStorage.setItem("qyx_yesterday_expanded",JSON.stringify(yesterdayExpanded));
+  syncYesterdayFold();
+};
 function renderV3Yesterday(){
   const key = dayKey(Date.now()-864e5);
   const d = new Date(Date.now()-864e5);
@@ -2251,28 +2317,26 @@ function renderV3Yesterday(){
   const sum = summaries[key];
   const prev = LS.get("qyx_enough_prev", null);
   const source = prev && prev.d===key ? (prev.items||[]) : ((sum&&sum.three)||[]);
-  const items = source.filter(i=>i.text&&i.text.trim()).map(i=>{
+  const items = source.filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").slice(0,3).map(i=>{
     const subs = (i.subs||[]).filter(s=>s.text&&s.text.trim());
-    const total = subs.length || 1;
-    const doneCount = i.done ? total : (subs.length ? subs.filter(s=>s.done).length : 0);
-    const complete = !!i.done || (!!subs.length && doneCount===total);
-    return {...i, subs, total, doneCount, complete, missed:!complete};
+    const status=enoughStatus(i),doneCount=subs.filter(s=>s.done).length;
+    const progress=status==="completed"?100:(subs.length?Math.round(doneCount/subs.length*100):0);
+    return {...i,status,subs,progress};
   });
   if(!items.length){
     body.innerHTML = '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
     return;
   }
-  const completed = items.filter(i=>i.complete).length;
+  const completed = items.filter(i=>i.status==="completed").length;
   const overall = Math.round(completed/items.length*100);
   let html = `<div class="v3-completion-copy"><strong>${completed} / ${items.length} 完成</strong><span>完成率 ${overall}%</span></div>`;
   html += items.map(i=>{
-    return `<div class="v3-task-progress${i.complete?" complete":" missed"}"><span class="v3-task-circle">${i.complete?"✓":"×"}</span><div class="v3-task-main"><div class="v3-task-line"><span>${esc(i.text)}</span></div></div><span class="v3-task-state">${i.complete?"已完成":"已错过"}</span></div>`;
+    const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress===100?"✓":"");
+    const label=i.status==="completed"?"已完成":expired?"时间结束":"未完成";
+    const ring=(large=false)=>`<span class="v3-progress-ring${expired?" expired":""}${large?" large":""}" style="--p:${i.progress}" aria-label="完成比例 ${i.progress}%"><span>${symbol}</span></span>`;
+    const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map(s=>`<span>${s.done?"✓":"○"} ${esc(s.text)}</span>`).join("")}</div>`:"";
+    return `<div class="v3-summary-item"><div class="v3-summary-row">${ring()}<span class="v3-summary-title">${esc(i.text)}</span></div><div class="v3-item-detail"><div class="v3-detail-head">${ring(true)}<div class="v3-detail-copy"><b>${esc(i.text)}</b><small>完成比例 ${i.progress}% · ${label}</small></div></div>${subs}</div></div>`;
   }).join("");
-  let detail = items.filter(i=>i.subs.length).map(i=>`<div class="v3-sub-detail"><b>${esc(i.text)}</b>　${i.subs.map(s=>`${s.done?"✓":"○"} ${esc(s.text)}`).join("　")}</div>`).join("");
-  if(sum&&sum.stats) detail += `<div class="v3-summary-stats">切 ${sum.stats.cut} · 记 ${sum.stats.notes} · 划掉 ${sum.stats.done}</div>`;
-  if(sum&&sum.bonus&&sum.bonus.length) detail += `<div class="v3-bonus-compact"><b>Bonus</b><span class="v3-bonus-items">${sum.bonus.map(i=>`<span>${i.done?"✓":"○"} ${esc(i.text)}</span>`).join("")}</span></div>`;
-  if(sum&&sum.obs) detail += `<div class="v3-summary-observation">${esc(cleanAIText(sum.obs))}</div>`;
-  if(detail) html += `<div class="v3-yesterday-detail">${detail}</div>`;
   body.innerHTML = html;
 }
 
@@ -2677,7 +2741,7 @@ function buildExportBundle(){
     const taskDays={};
     [enough,LS.get("qyx_enough_prev",null)].forEach(src=>{
       if(src&&src.d&&src.d>=range.fromKey&&src.d<=range.toKey){
-        taskDays[src.d]={date:src.d,items:(src.items||[]).filter(i=>i.text&&i.text.trim()).map(i=>({text:i.text,done:!!i.done,subs:(i.subs||[]).map(s=>({text:s.text,done:!!s.done}))})),bonus:[]};
+        taskDays[src.d]={date:src.d,items:(src.items||[]).filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").map(i=>({text:i.text,status:enoughStatus(i),done:enoughStatus(i)==="completed",subs:(i.subs||[]).map(s=>({text:s.text,done:!!s.done}))})),bonus:[]};
       }
     });
     Object.keys(summaries).filter(k=>k>=range.fromKey&&k<=range.toKey).forEach(k=>{
@@ -2708,7 +2772,7 @@ function buildExportMarkdown(b){
   }
   if(b.tasks){
     lines.push("## 今日三件事","");
-    b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).forEach(i=>{ lines.push("- ["+(i.done?"x":" ")+"] "+i.text+"（"+(i.done?"已完成":"已错过")+"）"); (i.subs||[]).forEach(s=>lines.push("  - ["+(s.done?"x":" ")+"] "+s.text)); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
+    b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).filter(i=>enoughStatus(i)!=="deleted").forEach(i=>{ const status=enoughStatus(i),label=status==="completed"?"已完成":status==="expired"?"时间结束":"未完成"; lines.push("- ["+(status==="completed"?"x":" ")+"] "+i.text+"（"+label+"）"); (i.subs||[]).forEach(s=>lines.push("  - ["+(s.done?"x":" ")+"] "+s.text)); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
   }
   if(b.bottles){ lines.push("## 瓶子内容",""); b.bottles.length?b.bottles.forEach(x=>{ lines.push("### "+dt(x.t),"",x.text,""); (x.followups||[]).forEach(f=>lines.push("- 后续 "+dt(f.t)+"："+f.text)); }):lines.push("这段时间没有瓶子。",""); }
   if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
@@ -2781,7 +2845,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.0.1";
+const APP_VERSION = "3.0.2";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -2930,8 +2994,11 @@ function mergeAll(o){
     enough.items.forEach((it,i)=>{
       const rit = (re.items||[])[i];
       if(!rit) return;
+      normalizeEnoughItem(it);normalizeEnoughItem(rit);
       if(!it.text.trim() && rit.text) it.text = rit.text;
-      it.done = it.done || !!rit.done;
+      const statuses=[enoughStatus(it),enoughStatus(rit)];
+      it.status=statuses.includes("completed")?"completed":statuses.includes("expired")?"expired":"incomplete";
+      it.done=it.status==="completed";
       const norm = a=>(a||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
       const sm = new Map(norm(it.subs).map(x=>[x.text, x]));
       norm(rit.subs).forEach(x=>{
@@ -2944,7 +3011,7 @@ function mergeAll(o){
     LS.setSilent("qyx_enough", enough);
   } else if(re && re.d===today && (!enough || enough.d!==today)){
     enough = re;
-    enough.items.forEach(i=>{ i.subs = (i.subs||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x); });
+    enough.items=(enough.items||[]).map(normalizeEnoughItem).slice(0,3);while(enough.items.length<3)enough.items.push(blankEnoughItem());
     LS.setSilent("qyx_enough", enough);
   }
   const rp = o.qyx_enough_prev;
