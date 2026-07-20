@@ -702,6 +702,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-bonus-compact{display:flex;align-items:flex-start;gap:8px;margin-top:5px;font:500 10.5px/1.65 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#6F7868}
 .v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:flex;flex-wrap:wrap;gap:2px 10px}
 .v3-summary-observation{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#706B61}
+.v3-yesterday-extras{margin-top:7px;padding-top:4px;border-top:1px solid rgba(116,130,103,.1)}.v3-yesterday-section{margin-top:9px}.v3-yesterday-section>b{display:block;margin-bottom:4px;font:600 10px "Noto Serif SC",var(--kai);letter-spacing:.1em;color:#7A876F}.v3-question-item{padding:6px 8px;margin-top:4px;border-radius:10px;background:rgba(242,246,237,.62);font:500 10.5px/1.65 "Noto Serif SC",var(--kai);color:#665F56}.v3-question-item small{display:block;color:#89917F;margin-bottom:1px}.v3-question-answer{color:#7B746A}.v3-yesterday-marks{margin-top:8px;font:500 10px/1.7 "Noto Serif SC",var(--kai);color:#7D806F}
 #v-log>.buddy-row.mini{margin:0 2px 12px;align-items:center}
 .buddy-row.mini{margin:0 2px 13px}.buddy-row.mini .buddy{filter:none;width:58px;height:53px}
 .letter{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.67),rgba(255,249,240,.5));
@@ -2311,19 +2312,24 @@ function renderV3Yesterday(){
     const progress=status==="completed"?100:(subs.length?Math.round(doneCount/subs.length*100):0);
     return {...i,status,subs,progress};
   });
-  if(!items.length){
-    body.innerHTML = '<div class="v3-yesterday-collapsed">昨日事项</div><div class="v3-expanded-content"><div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div></div>';
-    return;
-  }
   const completed = items.filter(i=>i.status==="completed").length;
   const overall = Math.round(completed/3*100);
   let html = `<div class="v3-yesterday-collapsed">昨日事项</div><div class="v3-expanded-content"><div class="v3-completion-copy"><strong>${completed} / 3 完成</strong><span>完成率 ${overall}%</span></div>`;
+  if(!items.length) html += '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
   html += items.map(i=>{
     const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress>0?i.progress+"%":"");
     const ring=()=>`<span class="v3-progress-ring large${expired?" expired":""}" style="--p:${i.progress}" aria-label="完成比例 ${i.progress}%"><span>${symbol}</span></span>`;
     const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map(s=>`<span>${s.done?"✓":"○"} ${esc(s.text)}</span>`).join("")}</div>`:"";
     return `<div class="v3-summary-item"><div class="v3-summary-row">${ring()}<span class="v3-summary-title">${esc(i.text)}</span></div>${subs}</div>`;
-  }).join("")+`</div>`;
+  }).join("");
+  const yesterdayLog=log.filter(e=>dayKey(e.t)===key);
+  const stats={cut:yesterdayLog.filter(e=>e.type==="dice"||e.type==="ai").length,notes:yesterdayLog.filter(e=>e.type==="note").length,done:yesterdayLog.filter(e=>e.type==="done").length};
+  const bonusPrev=LS.get("qyx_bonus_prev",null);
+  const bonusItems=(bonusPrev&&bonusPrev.d===key?(bonusPrev.items||[]):((sum&&sum.bonus)||[])).filter(i=>i.text&&i.text.trim());
+  const questions=yesterdayLog.filter(e=>e.type==="ai"&&e.q).slice(-2);
+  const insight=sum&&sum.obs?cleanAIText(sum.obs):(questions.length?`昨天你用“问一问”梳理了 ${questions.length} 次，也把当时的选择过程留下来了。`:stats.notes?`昨天你留下了 ${stats.notes} 笔记录，先把当时的自己保存了下来。`:"昨天留下的内容不多，空白也可以被回望。");
+  const marks=[...((sum&&sum.habits)||[]),...((sum&&sum.moods)||[])];
+  html += `<div class="v3-yesterday-extras"><div class="v3-summary-stats">切 ${stats.cut} · 记 ${stats.notes} · 划掉 ${stats.done}</div><div class="v3-yesterday-section"><b>Bonus</b>${bonusItems.length?`<div class="v3-bonus-items">${bonusItems.map(i=>`<span>${i.done?"✓":"○"} ${esc(i.text)}</span>`).join("")}</div>`:`<div class="v3-yesterday-marks">昨天没有留下 Bonus。</div>`}</div><div class="v3-yesterday-section"><b>问一问</b>${questions.length?questions.map(e=>`<div class="v3-question-item"><small>${esc(e.q)}</small><div class="v3-question-answer">${esc(cleanAIText(e.text))}</div></div>`).join(""):`<div class="v3-yesterday-marks">昨天没有使用问一问。</div>`}</div><div class="v3-yesterday-section"><b>AI 回望 · 洞察</b><div class="v3-summary-observation">${esc(insight)}</div></div>${marks.length?`<div class="v3-yesterday-marks">${esc(marks.join("　·　"))}</div>`:""}</div></div>`;
   body.innerHTML = html;
 }
 
@@ -2832,7 +2838,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.0.3";
+const APP_VERSION = "3.0.4";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
