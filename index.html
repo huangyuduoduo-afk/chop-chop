@@ -1896,7 +1896,7 @@ function startBottleVoice(){
   const before=$("bottleText").value.trim();let finalText=before?before+" ":"";
   rec.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)finalText+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;}$("bottleText").value=finalText+interim;};
   rec.onend=()=>{bottleRecognition=null;$("bottleVoiceBtn").classList.remove("recording");$("bottleVoiceBtn").textContent="♩ 按住说";};
-  rec.onerror=()=>toastDone("没有听清，再试一次。");
+  rec.onerror=e=>toastDone(voiceErrorMessage(e.error||"unknown"));
   rec.start();$("bottleVoiceBtn").classList.add("recording");$("bottleVoiceBtn").textContent="● 正在听…";
 }
 function stopBottleVoice(){if(bottleRecognition)try{bottleRecognition.stop();}catch(e){}}
@@ -2477,6 +2477,13 @@ let voiceOriginal = "";
 let polishResult = "";
 let polishMode = "keep";
 let pendingPolish = null;
+function voiceErrorMessage(code){
+  if(code==="network") return "网络不稳定，语音没有转成文字。检查网络后再试，刚才这条没有保存";
+  if(code==="not-allowed"||code==="service-not-allowed") return "没有麦克风权限，请在浏览器设置里允许麦克风后再试";
+  if(code==="audio-capture") return "没有找到可用的麦克风，请检查设备后再试";
+  if(code==="no-speech") return "没有识别到声音，请靠近一点再按住说";
+  return "这次没有转成文字，请再按住说一次";
+}
 function localTidy(text){
   return text.replace(/\s+/g," ").replace(/然后然后/g,"然后").replace(/([。！？])(?=\S)/g,"$1 ").trim();
 }
@@ -2495,23 +2502,27 @@ function startRecordVoice(){
   if(recordRecognition) return;
   const rec = new SR(); recordRecognition = rec;
   rec.lang = "zh-CN"; rec.continuous = true; rec.interimResults = true;
-  const before = $("noteText").value.trim(); let finalText = before ? before+" " : "";
+  const before = $("noteText").value.trim(); let finalText = before ? before+" " : "",heard=false,errorCode="";
+  $("polishPanel").hidden = true;
   rec.onresult = e=>{
     let interim = "";
     for(let i=e.resultIndex;i<e.results.length;i++){
-      if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
-      else interim += e.results[i][0].transcript;
+      const words=e.results[i][0].transcript||"";if(words.trim())heard=true;
+      if(e.results[i].isFinal) finalText += words;
+      else interim += words;
     }
     $("noteText").value = finalText + interim;
   };
-  rec.onerror = ()=>{ $("voiceStatus").textContent = "没有听清，再按一次试试"; };
+  rec.onerror = e=>{ errorCode=e.error||"unknown";$("voiceStatus").textContent=voiceErrorMessage(errorCode); };
   rec.onend = ()=>{
     recordRecognition = null; $("recordVoiceBtn").classList.remove("recording");
-    $("recordVoiceBtn").textContent = "♩ 按住说"; $("voiceStatus").textContent = "已转成文字，可以选择整理方式";
-    showPolish($("noteText").value);
+    $("recordVoiceBtn").textContent = "♩ 按住说";
+    const produced=$("noteText").value.trim()!==before;
+    if(heard&&produced){$("voiceStatus").textContent="已转成文字，可以选择整理方式";showPolish($("noteText").value);}
+    else{const msg=voiceErrorMessage(errorCode||"no-speech");$("voiceStatus").textContent=msg;toastDone(msg);}
   };
-  rec.start(); $("recordVoiceBtn").classList.add("recording");
-  $("recordVoiceBtn").textContent = "● 正在听…"; $("voiceStatus").textContent = "松开结束";
+  try{rec.start();$("recordVoiceBtn").classList.add("recording");$("recordVoiceBtn").textContent="● 正在听…";$("voiceStatus").textContent="松开结束";}
+  catch(e){recordRecognition=null;$("voiceStatus").textContent="语音服务暂时没有启动，请再试一次";}
 }
 function stopRecordVoice(){ if(recordRecognition) try{ recordRecognition.stop(); }catch(e){} }
 $("recordVoiceBtn").addEventListener("pointerdown",e=>{e.preventDefault();startRecordVoice();});
@@ -2972,7 +2983,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.0";
+const APP_VERSION = "3.5.1";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
