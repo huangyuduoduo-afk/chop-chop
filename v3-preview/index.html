@@ -167,6 +167,7 @@ header{
 }
 .esub.sdone .chk{background:var(--sage-deep);border-color:var(--sage-deep)}
 .esub.sdone .stx{text-decoration:line-through;opacity:.6}
+.esub.sexpired{background:rgba(244,229,218,.58);border-color:rgba(194,134,99,.36);color:#A06E53}.esub.sexpired .chk{background:#C48663;border-color:#C48663}.esub.sexpired .stx{text-decoration:none;opacity:.72}
 .esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
@@ -700,9 +701,9 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-yesterday-body{transition:padding .25s ease}.v3-yesterday.expanded .v3-yesterday-body{padding-bottom:2px}
 .v3-summary-stats{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:600 10.5px "Noto Serif SC",var(--kai);letter-spacing:.07em;color:#718466}
 .v3-bonus-compact{display:flex;align-items:flex-start;gap:8px;margin-top:5px;font:500 10.5px/1.65 "Noto Serif SC",var(--kai);letter-spacing:.035em;color:#6F7868}
-.v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:flex;flex-wrap:wrap;gap:2px 10px}
+.v3-bonus-compact b{color:#8B806F;letter-spacing:.09em}.v3-bonus-items{display:grid;gap:3px;font:500 10.5px/1.7 "Noto Serif SC",var(--kai);letter-spacing:.025em;color:#6F6A61}.v3-bonus-items span{display:block}
 .v3-summary-observation{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(129,111,86,.15);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#706B61}
-.v3-yesterday-extras{margin-top:7px;padding-top:4px;border-top:1px solid rgba(116,130,103,.1)}.v3-yesterday-section{margin-top:9px}.v3-yesterday-section>b{display:block;margin-bottom:4px;font:600 10px "Noto Serif SC",var(--kai);letter-spacing:.1em;color:#7A876F}.v3-question-item{padding:6px 8px;margin-top:4px;border-radius:10px;background:rgba(242,246,237,.62);font:500 10.5px/1.65 "Noto Serif SC",var(--kai);color:#665F56}.v3-question-item small{display:block;color:#89917F;margin-bottom:1px}.v3-question-answer{color:#7B746A}.v3-yesterday-marks{margin-top:8px;font:500 10px/1.7 "Noto Serif SC",var(--kai);color:#7D806F}
+.v3-yesterday-extras{margin-top:7px;padding-top:4px;border-top:1px solid rgba(116,130,103,.1);font-family:"Noto Serif SC",var(--kai)}.v3-yesterday-section{margin-top:9px}.v3-yesterday-section>b{display:block;margin-bottom:4px;font:600 10px "Noto Serif SC",var(--kai);letter-spacing:.08em;color:#7A876F}.v3-question-item{padding:6px 8px;margin-top:4px;border-radius:10px;background:rgba(242,246,237,.62);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);letter-spacing:.025em;color:#665F56}.v3-question-item small{display:block;color:#89917F;margin-bottom:1px;font:500 10px/1.65 "Noto Serif SC",var(--kai)}.v3-question-answer{color:#7B746A;font-family:"Noto Serif SC",var(--kai)}.v3-yesterday-marks{margin-top:8px;font:500 10px/1.7 "Noto Serif SC",var(--kai);letter-spacing:.025em;color:#7D806F}#yesterdayReview,#enoughCard,#enoughCard input,#enoughCard button,#enoughCard .stx{font-family:"Noto Serif SC",var(--kai)}
 #v-log>.buddy-row.mini{margin:0 2px 12px;align-items:center}
 .buddy-row.mini{margin:0 2px 13px}.buddy-row.mini .buddy{filter:none;width:58px;height:53px}
 .letter{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.67),rgba(255,249,240,.5));
@@ -1926,17 +1927,29 @@ $("aiReviewBtn").onclick = async ()=>{
 /* ---------- 今天做完哪三件就够了 ---------- */
 let enough = LS.get("qyx_enough", null);
 const ENOUGH_STATUSES = ["completed","incomplete","expired","deleted"];
+const ENOUGH_SUB_STATUSES = ["completed","incomplete","expired"];
 function blankEnoughItem(){ return {text:"",done:false,status:"incomplete",subs:[]}; }
 function enoughStatus(item){
   return item && ENOUGH_STATUSES.includes(item.status) ? item.status : (item&&item.done ? "completed" : "incomplete");
 }
+function enoughSubStatus(sub){ return sub&&ENOUGH_SUB_STATUSES.includes(sub.status)?sub.status:(sub&&sub.done?"completed":"incomplete"); }
+function normalizeEnoughSub(sub){
+  if(typeof sub==="string") return {text:sub,done:false,status:"incomplete"};
+  const status=enoughSubStatus(sub);
+  return {text:(sub&&sub.text)||"",done:status==="completed",status};
+}
 function normalizeEnoughItem(item){
   item = item || blankEnoughItem();
   item.text = item.text || "";
-  item.subs = (item.subs||[]).map(x=>typeof x==="string" ? {text:x,done:false} : {text:x.text||"",done:!!x.done});
+  item.subs = (item.subs||[]).map(normalizeEnoughSub);
   item.status = enoughStatus(item);
   item.done = item.status === "completed";
   return item;
+}
+function syncParentFromSubs(item){
+  if(!(item.subs||[]).length) return;
+  item.status=item.subs.every(s=>s.status==="completed")?"completed":"incomplete";
+  item.done=item.status==="completed";
 }
 function saveEnough(){ LS.set("qyx_enough", enough); }
 function ensureEnough(){
@@ -1950,6 +1963,7 @@ function ensureEnough(){
     LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
   }
   enough.items = (enough.items||[]).map(normalizeEnoughItem).slice(0,3);
+  enough.items.forEach(i=>{if(i.status==="expired"){i.status="incomplete";i.done=false;}syncParentFromSubs(i);});
   while(enough.items.length<3) enough.items.push(blankEnoughItem());
 }
 function renderEnough(){
@@ -1972,15 +1986,15 @@ function renderEnough(){
     box.innerHTML = "";
     enough.items[i].subs.forEach((sub, si)=>{
       const chip = document.createElement("span");
-      chip.className = "esub" + (sub.done ? " sdone" : "");
-      chip.innerHTML = `<button class="chk">${sub.done?"✓":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
+      chip.className = "esub" + (sub.status==="completed" ? " sdone" : sub.status==="expired" ? " sexpired" : "");
+      chip.innerHTML = `<button class="chk" title="点击切换：完成 / 时间结束 / 未完成">${sub.status==="completed"?"✓":sub.status==="expired"?"×":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
       chip.querySelector(".chk").onclick = ()=>{
-        sub.done = !sub.done;
         const item=enough.items[i];
-        if(item.subs.length&&item.subs.every(s=>s.done)){ item.status="completed";item.done=true; }
-        else if(item.status==="completed"){ item.status="incomplete";item.done=false; }
+        sub.status=sub.status==="incomplete"?"completed":sub.status==="completed"?"expired":"incomplete";
+        sub.done=sub.status==="completed";
+        syncParentFromSubs(item);
         saveEnough();
-        if(sub.done) addLog("done", sub.text, null, "三件·小项");
+        if(sub.status==="completed") addLog("done", sub.text, null, "三件·小项");
         renderEnough();
       };
       chip.querySelector(".stx").onclick = ()=>{
@@ -1993,6 +2007,7 @@ function renderEnough(){
       chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
       chip.querySelector(".x").onclick = ()=>{
         enough.items[i].subs.splice(si,1);
+        syncParentFromSubs(enough.items[i]);
         bury("esub:"+enough.d, sub.text);
         saveEnough(); renderEnough();
       };
@@ -2027,8 +2042,9 @@ function setEnoughStatus(i,status){
 }
 document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
   c.onclick = ()=>{
-    const i=+c.dataset.i,status=enoughStatus(enough.items[i]);
-    setEnoughStatus(i,status==="incomplete"?"completed":status==="completed"?"expired":"incomplete");
+    const i=+c.dataset.i,item=enough.items[i];
+    if(item.subs.length){syncParentFromSubs(item);saveEnough();renderEnough();if(item.status!=="completed")toastDone("分项都完成后，主项会自动打勾。");return;}
+    setEnoughStatus(i,enoughStatus(item)==="completed"?"incomplete":"completed");
   };
 });
 document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
@@ -2050,7 +2066,8 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     const v = prompt("拆一个小项：");
     if(v && v.trim()){
       unbury("esub:"+enough.d, v.trim());
-      enough.items[i].subs.push({text: v.trim(), done: false});
+      enough.items[i].subs.push({text:v.trim(),done:false,status:"incomplete"});
+      syncParentFromSubs(enough.items[i]);
       saveEnough();
       renderEnough();
     }
@@ -2227,9 +2244,9 @@ async function makeDailySummary(){
   if(prev && prev.d===yk){
     sum.three = prev.items.map(normalizeEnoughItem).filter(i=>i.text.trim()&&i.status!=="deleted").map(i=>({
       text: i.text,
-      status: enoughStatus(i),
+      status: enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),
       done: enoughStatus(i)==="completed",
-      subs: (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text, done:!!s.done}))
+      subs: (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed"}))
     }));
   }
   sum.habits = habits.map(h=>{
@@ -2307,8 +2324,8 @@ function renderV3Yesterday(){
   const prev = LS.get("qyx_enough_prev", null);
   const source = prev && prev.d===key ? (prev.items||[]) : ((sum&&sum.three)||[]);
   const items = source.filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").slice(0,3).map(i=>{
-    const subs = (i.subs||[]).filter(s=>s.text&&s.text.trim());
-    const status=enoughStatus(i),doneCount=subs.filter(s=>s.done).length;
+    const subs = (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(normalizeEnoughSub);
+    const rawStatus=enoughStatus(i),status=rawStatus==="expired"?"incomplete":rawStatus,doneCount=subs.filter(s=>enoughSubStatus(s)==="completed").length;
     const progress=status==="completed"?100:(subs.length?Math.round(doneCount/subs.length*100):0);
     return {...i,status,subs,progress};
   });
@@ -2319,7 +2336,7 @@ function renderV3Yesterday(){
   html += items.map(i=>{
     const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress>0?i.progress+"%":"");
     const ring=()=>`<span class="v3-progress-ring large${expired?" expired":""}" style="--p:${i.progress}" aria-label="完成比例 ${i.progress}%"><span>${symbol}</span></span>`;
-    const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map(s=>`<span>${s.done?"✓":"○"} ${esc(s.text)}</span>`).join("")}</div>`:"";
+    const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map(s=>{const ss=enoughSubStatus(s);return `<span>${ss==="completed"?"✓":ss==="expired"?"×":"○"} ${esc(s.text)}</span>`;}).join("")}</div>`:"";
     return `<div class="v3-summary-item"><div class="v3-summary-row">${ring()}<span class="v3-summary-title">${esc(i.text)}</span></div>${subs}</div>`;
   }).join("");
   const yesterdayLog=log.filter(e=>dayKey(e.t)===key);
@@ -2734,7 +2751,7 @@ function buildExportBundle(){
     const taskDays={};
     [enough,LS.get("qyx_enough_prev",null)].forEach(src=>{
       if(src&&src.d&&src.d>=range.fromKey&&src.d<=range.toKey){
-        taskDays[src.d]={date:src.d,items:(src.items||[]).filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").map(i=>({text:i.text,status:enoughStatus(i),done:enoughStatus(i)==="completed",subs:(i.subs||[]).map(s=>({text:s.text,done:!!s.done}))})),bonus:[]};
+        taskDays[src.d]={date:src.d,items:(src.items||[]).filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").map(i=>({text:i.text,status:enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),done:enoughStatus(i)==="completed",subs:(i.subs||[]).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed"}))})),bonus:[]};
       }
     });
     Object.keys(summaries).filter(k=>k>=range.fromKey&&k<=range.toKey).forEach(k=>{
@@ -2765,7 +2782,7 @@ function buildExportMarkdown(b){
   }
   if(b.tasks){
     lines.push("## 今日三件事","");
-    b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).filter(i=>enoughStatus(i)!=="deleted").forEach(i=>{ const status=enoughStatus(i),label=status==="completed"?"已完成":status==="expired"?"时间结束":"未完成"; lines.push("- ["+(status==="completed"?"x":" ")+"] "+i.text+"（"+label+"）"); (i.subs||[]).forEach(s=>lines.push("  - ["+(s.done?"x":" ")+"] "+s.text)); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
+    b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).filter(i=>enoughStatus(i)!=="deleted").forEach(i=>{ const status=enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),label=status==="completed"?"已完成":"未完成"; lines.push("- ["+(status==="completed"?"x":" ")+"] "+i.text+"（"+label+"）"); (i.subs||[]).forEach(s=>{const ss=enoughSubStatus(s),sl=ss==="completed"?"已完成":ss==="expired"?"时间结束":"未完成";lines.push("  - ["+(ss==="completed"?"x":" ")+"] "+s.text+"（"+sl+"）");}); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
   }
   if(b.bottles){ lines.push("## 瓶子内容",""); b.bottles.length?b.bottles.forEach(x=>{ lines.push("### "+dt(x.t),"",x.text,""); (x.followups||[]).forEach(f=>lines.push("- 后续 "+dt(f.t)+"："+f.text)); }):lines.push("这段时间没有瓶子。",""); }
   if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
@@ -2838,7 +2855,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.0.4-preview";
+const APP_VERSION = "3.0.5-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -2990,16 +3007,20 @@ function mergeAll(o){
       normalizeEnoughItem(it);normalizeEnoughItem(rit);
       if(!it.text.trim() && rit.text) it.text = rit.text;
       const statuses=[enoughStatus(it),enoughStatus(rit)];
-      it.status=statuses.includes("completed")?"completed":statuses.includes("expired")?"expired":"incomplete";
+      it.status=statuses.includes("completed")?"completed":"incomplete";
       it.done=it.status==="completed";
-      const norm = a=>(a||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
+      const norm = a=>(a||[]).map(normalizeEnoughSub);
       const sm = new Map(norm(it.subs).map(x=>[x.text, x]));
       norm(rit.subs).forEach(x=>{
         if(isDead("esub:"+enough.d, x.text)) return;
-        if(sm.has(x.text)) sm.get(x.text).done = sm.get(x.text).done || x.done;
-        else sm.set(x.text, x);
+        if(sm.has(x.text)){
+          const local=sm.get(x.text),states=[enoughSubStatus(local),enoughSubStatus(x)];
+          local.status=states.includes("completed")?"completed":states.includes("expired")?"expired":"incomplete";
+          local.done=local.status==="completed";
+        }else sm.set(x.text,x);
       });
       it.subs = [...sm.values()];
+      syncParentFromSubs(it);
     });
     LS.setSilent("qyx_enough", enough);
   } else if(re && re.d===today && (!enough || enough.d!==today)){
