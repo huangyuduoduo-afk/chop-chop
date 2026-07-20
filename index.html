@@ -1928,15 +1928,15 @@ $("aiReviewBtn").onclick = async ()=>{
 let enough = LS.get("qyx_enough", null);
 const ENOUGH_STATUSES = ["completed","incomplete","expired","deleted"];
 const ENOUGH_SUB_STATUSES = ["completed","incomplete","expired"];
-function blankEnoughItem(){ return {text:"",done:false,status:"incomplete",subs:[]}; }
+function blankEnoughItem(){ return {text:"",done:false,status:"incomplete",updatedAt:0,subs:[]}; }
 function enoughStatus(item){
   return item && ENOUGH_STATUSES.includes(item.status) ? item.status : (item&&item.done ? "completed" : "incomplete");
 }
 function enoughSubStatus(sub){ return sub&&ENOUGH_SUB_STATUSES.includes(sub.status)?sub.status:(sub&&sub.done?"completed":"incomplete"); }
 function normalizeEnoughSub(sub){
-  if(typeof sub==="string") return {text:sub,done:false,status:"incomplete"};
+  if(typeof sub==="string") return {text:sub,done:false,status:"incomplete",updatedAt:0};
   const status=enoughSubStatus(sub);
-  return {text:(sub&&sub.text)||"",done:status==="completed",status};
+  return {text:(sub&&sub.text)||"",done:status==="completed",status,updatedAt:Number(sub&&sub.updatedAt)||0};
 }
 function normalizeEnoughItem(item){
   item = item || blankEnoughItem();
@@ -1944,12 +1944,14 @@ function normalizeEnoughItem(item){
   item.subs = (item.subs||[]).map(normalizeEnoughSub);
   item.status = enoughStatus(item);
   item.done = item.status === "completed";
+  item.updatedAt = Number(item.updatedAt)||0;
   return item;
 }
 function syncParentFromSubs(item){
   if(!(item.subs||[]).length) return;
   item.status=item.subs.every(s=>s.status==="completed")?"completed":"incomplete";
   item.done=item.status==="completed";
+  item.updatedAt=Math.max(item.updatedAt||0,...item.subs.map(s=>s.updatedAt||0));
 }
 function saveEnough(){ LS.set("qyx_enough", enough); }
 function ensureEnough(){
@@ -1992,9 +1994,10 @@ function renderEnough(){
         const item=enough.items[i];
         sub.status=sub.status==="incomplete"?"completed":sub.status==="completed"?"expired":"incomplete";
         sub.done=sub.status==="completed";
+        sub.updatedAt=Date.now();
         syncParentFromSubs(item);
         saveEnough();
-        if(sub.status==="completed") addLog("done", sub.text, null, "三件·小项");
+        if(sub.status==="completed") addDoneLogOnce(sub.text,"三件·小项");
         renderEnough();
       };
       chip.querySelector(".stx").onclick = ()=>{
@@ -2002,11 +2005,12 @@ function renderEnough(){
         if(value===null) return;
         const next=value.trim();
         if(!next){ toastDone("小项文字不能为空，可以用右侧 × 删除。");return; }
-        sub.text=next;saveEnough();renderEnough();
+        const old=sub.text;bury("esub:"+enough.d,old);unbury("esub:"+enough.d,next);sub.text=next;sub.updatedAt=Date.now();saveEnough();renderEnough();
       };
       chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
       chip.querySelector(".x").onclick = ()=>{
         enough.items[i].subs.splice(si,1);
+        enough.items[i].updatedAt=Date.now();
         syncParentFromSubs(enough.items[i]);
         bury("esub:"+enough.d, sub.text);
         saveEnough(); renderEnough();
@@ -2033,9 +2037,10 @@ function setEnoughStatus(i,status){
   const before=enoughStatus(item);
   item.status=before===status?"incomplete":status;
   item.done=item.status==="completed";
+  item.updatedAt=Date.now();
   saveEnough();renderEnough();
   if(item.status==="completed"&&before!=="completed"){
-    addLog("done",item.text,null,"三件");buddySay("done");
+    addDoneLogOnce(item.text,"三件");buddySay("done");
     const filled=enough.items.filter(x=>x.text.trim()&&enoughStatus(x)!=="deleted");
     if(filled.length===3&&filled.every(x=>enoughStatus(x)==="completed")) toastDone("今天，够了。");
   }else if(item.status==="expired") toastDone("这件事先停在这里，留给以后回望。");
@@ -2066,7 +2071,7 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     const v = prompt("拆一个小项：");
     if(v && v.trim()){
       unbury("esub:"+enough.d, v.trim());
-      enough.items[i].subs.push({text:v.trim(),done:false,status:"incomplete"});
+      enough.items[i].subs.push({text:v.trim(),done:false,status:"incomplete",updatedAt:Date.now()});
       syncParentFromSubs(enough.items[i]);
       saveEnough();
       renderEnough();
@@ -2462,6 +2467,21 @@ $("applyPolish").onclick = ()=>{
 const logKey = e=>e.t+"|"+e.type+"|"+e.text;
 const TAG = {dice:"骰子", ai:"问一句", draw:"抽签", note:"记录", done:"完成", bonus:"bonus"};
 function dayKey(t){ const d = new Date(t); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function doneLogIdentity(e){ return `${dayKey(e.t)}|${e.type}|${e.src||""}|${e.text}`; }
+function dedupeDoneLogEntries(entries){
+  const seen=new Set();
+  return [...entries].sort((a,b)=>a.t-b.t).filter(e=>{
+    if(e.type!=="done") return true;
+    const key=doneLogIdentity(e);
+    if(!seen.has(key)){seen.add(key);return true;}
+    bury("log",logKey(e));return false;
+  });
+}
+function addDoneLogOnce(text,src){
+  const key=`${dayKey(Date.now())}|done|${src||""}|${text}`;
+  const existing=log.find(e=>e.type==="done"&&doneLogIdentity(e)===key);
+  return existing||addLog("done",text,null,src);
+}
 function dayTitle(k){
   const today = dayKey(Date.now());
   const yest = dayKey(Date.now()-864e5);
@@ -2490,6 +2510,8 @@ function logGreet(){
   $("logSay").textContent = sessionGreet + (n ? ` 今天已记 ${n} 笔。` : "");
 }
 function renderLog(){
+  const cleaned=dedupeDoneLogEntries(log);
+  if(cleaned.length!==log.length){log=cleaned;LS.set("qyx_log",log);}
   logGreet();
   renderV3Yesterday();
   renderHabitReminder();
@@ -2855,7 +2877,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.0.5";
+const APP_VERSION = "3.0.6";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -2927,7 +2949,7 @@ function mergeAll(o){
     const k = logKey(e);
     if(!logMap.has(k) && !isDead("log", k)) logMap.set(k, e);
   });
-  log = [...logMap.values()].sort((a,b)=>a.t-b.t);
+  log = dedupeDoneLogEntries([...logMap.values()]);
   LS.setSilent("qyx_log", log);
   // 语音整理历史：新增独立键，不改变原记录结构
   const phKey = x=>(x.t||0)+"|"+(x.original||"")+"|"+(x.polished||"");
@@ -3006,17 +3028,20 @@ function mergeAll(o){
       if(!rit) return;
       normalizeEnoughItem(it);normalizeEnoughItem(rit);
       if(!it.text.trim() && rit.text) it.text = rit.text;
-      const statuses=[enoughStatus(it),enoughStatus(rit)];
-      it.status=statuses.includes("completed")?"completed":"incomplete";
+      const localUpdated=it.updatedAt||0,remoteUpdated=rit.updatedAt||0;
+      const statusWinner=remoteUpdated>localUpdated?rit:it;
+      it.status=enoughStatus(statusWinner)==="completed"?"completed":"incomplete";
       it.done=it.status==="completed";
+      it.updatedAt=Math.max(localUpdated,remoteUpdated);
       const norm = a=>(a||[]).map(normalizeEnoughSub);
       const sm = new Map(norm(it.subs).map(x=>[x.text, x]));
       norm(rit.subs).forEach(x=>{
         if(isDead("esub:"+enough.d, x.text)) return;
         if(sm.has(x.text)){
-          const local=sm.get(x.text),states=[enoughSubStatus(local),enoughSubStatus(x)];
-          local.status=states.includes("completed")?"completed":states.includes("expired")?"expired":"incomplete";
+          const local=sm.get(x.text),winner=(x.updatedAt||0)>(local.updatedAt||0)?x:local;
+          local.status=enoughSubStatus(winner);
           local.done=local.status==="completed";
+          local.updatedAt=Math.max(local.updatedAt||0,x.updatedAt||0);
         }else sm.set(x.text,x);
       });
       it.subs = [...sm.values()];
@@ -3025,7 +3050,7 @@ function mergeAll(o){
     LS.setSilent("qyx_enough", enough);
   } else if(re && re.d===today && (!enough || enough.d!==today)){
     enough = re;
-    enough.items=(enough.items||[]).map(normalizeEnoughItem).slice(0,3);while(enough.items.length<3)enough.items.push(blankEnoughItem());
+    enough.items=(enough.items||[]).map(normalizeEnoughItem).slice(0,3);enough.items.forEach(i=>{if(i.status==="expired"){i.status="incomplete";i.done=false;}syncParentFromSubs(i);});while(enough.items.length<3)enough.items.push(blankEnoughItem());
     LS.setSilent("qyx_enough", enough);
   }
   const rp = o.qyx_enough_prev;
