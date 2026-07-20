@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FBF4EA">
-<title>chop chop! 3.0</title>
+<title>chop chop! 3.5</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -737,6 +737,8 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 
 /* 导出中心：复用设置与历史记录中的既有入口 */
 .export-modal .modal{max-height:88vh}.export-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.export-close{border:0;background:transparent;color:var(--ink-soft);font-size:20px;cursor:pointer}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.export-grid .wide{grid-column:1/-1}.export-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 14px}.export-checks label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid rgba(75,66,55,.1);border-radius:12px;background:rgba(255,255,255,.52);color:var(--ink);font-size:11px}.export-checks input{width:auto}.export-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-formats button,.export-open-btn{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:14px;padding:11px;color:var(--ink);cursor:pointer;font-family:var(--sans)}.export-formats button:first-child{background:#EEF4E9;color:#5F7B4E}.export-hint{min-height:18px;margin-top:9px!important;color:#718466!important}.custom-range[hidden]{display:none}.settings-export{width:100%;margin-top:7px}
+.tag-suggest{display:none;position:absolute;left:18px;right:18px;top:118px;z-index:12;padding:7px;background:rgba(255,253,249,.98);border:1px solid rgba(108,132,89,.2);border-radius:14px;box-shadow:0 12px 28px rgba(75,66,55,.14)}.tag-suggest.show{display:grid;gap:3px}.tag-suggest button{border:0;background:transparent;text-align:left;padding:7px 9px;border-radius:9px;color:#5D7550;cursor:pointer;font:500 11px "Noto Serif SC",var(--kai)}.tag-chip{border:0;background:#EAF1E4;color:#60784F;border-radius:999px;padding:3px 8px;cursor:pointer;font:500 9.5px "Noto Serif SC",var(--kai);white-space:nowrap}.record-tags,.entity-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.task-tag-row{display:flex;flex-wrap:wrap;gap:4px;margin:-3px 0 4px 72px}.tag-bind,.task-tag-btn{border:0;background:transparent;color:#71875F;cursor:pointer;font:600 10px "Noto Serif SC",var(--kai);padding:4px}.tag-memory-card{padding:18px 20px;margin:17px 0;border-radius:24px;display:flex;align-items:center;gap:13px}.tag-memory-card>span{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#E8F0E3;color:#668653;font-size:20px}.tag-memory-card div{flex:1}.tag-memory-card b,.tag-memory-card small{display:block}.tag-memory-card b{font:600 17px "Noto Serif SC",var(--kai)}.tag-memory-card small{font-size:10.5px;color:var(--ink-soft);margin-top:2px}.tag-memory-card button{border:1px solid rgba(96,120,79,.2);background:#fff;border-radius:999px;padding:8px 13px;color:#60784F;cursor:pointer}.tag-modal .modal{max-width:570px;max-height:88vh}.tag-toolbar{display:flex;gap:8px;align-items:center;margin:10px 0}.tag-toolbar select{margin:0}.tag-list{display:grid;gap:7px}.tag-list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer}.tag-list-item .tag-main{flex:1;min-width:0}.tag-list-item b,.tag-list-item small{display:block}.tag-list-item b{font:600 12px "Noto Serif SC",var(--kai);color:#526548;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag-list-item small{font-size:9.5px;color:#918A80;margin-top:2px}.tag-count{font-size:10px;color:#71875F}.tag-empty{padding:24px;text-align:center;color:var(--ink-soft);font:500 11px "Noto Serif SC",var(--kai)}.tag-detail-head{display:flex;align-items:center;gap:8px}.tag-back{border:0;background:transparent;color:#71875F;cursor:pointer}.tag-detail-stats{padding:10px 12px;margin:10px 0;border-radius:13px;background:#F1F5ED;color:#66745D;font-size:10px;line-height:1.8}.tag-manage{display:flex;gap:6px;margin-bottom:12px}.tag-manage button{border:1px solid rgba(75,66,55,.1);background:#fff;border-radius:999px;padding:6px 10px;color:#786F65;cursor:pointer;font-size:10px}.tag-related h4{margin:13px 0 6px;font:600 11px "Noto Serif SC",var(--kai);color:#6A7B5F}.tag-record{padding:8px 0;border-bottom:1px dashed rgba(75,66,55,.1);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#5D574F}.tag-record time{display:block;color:#9A9186;font-size:9px}.tag-modal [hidden]{display:none!important}
+.tag-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.tag-head h3,.tag-head p{margin:0}.tag-head p{margin-top:3px}.tag-close{border:0;background:transparent;font-size:22px;color:#8D857B;cursor:pointer}.tag-list-row{display:grid;grid-template-columns:1fr auto;text-align:left;gap:3px 10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer;color:#5D574F}.tag-list-row b{color:#526548}.tag-list-row small{grid-column:1/-1;color:#918A80}.tag-related-row{padding:9px 0;border-bottom:1px dashed rgba(75,66,55,.1)}.tag-related-row time{font-size:9px;color:#9A9186}.tag-related-row p{margin:2px 0}.tag-manage .danger{color:#B56E5B}
 nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{border-radius:25px;padding:8px 0 7px}nav button.on{background:linear-gradient(135deg,#FF955B,var(--v3-orange))}
 .modal{background:rgba(255,252,247,.96)}
 
@@ -786,7 +788,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 <div class="aura a"></div><div class="aura b"></div><div class="aura c"></div>
 
 <header>
-  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill">3.0</span></div>
+  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill">3.5</span></div>
   <div class="head-meta">
     <span class="head-clock" id="headClock"></span>
     <button class="sync" id="syncBtn" aria-label="同步" title="同步到云端">
@@ -849,11 +851,11 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 
     <div class="glass enough" id="enoughCard">
       <div class="v3-card-label"><span>✦</span><div><b>今天只做三件事</b><small>聚焦重点，少即是多。</small></div></div>
-      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-delete" data-task-action="delete" data-i="0">删除</button></div>
+      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-tag-btn" data-task-tag="0">#</button><button class="task-delete" data-task-action="delete" data-i="0">删除</button></div><div class="task-tag-row" data-task-tags="0"></div>
       <div class="esubs" data-i="0"></div>
-      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-delete" data-task-action="delete" data-i="1">删除</button></div>
+      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-tag-btn" data-task-tag="1">#</button><button class="task-delete" data-task-action="delete" data-i="1">删除</button></div><div class="task-tag-row" data-task-tags="1"></div>
       <div class="esubs" data-i="1"></div>
-      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div>
+      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-tag-btn" data-task-tag="2">#</button><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div><div class="task-tag-row" data-task-tags="2"></div>
       <div class="esubs" data-i="2"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
     </div>
@@ -943,6 +945,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <span class="glyph">🫙</span>
     </button>
     <div id="bottleShow"></div>
+    <section class="tag-memory-card glass"><span class="tag-memory-mark">#</span><div><b>标签回望</b><small>沿着自己写下的标签，重新找到过去。</small></div><button id="openTagLibrary">标签库　›</button></section>
     <section class="memory-map-card glass">
       <div class="head"><div><h2>事件图回望 <span>AI回望</span></h2><p>看看最近哪些主题反复出现。</p></div></div>
       <div class="memory-map" id="memoryMap"></div>
@@ -988,6 +991,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <div class="letter">
       <div class="letter-date" id="letterDate"></div>
       <textarea id="noteText" rows="3" placeholder="发生了什么、注意到什么，话多正好……"></textarea>
+      <div class="tag-suggest" id="tagSuggest"></div>
       <div class="v3-record-tools">
         <button class="v3-voice" id="recordVoiceBtn">♩ 按住说</button>
         <span class="voice-status" id="voiceStatus">也可以先说，松开后整理</span>
@@ -1108,6 +1112,22 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
   </div>
 </div>
 
+<div class="modal-bg tag-modal" id="tagLibraryBg">
+  <div class="modal">
+    <div id="tagLibraryView">
+      <div class="tag-head"><div><h3>标签库</h3><p>这些路径都来自你亲手写下的 #标签。</p></div><button class="tag-close" id="closeTagLibrary">×</button></div>
+      <label>排序<select id="tagSort"><option value="recent">最近使用</option><option value="count">使用次数</option><option value="created">创建时间</option></select></label>
+      <div class="tag-list" id="tagList"></div>
+    </div>
+    <div id="tagDetailView" hidden>
+      <div class="tag-head"><button class="tag-back" id="tagBack">‹ 标签库</button><button class="tag-close" id="closeTagDetail">×</button></div>
+      <h3 id="tagDetailName"></h3><p class="tag-detail-stats" id="tagDetailStats"></p>
+      <div class="tag-manage"><button id="renameTag">修改名称</button><button id="mergeTag">合并标签</button><button class="danger" id="deleteTag">删除标签</button></div>
+      <div id="tagRelated"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ---------- storage ---------- */
 const LS = {
@@ -1151,6 +1171,71 @@ let bottles  = LS.get("qyx_bottles", []);
 let opts     = LS.get("qyx_opts", []);
 let bench    = LS.get("qyx_bench", []);
 let polishHistory = LS.get("qyx_polish_history", []);
+let tags = LS.get("qyx_tags", []);
+let recordTags = LS.get("qyx_record_tags", {});
+let goalTags = LS.get("qyx_goal_tags", {});
+let taskTags = LS.get("qyx_task_tags", {});
+let activeTagId = null;
+
+function stableId(prefix, value){
+  let h=2166136261;for(const ch of String(value)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return prefix+(h>>>0).toString(36);
+}
+function entityId(prefix, value){ return stableId(prefix, value); }
+function normalizeTagPath(raw){
+  return String(raw||"").replace(/^#+/,"").split("/").map(s=>s.trim()).filter(Boolean).join("/");
+}
+function parseTagPaths(text){
+  const out=[];String(text||"").replace(/#([^\s#，。！？；：、]+)/g,(_,v)=>{const p=normalizeTagPath(v.replace(/[\]\[()（）【】{}<>《》"'“”‘’.,!?;:]+$/g,""));if(p&&!out.includes(p))out.push(p);return _;});return out;
+}
+function tagById(id){return tags.find(t=>t.id===id);}
+function tagPath(id){
+  const parts=[],seen=new Set();let t=tagById(id);while(t&&!seen.has(t.id)){seen.add(t.id);parts.unshift(t.name);t=t.parent_id?tagById(t.parent_id):null;}return parts.join("/");
+}
+function ensureTagPath(raw){
+  const path=normalizeTagPath(raw);if(!path)return null;let parent=null,full="";
+  path.split("/").forEach(name=>{full=full?full+"/"+name:name;let t=tags.find(x=>x.parent_id===parent&&x.name===name);if(!t){const now=Date.now();t={id:stableId("tag_",full),name,parent_id:parent,created_time:now,updated_time:now};tags.push(t);}parent=t.id;});
+  return parent;
+}
+function descendantTagIds(id){const set=new Set([id]);let changed=true;while(changed){changed=false;tags.forEach(t=>{if(t.parent_id&&set.has(t.parent_id)&&!set.has(t.id)){set.add(t.id);changed=true;}});}return [...set];}
+function saveTagData(silent=false){const fn=silent?LS.setSilent:LS.set;fn("qyx_tags",tags);fn("qyx_record_tags",recordTags);fn("qyx_goal_tags",goalTags);fn("qyx_task_tags",taskTags);}
+function ensureRecordId(e,i){if(!e.id)e.id=entityId("rec_",(e.t||0)+"|"+(e.type||"")+"|"+(e.text||"")+"|"+i);return e.id;}
+function indexRecordTags(e,force=false){
+  const id=ensureRecordId(e,log.indexOf(e));if(force||recordTags[id]===undefined)recordTags[id]=parseTagPaths(e.text).map(ensureTagPath).filter(Boolean);return recordTags[id]||[];
+}
+function renderTagChips(ids){return [...new Set(ids||[])].filter(tagById).map(id=>`<button class="tag-chip" data-open-tag="${id}">#${esc(tagPath(id))}</button>`).join("");}
+function allTagPaths(){return tags.map(t=>({id:t.id,path:tagPath(t.id)})).filter(x=>x.path).sort((a,b)=>a.path.localeCompare(b.path,"zh-CN"));}
+function tagRecordRows(id){
+  const wanted=new Set(descendantTagIds(id));return log.filter(e=>(recordTags[e.id]||[]).some(t=>wanted.has(t))).sort((a,b)=>b.t-a.t);
+}
+function tagGoalRows(id){const wanted=new Set(descendantTagIds(id)),rows=[];Object.keys(months).forEach(ym=>(months[ym]||[]).forEach(a=>{if((goalTags[a.id]||[]).some(t=>wanted.has(t)))rows.push({ym,a});}));return rows;}
+function tagUsage(id){const rows=tagRecordRows(id);return {count:rows.length,first:rows.length?Math.min(...rows.map(e=>e.t)):0,recent:rows.length?Math.max(...rows.map(e=>e.t)):0};}
+function formatTagDate(t){return t?new Date(t).toLocaleDateString("zh-CN"):"还没有记录";}
+function openTagDetail(id){
+  if(!tagById(id))return;activeTagId=id;$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=true;$('tagDetailView').hidden=false;
+  const use=tagUsage(id),rows=tagRecordRows(id),goals=tagGoalRows(id);$('tagDetailName').textContent="#"+tagPath(id);$('tagDetailStats').textContent=`${use.count} 条记录 · 首次 ${formatTagDate(use.first)} · 最近 ${formatTagDate(use.recent)}`;
+  let html='<h4>关联记录</h4>'+(rows.length?rows.map(e=>`<article class="tag-related-row"><time>${fmtDT(e.t)}</time><p>${esc(e.text)}</p></article>`).join(''):'<p class="empty">还没有关联记录。</p>');
+  html+='<h4>相关目标</h4>'+(goals.length?goals.map(x=>`<article class="tag-related-row"><time>${esc(x.ym)}</time><p>${esc(x.a.text)}</p></article>`).join(''):'<p class="empty">还没有关联目标。</p>');$('tagRelated').innerHTML=html;
+}
+function renderTagLibrary(){
+  const sort=$('tagSort').value;let rows=allTagPaths().map(x=>Object.assign(x,tagUsage(x.id),{created:tagById(x.id).created_time||0}));
+  rows.sort((a,b)=>sort==='count'?b.count-a.count:sort==='created'?b.created-a.created:b.recent-a.recent);
+  $('tagList').innerHTML=rows.length?rows.map(x=>`<button class="tag-list-row" data-open-tag="${x.id}"><b>#${esc(x.path)}</b><span>${x.count} 条记录</span><small>最近使用：${formatTagDate(x.recent)}</small></button>`).join(''):'<div class="empty">还没有标签。在记录里写下 #标签，就会出现在这里。</div>';
+}
+function replaceRelationIds(map,mapping,removed){Object.keys(map).forEach(k=>{map[k]=[...new Set((map[k]||[]).map(id=>mapping[id]||id).filter(id=>!removed.has(id)&&tagById(id)))];});}
+function migrateTag(sourceId,targetPath){
+  const oldBase=tagPath(sourceId),sourceIds=descendantTagIds(sourceId),mapping={};
+  sourceIds.sort((a,b)=>tagPath(a).split('/').length-tagPath(b).split('/').length).forEach(id=>{const old=tagPath(id),suffix=old.slice(oldBase.length).replace(/^\//,'');mapping[id]=ensureTagPath(targetPath+(suffix?'/'+suffix:''));});
+  const removed=new Set(sourceIds);replaceRelationIds(recordTags,mapping,removed);replaceRelationIds(goalTags,mapping,removed);replaceRelationIds(taskTags,mapping,removed);
+  log.forEach(e=>{e.text=String(e.text||'').replaceAll('#'+oldBase,'#'+normalizeTagPath(targetPath));});tags=tags.filter(t=>!removed.has(t.id));sourceIds.forEach(id=>bury('tag',id));saveTagData();LS.set('qyx_log',log);renderTagLibrary();openTagDetail(mapping[sourceId]);
+}
+function bindTagsFor(kind,id,current){
+  const value=prompt('输入关联标签（可多个，用空格分开）：',(current||[]).map(t=>'#'+tagPath(t)).join(' '));if(value===null)return;
+  const paths=parseTagPaths(value),ids=paths.map(ensureTagPath).filter(Boolean);if(kind==='goal')goalTags[id]=ids;else taskTags[id]=ids;saveTagData();renderMonth();renderEnough();
+}
+function initTagSystem(){
+  log.forEach((e,i)=>{ensureRecordId(e,i);indexRecordTags(e);});Object.keys(months).forEach(ym=>(months[ym]||[]).forEach((a,i)=>{if(!a.id)a.id=entityId('goal_',ym+'|'+a.text+'|'+i);}));
+  if(typeof enough!=='undefined'&&enough&&enough.items)enough.items.forEach((x,i)=>{if(!x.id)x.id=entityId('task_',enough.d+'|'+i+'|'+x.text);});saveTagData(true);LS.setSilent('qyx_log',log);LS.setSilent('qyx_months',months);if(typeof enough!=='undefined')LS.setSilent('qyx_enough',enough);
+}
 
 function ymNow(){
   const d = new Date();
@@ -1201,8 +1286,9 @@ document.querySelectorAll("nav button").forEach(b=>{
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
 function addLog(type, text, mood, src, q){
-  const entry = {t: Date.now(), type, text, mood: mood||null, src: src||null, q: q||null};
+  const entry = {id:entityId("rec_",Date.now()+"|"+Math.random()),t: Date.now(), type, text, mood: mood||null, src: src||null, q: q||null};
   log.push(entry);
+  indexRecordTags(entry,true);saveTagData(true);
   LS.set("qyx_log", log);
   return entry;
 }
@@ -1587,12 +1673,12 @@ function renderMonth(){
       <div class="anchor-head">
         <button class="achk">${a.done?"✓":""}</button>
         <span class="txt">${esc(a.text)}</span>
-        <button class="split-btn">拆一拆</button>
+        <button class="split-btn">拆一拆</button><button class="tag-bind"># 标签</button>
         <button class="trail" title="轨迹">◷</button>
         <button class="edit" title="编辑">✎</button>
         <button class="del" title="删除">✕</button>
       </div>
-      <div class="splits"></div>
+      <div class="entity-tags">${renderTagChips(goalTags[a.id]||[])}</div><div class="splits"></div>
       <div class="anchor-trail" style="display:none"></div>
       <div class="splitting">在拆…</div>`;
     const splitsBox = card.querySelector(".splits");
@@ -1645,6 +1731,7 @@ function renderMonth(){
       splitsBox.appendChild(add);
     }
     renderSplits();
+    card.querySelector(".tag-bind").onclick=()=>bindTagsFor("goal",a.id,goalTags[a.id]||[]);
     card.querySelector(".split-btn").onclick = async ()=>{
       const ing = card.querySelector(".splitting");
       ing.style.display = "block";
@@ -1699,6 +1786,7 @@ function renderMonth(){
       const anchors = monthAnchors();
       const idx = anchors.findIndex(x=>x.id===a.id);
       if(idx>-1) anchors.splice(idx,1);
+      delete goalTags[a.id];saveTagData(true);
       bury("anchor:"+ymNow(), a.text);
       saveMonths(); renderMonth();
     };
@@ -1928,7 +2016,7 @@ $("aiReviewBtn").onclick = async ()=>{
 let enough = LS.get("qyx_enough", null);
 const ENOUGH_STATUSES = ["completed","incomplete","expired","deleted"];
 const ENOUGH_SUB_STATUSES = ["completed","incomplete","expired"];
-function blankEnoughItem(){ return {text:"",done:false,status:"incomplete",updatedAt:0,subs:[]}; }
+function blankEnoughItem(){ return {id:entityId("task_",Date.now()+"|"+Math.random()),text:"",done:false,status:"incomplete",updatedAt:0,subs:[]}; }
 function enoughStatus(item){
   return item && ENOUGH_STATUSES.includes(item.status) ? item.status : (item&&item.done ? "completed" : "incomplete");
 }
@@ -1940,6 +2028,7 @@ function normalizeEnoughSub(sub){
 }
 function normalizeEnoughItem(item){
   item = item || blankEnoughItem();
+  if(!item.id)item.id=entityId("task_",Date.now()+"|"+Math.random());
   item.text = item.text || "";
   item.subs = (item.subs||[]).map(normalizeEnoughSub);
   item.status = enoughStatus(item);
@@ -1965,7 +2054,7 @@ function ensureEnough(){
     LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
   }
   enough.items = (enough.items||[]).map(normalizeEnoughItem).slice(0,3);
-  enough.items.forEach(i=>{if(i.status==="expired"){i.status="incomplete";i.done=false;}syncParentFromSubs(i);});
+  enough.items.forEach(i=>syncParentFromSubs(i));
   while(enough.items.length<3) enough.items.push(blankEnoughItem());
 }
 function renderEnough(){
@@ -2018,10 +2107,12 @@ function renderEnough(){
       box.appendChild(chip);
     });
   });
+  document.querySelectorAll("#enoughCard [data-task-tags]").forEach(box=>{const item=enough.items[+box.dataset.taskTags];box.innerHTML=renderTagChips(taskTags[item.id]||[]);});
   const filled = enough.items.filter(i=>i.text.trim()&&enoughStatus(i)!=="deleted");
   const allDone = filled.length===3 && filled.every(i=>enoughStatus(i)==="completed");
   $("enoughFin").style.display = allDone ? "block" : "none";
 }
+document.querySelectorAll("#enoughCard [data-task-tag]").forEach(b=>{b.onclick=()=>{const item=enough.items[+b.dataset.taskTag];bindTagsFor("task",item.id,taskTags[item.id]||[]);};});
 document.querySelectorAll("#enoughCard input").forEach(inp=>{
   inp.addEventListener("input", ()=>{
     const i=+inp.dataset.i,item=enough.items[i];
@@ -2059,7 +2150,7 @@ document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
     if(action==="delete"){
       if(!confirm("删除这件事？删除后不会进入昨日总结。")) return;
       (item.subs||[]).forEach(s=>bury("esub:"+enough.d,s.text));
-      enough.items[i]=blankEnoughItem();saveEnough();renderEnough();
+      delete taskTags[item.id];saveTagData(true);enough.items[i]=blankEnoughItem();saveEnough();renderEnough();
       toastDone("删掉了，不会进入昨日总结。");
     }
   };
@@ -2464,7 +2555,7 @@ $("applyPolish").onclick = ()=>{
 };
 
 /* ---------- 记录 ---------- */
-const logKey = e=>e.t+"|"+e.type+"|"+e.text;
+const logKey = e=>e.id||e.t+"|"+e.type+"|"+e.text;
 const TAG = {dice:"骰子", ai:"问一句", draw:"抽签", note:"记录", done:"完成", bonus:"bonus"};
 function dayKey(t){ const d = new Date(t); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function doneLogIdentity(e){ return `${dayKey(e.t)}|${e.type}|${e.src||""}|${e.text}`; }
@@ -2564,11 +2655,13 @@ function renderLog(){
       }else{
         inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<span class="etx">${esc(e.text)}</span>${extra}`;
       }
-      row.innerHTML = `<span class="t">${hm}</span><div class="body">${inner}</div><button class="ex" title="删除">✕</button>`;
+      const chips=renderTagChips(recordTags[e.id]||[]);
+      row.innerHTML = `<span class="t">${hm}</span><div class="body">${inner}${chips?`<div class="record-tags">${chips}</div>`:""}</div><button class="ex" title="删除">✕</button>`;
       row.querySelector(".ex").onclick = ()=>{
         if(!confirm("删掉这条？")) return;
         bury("log", logKey(e));
         log = log.filter(x=>x!==e);
+        delete recordTags[e.id];saveTagData(true);
         LS.set("qyx_log", log);
         renderLog();
         toastDone("删了。");
@@ -2762,6 +2855,7 @@ function buildExportBundle(){
   const inside=t=>t>=range.start.getTime()&&t<=range.end.getTime();
   const entries=[...log].filter(e=>inside(e.t)).sort((a,b)=>a.t-b.t);
   const bundle={meta:{app:"chop chop!",version:APP_VERSION,exportedAt:new Date().toISOString(),from:range.fromKey,to:range.toKey},range};
+  bundle.tagSystem={tags:tags.map(t=>Object.assign({},t,{path:tagPath(t.id)})),recordTags,goalTags,taskTags};
   if(parts.has("journals")) bundle.journals=entries.filter(e=>e.type==="note");
   if(parts.has("ai")){
     bundle.aiEntries=entries.filter(e=>e.type==="ai");
@@ -2808,6 +2902,7 @@ function buildExportMarkdown(b){
   }
   if(b.bottles){ lines.push("## 瓶子内容",""); b.bottles.length?b.bottles.forEach(x=>{ lines.push("### "+dt(x.t),"",x.text,""); (x.followups||[]).forEach(f=>lines.push("- 后续 "+dt(f.t)+"："+f.text)); }):lines.push("这段时间没有瓶子。",""); }
   if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
+  if(b.tagSystem&&b.tagSystem.tags.length){lines.push("## 标签索引","");b.tagSystem.tags.forEach(t=>lines.push("- #"+t.path+"（"+tagUsage(t.id).count+" 条记录）"));lines.push("");}
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()+"\n";
 }
 function downloadText(name,text,type){
@@ -2877,8 +2972,8 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.0.6";
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_dead"];
+const APP_VERSION = "3.5.0";
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -2943,6 +3038,11 @@ function mergeAll(o){
   });
   if(dead.length>300) dead = dead.slice(-300);
   LS.setSilent("qyx_dead", dead);
+  const tagMap=new Map(tags.map(t=>[t.id,t]));
+  (o.qyx_tags||[]).forEach(t=>{if(!isDead("tag",t.id)){const old=tagMap.get(t.id);if(!old||(t.updated_time||0)>(old.updated_time||0))tagMap.set(t.id,t);}});
+  tags=[...tagMap.values()].filter(t=>!isDead("tag",t.id));
+  const mergeRelations=(local,remote)=>{const out=Object.assign({},local||{});Object.keys(remote||{}).forEach(k=>{out[k]=[...new Set([...(out[k]||[]),...(remote[k]||[])])].filter(id=>tagMap.has(id)&&!isDead("tag",id));});return out;};
+  recordTags=mergeRelations(recordTags,o.qyx_record_tags);goalTags=mergeRelations(goalTags,o.qyx_goal_tags);taskTags=mergeRelations(taskTags,o.qyx_task_tags);saveTagData(true);
   // 日志：按 时间+类型+内容 去重取并集
   const logMap = new Map(log.map(e=>[logKey(e), e]));
   (o.qyx_log||[]).forEach(e=>{
@@ -3027,10 +3127,10 @@ function mergeAll(o){
       const rit = (re.items||[])[i];
       if(!rit) return;
       normalizeEnoughItem(it);normalizeEnoughItem(rit);
-      if(!it.text.trim() && rit.text) it.text = rit.text;
+      if(!it.text.trim() && rit.text){it.text = rit.text;if(rit.id)it.id=rit.id;}
       const localUpdated=it.updatedAt||0,remoteUpdated=rit.updatedAt||0;
       const statusWinner=remoteUpdated>localUpdated?rit:it;
-      it.status=enoughStatus(statusWinner)==="completed"?"completed":"incomplete";
+      it.status=enoughStatus(statusWinner);
       it.done=it.status==="completed";
       it.updatedAt=Math.max(localUpdated,remoteUpdated);
       const norm = a=>(a||[]).map(normalizeEnoughSub);
@@ -3046,11 +3146,12 @@ function mergeAll(o){
       });
       it.subs = [...sm.values()];
       syncParentFromSubs(it);
+      if(rit.id&&rit.id!==it.id)taskTags[it.id]=[...new Set([...(taskTags[it.id]||[]),...(taskTags[rit.id]||[])])];
     });
     LS.setSilent("qyx_enough", enough);
   } else if(re && re.d===today && (!enough || enough.d!==today)){
     enough = re;
-    enough.items=(enough.items||[]).map(normalizeEnoughItem).slice(0,3);enough.items.forEach(i=>{if(i.status==="expired"){i.status="incomplete";i.done=false;}syncParentFromSubs(i);});while(enough.items.length<3)enough.items.push(blankEnoughItem());
+    enough.items=(enough.items||[]).map(normalizeEnoughItem).slice(0,3);enough.items.forEach(i=>syncParentFromSubs(i));while(enough.items.length<3)enough.items.push(blankEnoughItem());
     LS.setSilent("qyx_enough", enough);
   }
   const rp = o.qyx_enough_prev;
@@ -3100,11 +3201,12 @@ function mergeAll(o){
   if(o.qyx_sit_reminder && !LS.get("qyx_sit_reminder","")){
     LS.setSilent("qyx_sit_reminder", o.qyx_sit_reminder);
   }
+  saveTagData(true);
   const after = JSON.stringify(BACKUP_KEYS.map(k=>LS.get(k,null)));
   return before !== after;
 }
 function rerenderAll(){
-  ensureEnough(); renderEnough();
+  ensureEnough(); initTagSystem(); renderEnough();
   ensureBonus(); renderBonus();
   renderOpts(); renderBench(); renderOngoing(); renderMonth(); renderHabits(); renderSea(); renderRules(); renderLog();
 }
@@ -3279,6 +3381,24 @@ async function checkUpdate(){
 }
 
 /* ---------- settings ---------- */
+$('openTagLibrary').onclick=()=>{$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=false;$('tagDetailView').hidden=true;renderTagLibrary();};
+$('closeTagLibrary').onclick=$('closeTagDetail').onclick=()=>$('tagLibraryBg').classList.remove('show');
+$('tagLibraryBg').onclick=e=>{if(e.target===$('tagLibraryBg'))$('tagLibraryBg').classList.remove('show');};
+$('tagBack').onclick=()=>{$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();};
+$('tagSort').onchange=renderTagLibrary;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-open-tag]');if(b){e.preventDefault();e.stopPropagation();openTagDetail(b.dataset.openTag);}});
+$('renameTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=prompt('修改完整标签路径：','#'+old);if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('新标签不能放进自己的子层级。');return;}migrateTag(activeTagId,path);toastDone('标签和历史关联都迁移好了。');};
+$('mergeTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=prompt('合并到哪个标签？输入完整路径：','');if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('不能合并到自己的子标签。');return;}migrateTag(activeTagId,path);toastDone('标签已经合并。');};
+$('deleteTag').onclick=()=>{if(!activeTagId)return;const ids=descendantTagIds(activeTagId),name=tagPath(activeTagId);if(!confirm('删除 #'+name+' 及其子标签的关联？原记录不会删除。'))return;const removed=new Set(ids);replaceRelationIds(recordTags,{},removed);replaceRelationIds(goalTags,{},removed);replaceRelationIds(taskTags,{},removed);ids.forEach(id=>bury('tag',id));tags=tags.filter(t=>!removed.has(t.id));saveTagData();$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();toastDone('只删了标签关系，原记录还在。');};
+
+function updateTagSuggest(){
+  const el=$('noteText'),box=$('tagSuggest'),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|\s)#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
+  const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,6),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
+  box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('');box.classList.toggle('show',!!items.length);
+}
+$('noteText').addEventListener('input',updateTagSuggest);$('noteText').addEventListener('click',updateTagSuggest);
+$('tagSuggest').onclick=e=>{const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=$('noteText'),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);$('tagSuggest').classList.remove('show');};
+
 $("gearBtn").onclick = ()=>{
   $("apiKey").value = LS.get("qyx_key","");
   $("provider").value = LS.get("qyx_provider","anthropic");
@@ -3307,12 +3427,13 @@ $("saveSettings").onclick = ()=>{
   toastDone("保存了。");
 };
 
+ensureEnough();
+initTagSystem();
 renderOpts();
 renderBench();
 renderOngoing();
 renderMonth();
 renderSea();
-ensureEnough();
 renderEnough();
 ensureBonus();
 renderBonus();
