@@ -168,7 +168,7 @@ header{
 .esub.sdone .chk{background:var(--sage-deep);border-color:var(--sage-deep)}
 .esub.sdone .stx{text-decoration:line-through;opacity:.6}
 .esub.sexpired{background:rgba(244,229,218,.58);border-color:rgba(194,134,99,.36);color:#A06E53}.esub.sexpired .chk{background:#C48663;border-color:#C48663}.esub.sexpired .stx{text-decoration:none;opacity:.72}
-.esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}
+.esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}.task-goal-btn{flex-shrink:0;border:0;background:transparent;color:#67805A;font:600 9.5px var(--sans);padding:4px 2px;cursor:pointer}.task-goal-chip{border:1px solid rgba(95,127,82,.2);background:#F1F6EC;color:#5E7951;border-radius:999px;padding:3px 8px;cursor:pointer;font:600 9.5px "Noto Serif SC",var(--kai)}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
 
@@ -403,10 +403,10 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
   width:22px;height:22px;border-radius:50%;flex-shrink:0;cursor:pointer;
   border:2px solid var(--sage);background:transparent;padding:0;
   font-size:12px;color:#fff;display:flex;align-items:center;justify-content:center;
-  transition:all .15s ease;
+  transition:all .15s ease;position:relative;overflow:visible;
 }
-.anchor.adone .achk{background:var(--sage-deep);border-color:var(--sage-deep)}
-.anchor.adone .anchor-head .txt{text-decoration:line-through;opacity:.55}
+.anchor.adone .achk{background:linear-gradient(145deg,#8BA775,#688A57);border-color:#789563;box-shadow:0 4px 11px rgba(99,130,79,.28)}
+.anchor.adone .anchor-head .txt{text-decoration:none;opacity:1;color:#5E6F54;font-weight:600}.medal-crown{position:absolute;right:-7px;top:-12px;color:#D39A35;font-size:11px;line-height:1;text-shadow:0 1px 0 #fff}.medal-check{line-height:1}
 .past-month{font-family:var(--kai);font-size:13.5px;color:var(--ink-soft);padding:5px 4px;line-height:1.8}
 .pm-ym{font-weight:700;color:var(--ink);margin-right:10px}
 .split-add{
@@ -740,7 +740,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 /* 导出中心：复用设置与历史记录中的既有入口 */
 .export-modal .modal{max-height:88vh}.export-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.export-close{border:0;background:transparent;color:var(--ink-soft);font-size:20px;cursor:pointer}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.export-grid .wide{grid-column:1/-1}.export-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 14px}.export-checks label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid rgba(75,66,55,.1);border-radius:12px;background:rgba(255,255,255,.52);color:var(--ink);font-size:11px}.export-checks input{width:auto}.export-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-formats button,.export-open-btn{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:14px;padding:11px;color:var(--ink);cursor:pointer;font-family:var(--sans)}.export-formats button:first-child{background:#EEF4E9;color:#5F7B4E}.export-hint{min-height:18px;margin-top:9px!important;color:#718466!important}.custom-range[hidden]{display:none}.settings-export{width:100%;margin-top:7px}
 .tag-suggest{display:none;position:absolute;left:18px;right:18px;top:118px;z-index:12;padding:7px;background:rgba(255,253,249,.98);border:1px solid rgba(108,132,89,.2);border-radius:14px;box-shadow:0 12px 28px rgba(75,66,55,.14)}.tag-suggest.show{display:grid;gap:3px}.tag-suggest button{border:0;background:transparent;text-align:left;padding:7px 9px;border-radius:9px;color:#5D7550;cursor:pointer;font:500 11px "Noto Serif SC",var(--kai)}.tag-chip{border:0;background:#EAF1E4;color:#60784F;border-radius:999px;padding:3px 8px;cursor:pointer;font:500 9.5px "Noto Serif SC",var(--kai);white-space:nowrap}.record-tags,.entity-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.task-tag-row{display:flex;flex-wrap:wrap;gap:4px;margin:-3px 0 4px 72px}.tag-bind,.task-tag-btn{border:0;background:transparent;color:#71875F;cursor:pointer;font:600 10px "Noto Serif SC",var(--kai);padding:4px}.tag-memory-card{padding:18px 20px;margin:17px 0;border-radius:24px;display:flex;align-items:center;gap:13px}.tag-memory-card>span{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#E8F0E3;color:#668653;font-size:20px}.tag-memory-card div{flex:1}.tag-memory-card b,.tag-memory-card small{display:block}.tag-memory-card b{font:600 17px "Noto Serif SC",var(--kai)}.tag-memory-card small{font-size:10.5px;color:var(--ink-soft);margin-top:2px}.tag-memory-card button{border:1px solid rgba(96,120,79,.2);background:#fff;border-radius:999px;padding:8px 13px;color:#60784F;cursor:pointer}.tag-modal .modal{max-width:570px;max-height:88vh}.tag-toolbar{display:flex;gap:8px;align-items:center;margin:10px 0}.tag-toolbar select{margin:0}.tag-list{display:grid;gap:7px}.tag-list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer}.tag-list-item .tag-main{flex:1;min-width:0}.tag-list-item b,.tag-list-item small{display:block}.tag-list-item b{font:600 12px "Noto Serif SC",var(--kai);color:#526548;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag-list-item small{font-size:9.5px;color:#918A80;margin-top:2px}.tag-count{font-size:10px;color:#71875F}.tag-empty{padding:24px;text-align:center;color:var(--ink-soft);font:500 11px "Noto Serif SC",var(--kai)}.tag-detail-head{display:flex;align-items:center;gap:8px}.tag-back{border:0;background:transparent;color:#71875F;cursor:pointer}.tag-detail-stats{padding:10px 12px;margin:10px 0;border-radius:13px;background:#F1F5ED;color:#66745D;font-size:10px;line-height:1.8}.tag-manage{display:flex;gap:6px;margin-bottom:12px}.tag-manage button{border:1px solid rgba(75,66,55,.1);background:#fff;border-radius:999px;padding:6px 10px;color:#786F65;cursor:pointer;font-size:10px}.tag-related h4{margin:13px 0 6px;font:600 11px "Noto Serif SC",var(--kai);color:#6A7B5F}.tag-record{padding:8px 0;border-bottom:1px dashed rgba(75,66,55,.1);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#5D574F}.tag-record time{display:block;color:#9A9186;font-size:9px}.tag-modal [hidden]{display:none!important}
-.tag-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.tag-head h3,.tag-head p{margin:0}.tag-head p{margin-top:3px}.tag-close{border:0;background:transparent;font-size:22px;color:#8D857B;cursor:pointer}.tag-list-row{display:grid;grid-template-columns:1fr auto;text-align:left;gap:3px 10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer;color:#5D574F}.tag-list-row b{color:#526548}.tag-list-row small{grid-column:1/-1;color:#918A80}.tag-related-row{padding:9px 0;border-bottom:1px dashed rgba(75,66,55,.1)}.tag-related-row time{font-size:9px;color:#9A9186}.tag-related-row p{margin:2px 0}.tag-manage .danger{color:#B56E5B}
+.tag-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.tag-head h3,.tag-head p{margin:0}.tag-head p{margin-top:3px}.tag-close{border:0;background:transparent;font-size:22px;color:#8D857B;cursor:pointer}.tag-list-row{display:grid;grid-template-columns:1fr auto;text-align:left;gap:3px 10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer;color:#5D574F}.tag-list-row b{color:#526548}.tag-list-row small{grid-column:1/-1;color:#918A80}.tag-related-row{padding:9px 0;border-bottom:1px dashed rgba(75,66,55,.1)}.tag-related-row time{font-size:9px;color:#9A9186}.tag-related-row p{margin:2px 0}.tag-manage .danger{color:#B56E5B}.tag-tree-node{margin-left:0}.tag-tree-row{display:flex;align-items:stretch;gap:3px;margin-bottom:6px}.tag-tree-toggle,.tag-tree-spacer{width:25px;flex:0 0 25px}.tag-tree-toggle{border:0;background:transparent;color:#7E8D75;cursor:pointer;font-size:14px}.tag-tree-main{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto;gap:2px 8px;text-align:left;padding:10px 12px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer;color:#5D574F}.tag-tree-main b{color:#526548;overflow:hidden;text-overflow:ellipsis}.tag-tree-main small{grid-column:1/-1;color:#918A80}.tag-tree-children{margin:1px 0 0 12px;padding-left:7px;border-left:1px solid rgba(96,120,79,.13)}#enoughCard .enough-row{gap:6px}#enoughCard .enough-row input{min-width:0}
 nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{border-radius:25px;padding:8px 0 7px}nav button.on{background:linear-gradient(135deg,#FF955B,var(--v3-orange))}
 .modal{background:rgba(255,252,247,.96)}
 
@@ -853,11 +853,11 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 
     <div class="glass enough" id="enoughCard">
       <div class="v3-card-label"><span>✦</span><div><b>今天只做三件事</b><small>聚焦重点，少即是多。</small></div></div>
-      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-tag-btn" data-task-tag="0">#</button><button class="task-delete" data-task-action="delete" data-i="0">删除</button></div><div class="task-tag-row" data-task-tags="0"></div>
+      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="0">关联目标</button><button class="task-tag-btn" data-task-tag="0" title="添加主题标签"># 标签</button><button class="task-delete" data-task-action="delete" data-i="0">删除</button></div><div class="task-tag-row" data-task-tags="0"></div>
       <div class="esubs" data-i="0"></div>
-      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-tag-btn" data-task-tag="1">#</button><button class="task-delete" data-task-action="delete" data-i="1">删除</button></div><div class="task-tag-row" data-task-tags="1"></div>
+      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="1">关联目标</button><button class="task-tag-btn" data-task-tag="1" title="添加主题标签"># 标签</button><button class="task-delete" data-task-action="delete" data-i="1">删除</button></div><div class="task-tag-row" data-task-tags="1"></div>
       <div class="esubs" data-i="1"></div>
-      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-tag-btn" data-task-tag="2">#</button><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div><div class="task-tag-row" data-task-tags="2"></div>
+      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="2">关联目标</button><button class="task-tag-btn" data-task-tag="2" title="添加主题标签"># 标签</button><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div><div class="task-tag-row" data-task-tags="2"></div>
       <div class="esubs" data-i="2"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
     </div>
@@ -1177,7 +1177,9 @@ let tags = LS.get("qyx_tags", []);
 let recordTags = LS.get("qyx_record_tags", {});
 let goalTags = LS.get("qyx_goal_tags", {});
 let taskTags = LS.get("qyx_task_tags", {});
+let taskGoals = LS.get("qyx_task_goals", {});
 let activeTagId = null;
+let tagTreeOpen = new Set(LS.get("qyx_tag_tree_open", []));
 
 function stableId(prefix, value){
   let h=2166136261;for(const ch of String(value)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return prefix+(h>>>0).toString(36);
@@ -1199,7 +1201,7 @@ function ensureTagPath(raw,revive=true){
   return blocked?null:parent;
 }
 function descendantTagIds(id){const set=new Set([id]);let changed=true;while(changed){changed=false;tags.forEach(t=>{if(t.parent_id&&set.has(t.parent_id)&&!set.has(t.id)){set.add(t.id);changed=true;}});}return [...set];}
-function saveTagData(silent=false){const fn=silent?LS.setSilent:LS.set;fn("qyx_tags",tags);fn("qyx_record_tags",recordTags);fn("qyx_goal_tags",goalTags);fn("qyx_task_tags",taskTags);}
+function saveTagData(silent=false){const fn=silent?LS.setSilent:LS.set;fn("qyx_tags",tags);fn("qyx_record_tags",recordTags);fn("qyx_goal_tags",goalTags);fn("qyx_task_tags",taskTags);fn("qyx_task_goals",taskGoals);}
 function ensureRecordId(e,i){if(!e.id)e.id=entityId("rec_",(e.t||0)+"|"+(e.type||"")+"|"+(e.text||"")+"|"+i);return e.id;}
 function indexRecordTags(e,force=false){
   const id=ensureRecordId(e,log.indexOf(e)),parsed=parseTagPaths(e.text).map(p=>ensureTagPath(p,force)).filter(Boolean);
@@ -1220,9 +1222,11 @@ function openTagDetail(id){
   html+='<h4>相关目标</h4>'+(goals.length?goals.map(x=>`<article class="tag-related-row"><time>${esc(x.ym)}</time><p>${esc(x.a.text)}</p></article>`).join(''):'<p class="empty">还没有关联目标。</p>');$('tagRelated').innerHTML=html;
 }
 function renderTagLibrary(){
-  const sort=$('tagSort').value;let rows=allTagPaths().map(x=>Object.assign(x,tagUsage(x.id),{created:tagById(x.id).created_time||0}));
-  rows.sort((a,b)=>sort==='count'?b.count-a.count:sort==='created'?b.created-a.created:b.recent-a.recent);
-  $('tagList').innerHTML=rows.length?rows.map(x=>`<button class="tag-list-row" data-open-tag="${x.id}"><b>#${esc(x.path)}</b><span>${x.count} 条记录</span><small>最近使用：${formatTagDate(x.recent)}</small></button>`).join(''):'<div class="empty">还没有标签。在记录里写下 #标签，就会出现在这里。</div>';
+  const sort=$('tagSort').value,metric=t=>Object.assign({tag:t},tagUsage(t.id),{created:t.created_time||0});
+  const compare=(a,b)=>sort==='count'?b.count-a.count:sort==='created'?b.created-a.created:b.recent-a.recent;
+  const childrenOf=parent=>tags.filter(t=>parent?t.parent_id===parent:!t.parent_id||!tagById(t.parent_id)).map(metric).sort(compare);
+  const branch=(parent,depth)=>childrenOf(parent).map(x=>{const kids=childrenOf(x.tag.id),open=tagTreeOpen.has(x.tag.id);return `<div class="tag-tree-node" style="--depth:${depth}"><div class="tag-tree-row">${kids.length?`<button class="tag-tree-toggle" data-tag-toggle="${x.tag.id}" aria-label="${open?'收起':'展开'}">${open?'▾':'▸'}</button>`:'<span class="tag-tree-spacer"></span>'}<button class="tag-tree-main" data-open-tag="${x.tag.id}"><b>#${esc(x.tag.name)}</b><span>${x.count} 条记录</span><small>最近使用：${formatTagDate(x.recent)}</small></button></div>${kids.length&&open?`<div class="tag-tree-children">${branch(x.tag.id,depth+1)}</div>`:''}</div>`;}).join('');
+  $('tagList').innerHTML=tags.length?branch(null,0):'<div class="empty">还没有标签。在记录里写下 #标签，就会出现在这里。</div>';
 }
 function replaceRelationIds(map,mapping,removed){Object.keys(map).forEach(k=>{map[k]=[...new Set((map[k]||[]).map(id=>mapping[id]||id).filter(id=>!removed.has(id)&&tagById(id)))];});}
 function migrateTag(sourceId,targetPath){
@@ -1235,6 +1239,14 @@ function bindTagsFor(kind,id,current){
   const value=prompt('输入关联标签（可多个，用空格分开）：',(current||[]).map(t=>'#'+tagPath(t)).join(' '));if(value===null)return;
   const paths=parseTagPaths(value),ids=paths.map(ensureTagPath).filter(Boolean);if(kind==='goal')goalTags[id]=ids;else taskTags[id]=ids;saveTagData();renderMonth();renderEnough();
 }
+function goalById(id){for(const ym of Object.keys(months)){const found=(months[ym]||[]).find(a=>String(a.id)===String(id));if(found)return found;}return null;}
+function bindGoalForTask(item){
+  const goals=monthAnchors();if(!goals.length){toastDone('先在「目标」页写下一个本月方向。');return;}
+  const current=taskGoals[item.id],lines=goals.map((g,i)=>`${i+1}. ${g.text}${String(g.id)===String(current)?'（当前）':''}`).join('\n');
+  const value=prompt(`关联到哪个本月目标？\n\n${lines}\n\n输入编号；输入 0 取消关联。`,current?String(goals.findIndex(g=>String(g.id)===String(current))+1):'');if(value===null)return;
+  const n=Number(value);if(n===0||value.trim()===''){taskGoals[item.id]=null;}else if(Number.isInteger(n)&&goals[n-1])taskGoals[item.id]=goals[n-1].id;else{toastDone('没有找到这个编号。');return;}saveTagData();renderEnough();
+}
+function renderTaskRelations(item){const goal=goalById(taskGoals[item.id]),ids=[...(taskTags[item.id]||[]),...(goal?(goalTags[goal.id]||[]):[])];return `${goal?`<button class="task-goal-chip" data-rebind-goal="${item.id}">↗ 月目标：${esc(goal.text)}</button>`:''}${renderTagChips([...new Set(ids)])}`;}
 function initTagSystem(){
   log.forEach((e,i)=>{ensureRecordId(e,i);indexRecordTags(e);});Object.keys(months).forEach(ym=>(months[ym]||[]).forEach((a,i)=>{if(!a.id)a.id=entityId('goal_',ym+'|'+a.text+'|'+i);}));
   if(typeof enough!=='undefined'&&enough&&enough.items)enough.items.forEach((x,i)=>{if(!x.id)x.id=entityId('task_',enough.d+'|'+i+'|'+x.text);});saveTagData(true);LS.setSilent('qyx_log',log);LS.setSilent('qyx_months',months);if(typeof enough!=='undefined')LS.setSilent('qyx_enough',enough);
@@ -1289,7 +1301,7 @@ document.querySelectorAll("nav button").forEach(b=>{
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
 function addLog(type, text, mood, src, q){
-  const entry = {id:entityId("rec_",Date.now()+"|"+Math.random()),t: Date.now(), type, text, mood: mood||null, src: src||null, q: q||null};
+  const now=Date.now(),entry = {id:entityId("rec_",now+"|"+Math.random()),t:now,updatedAt:now,type,text,mood:mood||null,src:src||null,q:q||null};
   log.push(entry);
   indexRecordTags(entry,true);saveTagData(true);
   LS.set("qyx_log", log);
@@ -1674,7 +1686,7 @@ function renderMonth(){
     card.className = "anchor glass" + (a.done ? " adone" : "");
     card.innerHTML = `
       <div class="anchor-head">
-        <button class="achk">${a.done?"✓":""}</button>
+        <button class="achk" title="${a.done?'完成勋章':'标记完成'}">${a.done?'<span class="medal-check">✓</span><span class="medal-crown">♛</span>':''}</button>
         <span class="txt">${esc(a.text)}</span>
         <button class="split-btn">拆一拆</button><button class="tag-bind"># 标签</button>
         <button class="trail" title="轨迹">◷</button>
@@ -1707,8 +1719,9 @@ function renderMonth(){
           }
         };
         chip.querySelector(".to-today").onclick = ()=>{
-          addToOpts(sp.text);
-          toastDone("排进今天了。");
+          ensureEnough();const existing=enough.items.find(x=>x.text.trim()===sp.text),slot=existing||enough.items.find(x=>!x.text.trim());
+          if(slot){slot.text=sp.text;slot.updatedAt=Date.now();taskGoals[slot.id]=a.id;saveEnough();saveTagData();renderEnough();toastDone("排进今天了，也关联了这个月度目标。");}
+          else{addToOpts(sp.text);toastDone("今天三件已经满了，先放进待选。");}
         };
         chip.querySelector(".x").onclick = ()=>{
           a.splits.splice(si,1);
@@ -1789,6 +1802,7 @@ function renderMonth(){
       const anchors = monthAnchors();
       const idx = anchors.findIndex(x=>x.id===a.id);
       if(idx>-1) anchors.splice(idx,1);
+      Object.keys(taskGoals).forEach(k=>{if(String(taskGoals[k])===String(a.id))taskGoals[k]=null;});
       delete goalTags[a.id];saveTagData(true);
       bury("anchor:"+ymNow(), a.text);
       saveMonths(); renderMonth();
@@ -2110,12 +2124,14 @@ function renderEnough(){
       box.appendChild(chip);
     });
   });
-  document.querySelectorAll("#enoughCard [data-task-tags]").forEach(box=>{const item=enough.items[+box.dataset.taskTags];box.innerHTML=renderTagChips(taskTags[item.id]||[]);});
+  document.querySelectorAll("#enoughCard [data-task-tags]").forEach(box=>{const item=enough.items[+box.dataset.taskTags];box.innerHTML=renderTaskRelations(item);});
   const filled = enough.items.filter(i=>i.text.trim()&&enoughStatus(i)!=="deleted");
   const allDone = filled.length===3 && filled.every(i=>enoughStatus(i)==="completed");
   $("enoughFin").style.display = allDone ? "block" : "none";
 }
 document.querySelectorAll("#enoughCard [data-task-tag]").forEach(b=>{b.onclick=()=>{const item=enough.items[+b.dataset.taskTag];bindTagsFor("task",item.id,taskTags[item.id]||[]);};});
+document.querySelectorAll("#enoughCard [data-task-goal]").forEach(b=>{b.onclick=()=>{const item=enough.items[+b.dataset.taskGoal];if(!item.text.trim()){toastDone('先写上这件事。');return;}bindGoalForTask(item);};});
+document.querySelectorAll("#enoughCard [data-task-tags]").forEach(box=>{box.onclick=e=>{const b=e.target.closest('[data-rebind-goal]');if(!b)return;const item=enough.items.find(x=>String(x.id)===String(b.dataset.rebindGoal));if(item)bindGoalForTask(item);};});
 document.querySelectorAll("#enoughCard input").forEach(inp=>{
   inp.addEventListener("input", ()=>{
     const i=+inp.dataset.i,item=enough.items[i];
@@ -2153,7 +2169,7 @@ document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
     if(action==="delete"){
       if(!confirm("删除这件事？删除后不会进入昨日总结。")) return;
       (item.subs||[]).forEach(s=>bury("esub:"+enough.d,s.text));
-      delete taskTags[item.id];saveTagData(true);enough.items[i]=blankEnoughItem();saveEnough();renderEnough();
+      delete taskTags[item.id];taskGoals[item.id]=null;saveTagData(true);enough.items[i]=blankEnoughItem();saveEnough();renderEnough();
       toastDone("删掉了，不会进入昨日总结。");
     }
   };
@@ -2684,8 +2700,7 @@ function renderLog(){
       if(etx) etx.onclick = ()=>{
         const v = prompt("改一改：", e.text);
         if(v && v.trim() && v.trim()!==e.text){
-          bury("log", logKey(e));
-          e.text = v.trim();
+          const oldId=e.id,now=Date.now();bury("log",logKey(e));e.id=entityId("rec_",oldId+"|edit|"+now);e.text=v.trim();e.updatedAt=now;delete recordTags[oldId];recordTags[e.id]=[];indexRecordTags(e,true);saveTagData(true);
           LS.set("qyx_log", log);
           renderLog();
         }
@@ -2869,7 +2884,7 @@ function buildExportBundle(){
   const inside=t=>t>=range.start.getTime()&&t<=range.end.getTime();
   const entries=[...log].filter(e=>inside(e.t)).sort((a,b)=>a.t-b.t);
   const bundle={meta:{app:"chop chop!",version:APP_VERSION,exportedAt:new Date().toISOString(),from:range.fromKey,to:range.toKey},range};
-  bundle.tagSystem={tags:tags.map(t=>Object.assign({},t,{path:tagPath(t.id)})),recordTags,goalTags,taskTags};
+  bundle.tagSystem={tags:tags.map(t=>Object.assign({},t,{path:tagPath(t.id)})),recordTags,goalTags,taskTags,taskGoals};
   if(parts.has("journals")) bundle.journals=entries.filter(e=>e.type==="note");
   if(parts.has("ai")){
     bundle.aiEntries=entries.filter(e=>e.type==="ai");
@@ -2986,8 +3001,8 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.3";
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_dead"];
+const APP_VERSION = "3.5.4";
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -3056,12 +3071,12 @@ function mergeAll(o){
   (o.qyx_tags||[]).forEach(t=>{if(!isDead("tag",t.id)){const old=tagMap.get(t.id);if(!old||(t.updated_time||0)>(old.updated_time||0))tagMap.set(t.id,t);}});
   tags=[...tagMap.values()].filter(t=>!isDead("tag",t.id));
   const mergeRelations=(local,remote)=>{const out=Object.assign({},local||{});Object.keys(remote||{}).forEach(k=>{out[k]=[...new Set([...(out[k]||[]),...(remote[k]||[])])].filter(id=>tagMap.has(id)&&!isDead("tag",id));});return out;};
-  recordTags=mergeRelations(recordTags,o.qyx_record_tags);goalTags=mergeRelations(goalTags,o.qyx_goal_tags);taskTags=mergeRelations(taskTags,o.qyx_task_tags);saveTagData(true);
+  recordTags=mergeRelations(recordTags,o.qyx_record_tags);goalTags=mergeRelations(goalTags,o.qyx_goal_tags);taskTags=mergeRelations(taskTags,o.qyx_task_tags);taskGoals=Object.assign({},o.qyx_task_goals||{},taskGoals||{});saveTagData(true);
   // 日志：按 时间+类型+内容 去重取并集
   const logMap = new Map(log.map(e=>[logKey(e), e]));
   (o.qyx_log||[]).forEach(e=>{
     const k = logKey(e);
-    if(!logMap.has(k) && !isDead("log", k)) logMap.set(k, e);
+    if(!isDead("log",k)&&(!logMap.has(k)||(e.updatedAt||e.t||0)>(logMap.get(k).updatedAt||logMap.get(k).t||0)))logMap.set(k,e);
   });
   log = dedupeDoneLogEntries([...logMap.values()]);
   LS.setSilent("qyx_log", log);
@@ -3160,7 +3175,7 @@ function mergeAll(o){
       });
       it.subs = [...sm.values()];
       syncParentFromSubs(it);
-      if(rit.id&&rit.id!==it.id)taskTags[it.id]=[...new Set([...(taskTags[it.id]||[]),...(taskTags[rit.id]||[])])];
+      if(rit.id&&rit.id!==it.id){taskTags[it.id]=[...new Set([...(taskTags[it.id]||[]),...(taskTags[rit.id]||[])])];if(!taskGoals[it.id]&&taskGoals[rit.id])taskGoals[it.id]=taskGoals[rit.id];}
     });
     LS.setSilent("qyx_enough", enough);
   } else if(re && re.d===today && (!enough || enough.d!==today)){
@@ -3400,6 +3415,7 @@ $('closeTagLibrary').onclick=$('closeTagDetail').onclick=()=>$('tagLibraryBg').c
 $('tagLibraryBg').onclick=e=>{if(e.target===$('tagLibraryBg'))$('tagLibraryBg').classList.remove('show');};
 $('tagBack').onclick=()=>{$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();};
 $('tagSort').onchange=renderTagLibrary;
+$('tagList').onclick=e=>{const b=e.target.closest('[data-tag-toggle]');if(!b)return;e.preventDefault();e.stopPropagation();const id=b.dataset.tagToggle;if(tagTreeOpen.has(id))tagTreeOpen.delete(id);else tagTreeOpen.add(id);LS.setSilent('qyx_tag_tree_open',[...tagTreeOpen]);renderTagLibrary();};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-open-tag]');if(b){e.preventDefault();e.stopPropagation();openTagDetail(b.dataset.openTag);}});
 $('renameTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=prompt('修改完整标签路径：','#'+old);if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('新标签不能放进自己的子层级。');return;}migrateTag(activeTagId,path);toastDone('标签和历史关联都迁移好了。');};
 $('mergeTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=prompt('合并到哪个标签？输入完整路径：','');if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('不能合并到自己的子标签。');return;}migrateTag(activeTagId,path);toastDone('标签已经合并。');};
