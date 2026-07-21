@@ -403,10 +403,10 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
   width:22px;height:22px;border-radius:50%;flex-shrink:0;cursor:pointer;
   border:2px solid var(--sage);background:transparent;padding:0;
   font-size:12px;color:#fff;display:flex;align-items:center;justify-content:center;
-  transition:all .15s ease;position:relative;overflow:visible;
+  transition:all .15s ease;
 }
 .anchor.adone .achk{background:linear-gradient(145deg,#8BA775,#688A57);border-color:#789563;box-shadow:0 4px 11px rgba(99,130,79,.28)}
-.anchor.adone .anchor-head .txt{text-decoration:none;opacity:1;color:#5E6F54;font-weight:600}.medal-crown{position:absolute;right:-7px;top:-12px;color:#D39A35;font-size:11px;line-height:1;text-shadow:0 1px 0 #fff}.medal-check{line-height:1}
+.anchor.adone .anchor-head .txt{text-decoration:none;opacity:1;color:#5E6F54;font-weight:600}.goal-crown{display:inline-block;margin-left:8px;color:#C88D2C;font-size:1.16em;line-height:1;vertical-align:-.04em;text-shadow:0 1px 0 rgba(255,255,255,.92)}.medal-check{line-height:1}
 .past-month{font-family:var(--kai);font-size:13.5px;color:var(--ink-soft);padding:5px 4px;line-height:1.8}
 .pm-ym{font-weight:700;color:var(--ink);margin-right:10px}
 .split-add{
@@ -1686,8 +1686,8 @@ function renderMonth(){
     card.className = "anchor glass" + (a.done ? " adone" : "");
     card.innerHTML = `
       <div class="anchor-head">
-        <button class="achk" title="${a.done?'完成勋章':'标记完成'}">${a.done?'<span class="medal-check">✓</span><span class="medal-crown">♛</span>':''}</button>
-        <span class="txt">${esc(a.text)}</span>
+    <button class="achk" title="${a.done?'完成勋章':'标记完成'}">${a.done?'<span class="medal-check">✓</span>':''}</button>
+    <span class="txt">${esc(a.text)}${a.done?'<span class="goal-crown" aria-label="已完成">♛</span>':''}</span>
         <button class="split-btn">拆一拆</button><button class="tag-bind"># 标签</button>
         <button class="trail" title="轨迹">◷</button>
         <button class="edit" title="编辑">✎</button>
@@ -3001,7 +3001,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.4";
+const APP_VERSION = "3.5.5";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
