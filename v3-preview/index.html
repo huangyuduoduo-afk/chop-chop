@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 50279)
+Total output lines: 3546
+
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
@@ -1532,28 +1535,7 @@ async function callAnthropic(sys, messages, key){
     headers["anthropic-dangerous-direct-browser-access"] = "true";
   }
   const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST", headers,
-    body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:300, system:sys, messages })
-  });
-  const data = await res.json();
-  if(data.error) throw new Error(data.error.message || "API 错误");
-  return (data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join("").trim();
-}
-async function callDeepSeek(sys, messages, key, model){
-  if(!key) throw new Error("DeepSeek 需要在设置里填 key");
-  const res = await fetch("https://api.deepseek.com/chat/completions", {
-    method:"POST",
-    headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
-    body: JSON.stringify({ model: model||"deepseek-chat", max_tokens:600, messages:[{role:"system",content:sys}, ...messages] })
-  });
-  const data = await res.json();
-  if(data.error) throw new Error(data.error.message || "API 错误");
-  return (data.choices?.[0]?.message?.content || "").trim();
-}
-async function runAI(sys, messages){
-  const key = LS.get("qyx_key", "");
-  const provider = LS.get("qyx_provider", "anthropic");
-  if(provider==="deepseek") return await callDeepSeek(sys, messages, key, "deepseek-chat");
+ …279 tokens truncated…ey, "deepseek-chat");
   if(provider==="deepseek-r1") return await callDeepSeek(sys, messages, key, "deepseek-reasoner");
   return await callAnthropic(sys, messages, key);
 }
@@ -2059,6 +2041,49 @@ function syncParentFromSubs(item){
   item.done=item.status==="completed";
   item.updatedAt=Math.max(item.updatedAt||0,...item.subs.map(s=>s.updatedAt||0));
 }
+function enoughItemFreshness(item){
+  return Math.max(Number(item&&item.updatedAt)||0,...((item&&item.subs)||[]).map(s=>Number(s&&s.updatedAt)||0));
+}
+function enoughSnapshotFreshness(snapshot){
+  return Math.max(0,...((snapshot&&snapshot.items)||[]).map(enoughItemFreshness));
+}
+function cloneEnoughItem(item){
+  return normalizeEnoughItem(Object.assign({},item||{}, {subs:((item&&item.subs)||[]).map(s=>Object.assign({},s))}));
+}
+function mergeEnoughSnapshot(local,remote){
+  if(!local) return remote ? {d:remote.d,items:(remote.items||[]).map(cloneEnoughItem)} : null;
+  if(!remote) return {d:local.d,items:(local.items||[]).map(cloneEnoughItem)};
+  if(local.d!==remote.d){
+    const newer=String(remote.d||"")>String(local.d||"")?remote:local;
+    return {d:newer.d,items:(newer.items||[]).map(cloneEnoughItem)};
+  }
+  const remoteIsNewer=enoughSnapshotFreshness(remote)>enoughSnapshotFreshness(local);
+  const base=remoteIsNewer?remote:local,other=remoteIsNewer?local:remote;
+  const remaining=(other.items||[]).map(cloneEnoughItem);
+  const merged=(base.items||[]).map((raw,index)=>{
+    const first=cloneEnoughItem(raw);
+    let at=remaining.findIndex(x=>first.id&&x.id===first.id);
+    if(at<0) at=remaining.findIndex(x=>x.text&&x.text===first.text);
+    if(at<0 && remaining[index]) at=index;
+    if(at<0) return first;
+    const second=remaining.splice(at,1)[0];
+    const winner=enoughItemFreshness(second)>enoughItemFreshness(first)?second:first;
+    const loser=winner===first?second:first;
+    const out=cloneEnoughItem(winner);
+    const subMap=new Map((out.subs||[]).map(s=>[s.text,s]));
+    (loser.subs||[]).forEach(s=>{
+      if(isDead("esub:"+local.d,s.text)) return;
+      const old=subMap.get(s.text);
+      if(!old) subMap.set(s.text,Object.assign({},s));
+      else if((s.updatedAt||0)>(old.updatedAt||0)) subMap.set(s.text,Object.assign({},s));
+    });
+    out.subs=[...subMap.values()].map(normalizeEnoughSub);
+    if(out.subs.length) syncParentFromSubs(out);
+    return out;
+  });
+  remaining.forEach(item=>{if(merged.length<3)merged.push(item);});
+  return {d:base.d,items:merged.slice(0,3)};
+}
 function saveEnough(){ LS.set("qyx_enough", enough); }
 function ensureEnough(){
   const today = dayKey(Date.now());
@@ -2138,6 +2163,7 @@ document.querySelectorAll("#enoughCard input").forEach(inp=>{
     item.text=inp.value;
     if(item.status==="deleted") item.status="incomplete";
     item.done=item.status==="completed";
+    item.updatedAt=Date.now();
     saveEnough();
   });
 });
@@ -3001,7 +3027,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.5-preview";
+const APP_VERSION = "3.5.6-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -3183,8 +3209,20 @@ function mergeAll(o){
     enough.items=(enough.items||[]).map(normalizeEnoughItem).slice(0,3);enough.items.forEach(i=>syncParentFromSubs(i));while(enough.items.length<3)enough.items.push(blankEnoughItem());
     LS.setSilent("qyx_enough", enough);
   }
-  const rp = o.qyx_enough_prev;
-  if(rp && !LS.get("qyx_enough_prev", null)) LS.setSilent("qyx_enough_prev", rp);
+  // 昨日三件：两台设备都已有快照时，也逐项合并，避免旧手机快照挡住较新的进度
+  const rp = o.qyx_enough_prev,lp=LS.get("qyx_enough_prev",null);
+  const mergedPrev=mergeEnoughSnapshot(lp,rp);
+  if(mergedPrev){
+    LS.setSilent("qyx_enough_prev",mergedPrev);
+    const oldSum=summaries[mergedPrev.d];
+    if(oldSum&&oldSum.v2){
+      oldSum.three=mergedPrev.items.filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").map(i=>({
+        text:i.text,status:enoughStatus(i),done:enoughStatus(i)==="completed",
+        subs:(i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed"}))
+      }));
+      LS.setSilent("qyx_sums",summaries);
+    }
+  }
   // 习惯：按名字并，次数逐日取大
   (o.qyx_habits||[]).forEach(rh=>{
     if(isDead("habit", rh.name)) return;
