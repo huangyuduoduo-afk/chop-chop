@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FBF4EA">
-<title>chop chop! 3.5</title>
+<title>chop chop! 4.0</title>
 <link rel="manifest" href="../manifest.json">
 <link rel="apple-touch-icon" href="../icon-180.png">
 <link rel="icon" type="image/png" href="../icon-192.png">
@@ -535,7 +535,6 @@ nav button{position:relative}
 .letter textarea{
   background:transparent;border:none;border-radius:0;padding:4px 2px;
   font-family:var(--kai);font-size:16.5px;line-height:34px;color:#5C4A2E;
-  background-image:repeating-linear-gradient(transparent, transparent 33px, rgba(148,116,66,.22) 33px, rgba(148,116,66,.22) 34px);
   min-height:104px;
 }
 .letter textarea:focus{box-shadow:none;border:none}
@@ -646,6 +645,15 @@ nav button.on{color:#fff;background:var(--tang);font-weight:600;box-shadow:0 4px
 .modal p{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;line-height:1.6}
 .modal .send{margin-top:14px}
 .modal label{font-size:12.5px;color:var(--ink-soft);display:block;margin:11px 0 5px}
+.app-dialog-modal{align-self:center;margin:18px;border-radius:24px;padding:24px 22px 22px;max-width:500px}
+.app-dialog-modal p{white-space:pre-line}
+.app-dialog-modal input,.app-dialog-modal textarea{margin-top:10px;background:rgba(255,255,255,.82)}
+.app-dialog-modal textarea{min-height:132px;resize:vertical;line-height:1.7}
+.app-dialog-modal [hidden]{display:none!important}
+.app-dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.app-dialog-actions button{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:999px;padding:9px 18px;color:var(--ink);cursor:pointer;font-family:var(--sans)}
+.app-dialog-actions .primary{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
+.app-dialog-actions .danger{background:#B96A58;border-color:#B96A58;color:#fff}
 .sync-row{display:flex;gap:10px;margin-top:10px}
 .sync-row button{
   flex:1;border:1px solid rgba(75,66,55,.15);background:#fff;border-radius:14px;
@@ -710,7 +718,8 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .buddy-row.mini{margin:0 2px 13px}.buddy-row.mini .buddy{filter:none;width:58px;height:53px}
 .letter{border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.67),rgba(255,249,240,.5));
   border:1px solid rgba(242,139,82,.28);box-shadow:var(--v3-shadow);padding:21px 20px 18px}
-.letter::before{display:none}.letter textarea{font-family:"Noto Serif SC",var(--kai);color:var(--v3-ink);background-image:repeating-linear-gradient(transparent,transparent 39px,rgba(171,145,111,.16) 39px,rgba(171,145,111,.16) 40px);line-height:40px}
+.letter::before{display:none}.letter textarea{font-family:"Noto Serif SC",var(--kai);color:var(--v3-ink);line-height:1.85}
+.editor-toolbar{display:flex;align-items:center;gap:6px;margin-top:8px;padding-right:72px}.editor-toolbar button{width:32px;height:30px;border:1px solid rgba(113,135,95,.18);border-radius:10px;background:rgba(255,255,255,.48);color:#657958;font:600 13px "Noto Serif SC",var(--kai);cursor:pointer;touch-action:manipulation}.editor-toolbar button:active{transform:scale(.94);background:#EDF3E8}
 .v3-record-tools{display:flex;align-items:center;gap:10px;margin-top:8px;padding-right:72px}
 .v3-voice{border:1px solid rgba(156,191,208,.45);background:rgba(255,255,255,.5);color:#5683A0;border-radius:999px;padding:8px 14px;cursor:pointer}
 .v3-voice.recording{background:#FFF0E7;color:var(--tang-deep);border-color:rgba(242,139,82,.5);animation:v3-pulse 1.2s infinite}
@@ -724,7 +733,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .mood-btn{border-radius:50%;width:38px;height:38px;padding:0}.letter .seal{border-radius:20px;width:64px;height:48px;right:16px;bottom:15px;box-shadow:0 8px 18px rgba(217,113,60,.28)}
 .v3-log-actions{display:flex;justify-content:space-between;align-items:center;margin:23px 2px 12px}.v3-log-actions h2{font:600 19px "Noto Serif SC",var(--kai);color:var(--tang-deep)}
 .v3-log-actions button{border:1px solid rgba(75,66,55,.12);background:rgba(255,255,255,.5);border-radius:999px;padding:7px 13px;color:var(--ink-soft);cursor:pointer}
-.day-group{border-radius:23px;padding:18px 19px}.entry{padding:13px 0;line-height:1.75}.entry .body{font-family:"Noto Serif SC",var(--kai)}
+.day-group{border-radius:23px;padding:18px 19px}.entry{padding:13px 0;line-height:1.75}.entry .body{font-family:"Noto Serif SC",var(--kai)}.md-lite{white-space:normal}.md-line{min-height:1.6em;white-space:pre-wrap}.md-line.md-ul,.md-line.md-ol{position:relative;padding-left:1.35em}.md-line.md-ul::before{content:"•";position:absolute;left:.2em;color:#789263}.md-line.md-ol::before{content:attr(data-marker);position:absolute;left:0;color:#789263}.md-tag{color:#607C51;background:#EBF2E6;border-radius:6px;padding:0 .2em}.etx.md-lite{cursor:text}
 #logList.collapsed .day-group:nth-child(n+3){display:none}.all-records{width:100%;border:1px solid rgba(75,66,55,.1);border-radius:18px;background:rgba(255,255,255,.45);padding:11px;color:var(--ink-soft);cursor:pointer;margin:-4px 0 18px}
 .habit-reminder{display:none;align-items:center;gap:12px;padding:14px 16px;margin:0 0 18px;border-radius:22px;background:rgba(242,247,235,.72);border:1px solid rgba(145,168,124,.28);box-shadow:var(--v3-shadow)}
 .habit-reminder.show{display:flex}.habit-reminder .fish{font-size:28px;animation:v3-float 2.8s ease-in-out infinite}@keyframes v3-float{50%{transform:translateY(-4px)}}
@@ -994,6 +1003,12 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <div class="letter-date" id="letterDate"></div>
       <textarea id="noteText" rows="3" placeholder="发生了什么、注意到什么，话多正好……"></textarea>
       <div class="tag-suggest" id="tagSuggest"></div>
+      <div class="editor-toolbar" aria-label="记录格式工具">
+        <button type="button" data-editor-tool="tag" title="插入标签">#</button>
+        <button type="button" data-editor-tool="bold" title="加粗">B</button>
+        <button type="button" data-editor-tool="bullet" title="项目列表">•</button>
+        <button type="button" data-editor-tool="number" title="序号列表">1.</button>
+      </div>
       <div class="v3-record-tools">
         <button class="v3-voice" id="recordVoiceBtn">♩ 按住说</button>
         <span class="voice-status" id="voiceStatus">也可以先说，松开后整理</span>
@@ -1035,6 +1050,20 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
   <button data-v="v-month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>目标</button>
   <button data-v="v-sea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M10 2v4.5L6.8 11a5.5 5.5 0 0 0-.8 2.9V19a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-5.1a5.5 5.5 0 0 0-.8-2.9L14 6.5V2"/><path d="M8.5 15h7"/></svg>瓶子</button>
 </nav>
+
+<!-- 统一输入与确认弹层 -->
+<div class="modal-bg" id="appDialogBg">
+  <div class="modal app-dialog-modal" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle">
+    <h3 id="appDialogTitle"></h3>
+    <p id="appDialogText"></p>
+    <input id="appDialogLine" type="text" hidden>
+    <textarea id="appDialogArea" hidden></textarea>
+    <div class="app-dialog-actions">
+      <button type="button" id="appDialogCancel">取消</button>
+      <button type="button" class="primary" id="appDialogOk">确定</button>
+    </div>
+  </div>
+</div>
 
 <!-- 设置 -->
 <div class="modal-bg" id="settingsBg">
@@ -1235,15 +1264,15 @@ function migrateTag(sourceId,targetPath){
   const removed=new Set(sourceIds);replaceRelationIds(recordTags,mapping,removed);replaceRelationIds(goalTags,mapping,removed);replaceRelationIds(taskTags,mapping,removed);
   log.forEach(e=>{e.text=String(e.text||'').replaceAll('#'+oldBase,'#'+normalizeTagPath(targetPath));});tags=tags.filter(t=>!removed.has(t.id));sourceIds.forEach(id=>bury('tag',id));saveTagData();LS.set('qyx_log',log);renderTagLibrary();openTagDetail(mapping[sourceId]);
 }
-function bindTagsFor(kind,id,current){
-  const value=prompt('输入关联标签（可多个，用空格分开）：',(current||[]).map(t=>'#'+tagPath(t)).join(' '));if(value===null)return;
+async function bindTagsFor(kind,id,current){
+  const value=await appDialog({title:'关联标签',text:'可以写多个，用空格分开。',input:'line',value:(current||[]).map(t=>'#'+tagPath(t)).join(' '),placeholder:'#心理学/正念 #学习/英语'});if(value===null)return;
   const paths=parseTagPaths(value),ids=paths.map(ensureTagPath).filter(Boolean);if(kind==='goal')goalTags[id]=ids;else taskTags[id]=ids;saveTagData();renderMonth();renderEnough();
 }
 function goalById(id){for(const ym of Object.keys(months)){const found=(months[ym]||[]).find(a=>String(a.id)===String(id));if(found)return found;}return null;}
-function bindGoalForTask(item){
+async function bindGoalForTask(item){
   const goals=monthAnchors();if(!goals.length){toastDone('先在「目标」页写下一个本月方向。');return;}
   const current=taskGoals[item.id],lines=goals.map((g,i)=>`${i+1}. ${g.text}${String(g.id)===String(current)?'（当前）':''}`).join('\n');
-  const value=prompt(`关联到哪个本月目标？\n\n${lines}\n\n输入编号；输入 0 取消关联。`,current?String(goals.findIndex(g=>String(g.id)===String(current))+1):'');if(value===null)return;
+  const value=await appDialog({title:'关联本月目标',text:`${lines}\n\n输入编号；输入 0 取消关联。`,input:'line',value:current?String(goals.findIndex(g=>String(g.id)===String(current))+1):'',placeholder:'目标编号'});if(value===null)return;
   const n=Number(value);if(n===0||value.trim()===''){taskGoals[item.id]=null;}else if(Number.isInteger(n)&&goals[n-1])taskGoals[item.id]=goals[n-1].id;else{toastDone('没有找到这个编号。');return;}saveTagData();renderEnough();
 }
 function renderTaskRelations(item){const goal=goalById(taskGoals[item.id]),ids=[...(taskTags[item.id]||[]),...(goal?(goalTags[goal.id]||[]):[])];return `${goal?`<button class="task-goal-chip" data-rebind-goal="${item.id}">↗ 月目标：${esc(goal.text)}</button>`:''}${renderTagChips([...new Set(ids)])}`;}
@@ -1308,6 +1337,51 @@ function addLog(type, text, mood, src, q){
   return entry;
 }
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+let appDialogResolve=null,appDialogInput=null,appDialogConfirm=false;
+function closeAppDialog(ok){
+  if(!appDialogResolve)return;
+  const resolve=appDialogResolve,value=appDialogConfirm?!!ok:(ok?appDialogInput.value:null);
+  appDialogResolve=null;appDialogInput=null;$("appDialogBg").classList.remove("show");resolve(value);
+}
+function appDialog(opts={}){
+  return new Promise(resolve=>{
+    if(appDialogResolve)closeAppDialog(false);
+    appDialogResolve=resolve;appDialogConfirm=!opts.input;
+    $("appDialogTitle").textContent=opts.title||"请确认";
+    $("appDialogText").textContent=opts.text||"";
+    $("appDialogText").hidden=!opts.text;
+    $("appDialogLine").hidden=opts.input!=="line";
+    $("appDialogArea").hidden=opts.input!=="area";
+    appDialogInput=opts.input==="area"?$("appDialogArea"):opts.input==="line"?$("appDialogLine"):null;
+    if(appDialogInput){appDialogInput.value=opts.value||"";appDialogInput.placeholder=opts.placeholder||"";}
+    $("appDialogOk").textContent=opts.okText||"确定";
+    $("appDialogOk").classList.toggle("danger",!!opts.danger);
+    $("appDialogBg").classList.add("show");
+    requestAnimationFrame(()=>appDialogInput?.focus());
+  });
+}
+$("appDialogOk").onclick=()=>closeAppDialog(true);
+$("appDialogCancel").onclick=()=>closeAppDialog(false);
+$("appDialogBg").onclick=e=>{if(e.target===$("appDialogBg"))closeAppDialog(false);};
+$("appDialogLine").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();closeAppDialog(true);}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("appDialogBg").classList.contains("show"))closeAppDialog(false);});
+function renderInlineMarkdownLite(line){
+  let html=esc(line);
+  html=html.replace(/(^|[\s，。！？；：、,.!?;:])#([^\s#，。！？；：、,.!?;:<>&]+)/g,'$1<span class="md-tag">#$2</span>');
+  html=html.replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>");
+  return html;
+}
+function renderMarkdownLite(text){
+  return String(text||"").split("\n").map(line=>{
+    const bullet=line.match(/^-\s(.*)$/),number=line.match(/^(\d+)\.\s(.*)$/);
+    if(bullet)return `<div class="md-line md-ul">${renderInlineMarkdownLite(bullet[1])||"<br>"}</div>`;
+    if(number)return `<div class="md-line md-ol" data-marker="${number[1]}.">${renderInlineMarkdownLite(number[2])||"<br>"}</div>`;
+    return `<div class="md-line">${renderInlineMarkdownLite(line)||"<br>"}</div>`;
+  }).join("");
+}
+function stripMarkdownLite(text){
+  return String(text||"").replace(/\*\*([^*\n]+)\*\*/g,"$1").split("\n").map(line=>line.replace(/^-\s/,"· ")).join("\n");
+}
 function fmtDT(t){
   const d = new Date(t);
   return `${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -1619,12 +1693,12 @@ $("aiObey").onclick = ()=>{
   buddySay("accepted");
   toastDone("去吧。");
 };
-$("aiRule").onclick = ()=>{
+$("aiRule").onclick = async ()=>{
   const r = $("aiReply").textContent || "";
   if(!r.trim()) return;
   const nl = r.split("\n").find(l=>l.includes("下次"));
   const seed = nl ? nl.replace(/^下次[：:]?\s*/, "").trim() : r.trim();
-  const v = prompt("存这条准则（可以改成你的话）：", seed);
+  const v = await appDialog({title:"存为我的准则",text:"保存前还可以改成更像你的话。",input:"area",value:seed});
   if(v && v.trim()){
     unbury("rule", v.trim());
     if(!rules.some(x=>x.text===v.trim())){
@@ -1717,8 +1791,8 @@ function renderMonth(){
           }
           saveMonths(); renderSplits();
         };
-        chip.querySelector(".st").onclick = ()=>{
-          const v = prompt("改一改：", sp.text);
+        chip.querySelector(".st").onclick = async ()=>{
+          const v = await appDialog({title:"修改小选项",input:"line",value:sp.text});
           if(v && v.trim() && v.trim()!==sp.text){
             aHist(a, "改：" + sp.text + " → " + v.trim());
             sp.text = v.trim(); saveMonths(); renderSplits();
@@ -1740,8 +1814,8 @@ function renderMonth(){
       const add = document.createElement("button");
       add.className = "split-add";
       add.textContent = "＋ 自己加一个";
-      add.onclick = ()=>{
-        const v = prompt("加一个小选项（具体到今天20分钟能做）：");
+      add.onclick = async ()=>{
+        const v = await appDialog({title:"加一个小选项",text:"具体到今天 20 分钟能做。",input:"line"});
         if(v && v.trim()){
           a.splits = a.splits||[];
           unbury("split:"+a.text, v.trim());
@@ -1777,8 +1851,8 @@ function renderMonth(){
       }
       ing.style.display = "none";
     };
-    card.querySelector(".edit").onclick = ()=>{
-      const v = prompt("改一改：", a.text);
+    card.querySelector(".edit").onclick = async ()=>{
+      const v = await appDialog({title:"修改本月方向",input:"line",value:a.text});
       if(v && v.trim() && v.trim()!==a.text){
         aHist(a, "改名：" + a.text + " → " + v.trim());
         a.text = v.trim(); saveMonths(); renderMonth();
@@ -1803,8 +1877,8 @@ function renderMonth(){
         tb.style.display = "block";
       } else tb.style.display = "none";
     };
-    card.querySelector(".del").onclick = ()=>{
-      if(!confirm("删掉这个月的「"+a.text+"」？")) return;
+    card.querySelector(".del").onclick = async ()=>{
+      if(!await appDialog({title:"删除本月方向？",text:"删掉「"+a.text+"」？",okText:"删除",danger:true})) return;
       const anchors = monthAnchors();
       const idx = anchors.findIndex(x=>x.id===a.id);
       if(idx>-1) anchors.splice(idx,1);
@@ -2155,8 +2229,8 @@ function renderEnough(){
         if(sub.status==="completed") addDoneLogOnce(sub.text,"三件·小项");
         renderEnough();
       };
-      chip.querySelector(".stx").onclick = ()=>{
-        const value=prompt("修改小项：",sub.text);
+      chip.querySelector(".stx").onclick = async ()=>{
+        const value=await appDialog({title:"修改小项",input:"line",value:sub.text});
         if(value===null) return;
         const next=value.trim();
         if(!next){ toastDone("小项文字不能为空，可以用右侧 × 删除。");return; }
@@ -2213,11 +2287,11 @@ document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
   };
 });
 document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
-  b.onclick=()=>{
+  b.onclick=async ()=>{
     const i=+b.dataset.i,action=b.dataset.taskAction,item=enough.items[i];
     if(!item.text.trim()) return;
     if(action==="delete"){
-      if(!confirm("删除这件事？删除后不会进入昨日总结。")) return;
+      if(!await appDialog({title:"删除这件事？",text:"删除后不会进入昨日总结。",okText:"删除",danger:true})) return;
       (item.subs||[]).forEach(s=>bury("esub:"+enough.d,s.text));
       delete taskTags[item.id];taskGoals[item.id]=null;saveTagData(true);enough.items[i]=blankEnoughItem();saveEnough();renderEnough();
       toastDone("删掉了，不会进入昨日总结。");
@@ -2225,10 +2299,10 @@ document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
   };
 });
 document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
-  b.onclick = ()=>{
+  b.onclick = async ()=>{
     const i = +b.dataset.i;
     if(!enough.items[i].text.trim()){ toastDone("先写上这件事。"); return; }
-    const v = prompt("拆一个小项：");
+    const v = await appDialog({title:"拆一个小项",input:"line"});
     if(v && v.trim()){
       unbury("esub:"+enough.d, v.trim());
       enough.items[i].subs.push({text:v.trim(),done:false,status:"incomplete",updatedAt:Date.now()});
@@ -2276,8 +2350,8 @@ function renderHabits(){
       const tdDot = d.querySelector(".spk.td");
       if(tdDot) tdDot.classList.add("hit");
     };
-    d.querySelector(".hx").onclick = ()=>{
-      if(!confirm("删掉「"+h.name+"」？历史次数也会没了。")) return;
+    d.querySelector(".hx").onclick = async ()=>{
+      if(!await appDialog({title:"删除这个提醒？",text:"删掉「"+h.name+"」后，历史次数也会删除。",okText:"删除",danger:true})) return;
       habits = habits.filter(x=>x.id!==h.id);
       bury("habit", h.name);
       LS.set("qyx_habits", habits);
@@ -2289,8 +2363,8 @@ function renderHabits(){
     const add = document.createElement("button");
     add.className = "habit-add";
     add.textContent = "＋";
-    add.onclick = ()=>{
-      const v = prompt("追踪什么？（比如：起身）");
+    add.onclick = async ()=>{
+      const v = await appDialog({title:"新增提醒",text:"想追踪什么？",input:"line",placeholder:"比如：起身"});
       if(v && v.trim()){
         unbury("habit", v.trim());
         habits.push({id: Date.now(), name: v.trim(), counts:{}});
@@ -2731,14 +2805,14 @@ function renderLog(){
       const src = e.src ? `<span class="esrc">${esc(e.src)}</span>` : "";
       let inner;
       if(e.type==="ai" && e.q){
-        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="aiq">${esc(e.q)}</div><div class="aia">${esc(e.text)}</div>${extra}`;
+        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="aiq">${esc(e.q)}</div><div class="aia md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
       }else{
-        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<span class="etx">${esc(e.text)}</span>${extra}`;
+        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="etx md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
       }
       const chips=renderTagChips(recordTags[e.id]||[]);
       row.innerHTML = `<span class="t">${hm}</span><div class="body">${inner}${chips?`<div class="record-tags">${chips}</div>`:""}</div><button class="ex" title="删除">✕</button>`;
-      row.querySelector(".ex").onclick = ()=>{
-        if(!confirm("删掉这条？")) return;
+      row.querySelector(".ex").onclick = async ()=>{
+        if(!await appDialog({title:"删除这条记录？",text:"删除后不会出现在历史记录里。",okText:"删除",danger:true})) return;
         bury("log", logKey(e));
         log = log.filter(x=>x!==e);
         delete recordTags[e.id];saveTagData(true);
@@ -2747,8 +2821,8 @@ function renderLog(){
         toastDone("删了。");
       };
       const etx = row.querySelector(".etx");
-      if(etx) etx.onclick = ()=>{
-        const v = prompt("改一改：", e.text);
+      if(etx) etx.onclick = async ()=>{
+        const v = await appDialog({title:"修改记录",text:"标签可以写在行文的任何位置。",input:"area",value:e.text});
         if(v && v.trim() && v.trim()!==e.text){
           const oldId=e.id,now=Date.now();bury("log",logKey(e));e.id=entityId("rec_",oldId+"|edit|"+now);e.text=v.trim();e.updatedAt=now;delete recordTags[oldId];recordTags[e.id]=[];indexRecordTags(e,true);saveTagData(true);
           LS.set("qyx_log", log);
@@ -2788,7 +2862,7 @@ function exportDay(k, entries){
   const meas = document.createElement("canvas").getContext("2d");
   meas.font = "500 31px 'LXGW WenKai Lite','Kaiti SC','KaiTi',serif";
   const items = es.map(e=>{
-    const lines = wrapLines(meas, e.text, maxW, 4);
+    const lines = wrapLines(meas, stripMarkdownLite(e.text), maxW, 4);
     return {e, lines, h: 60 + lines.length*40};
   });
   const startY = padE + 245;
@@ -3051,7 +3125,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.8-preview";
+const APP_VERSION = "4.0.0-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -3479,15 +3553,38 @@ $('tagBack').onclick=()=>{$('tagDetailView').hidden=true;$('tagLibraryView').hid
 $('tagSort').onchange=renderTagLibrary;
 $('tagList').onclick=e=>{const b=e.target.closest('[data-tag-toggle]');if(!b)return;e.preventDefault();e.stopPropagation();const id=b.dataset.tagToggle;if(tagTreeOpen.has(id))tagTreeOpen.delete(id);else tagTreeOpen.add(id);LS.setSilent('qyx_tag_tree_open',[...tagTreeOpen]);renderTagLibrary();};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-open-tag]');if(b){e.preventDefault();e.stopPropagation();openTagDetail(b.dataset.openTag);}});
-$('renameTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=prompt('修改完整标签路径：','#'+old);if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('新标签不能放进自己的子层级。');return;}migrateTag(activeTagId,path);toastDone('标签和历史关联都迁移好了。');};
-$('mergeTag').onclick=()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=prompt('合并到哪个标签？输入完整路径：','');if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('不能合并到自己的子标签。');return;}migrateTag(activeTagId,path);toastDone('标签已经合并。');};
-$('deleteTag').onclick=()=>{if(!activeTagId)return;const ids=descendantTagIds(activeTagId),name=tagPath(activeTagId);if(!confirm('删除 #'+name+' 及其子标签的关联？原记录不会删除。'))return;const removed=new Set(ids);replaceRelationIds(recordTags,{},removed);replaceRelationIds(goalTags,{},removed);replaceRelationIds(taskTags,{},removed);ids.forEach(id=>bury('tag',id));tags=tags.filter(t=>!removed.has(t.id));saveTagData();$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();toastDone('只删了标签关系，原记录还在。');};
+$('renameTag').onclick=async()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=await appDialog({title:'修改标签名称',text:'填写完整标签路径。',input:'line',value:'#'+old});if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('新标签不能放进自己的子层级。');return;}migrateTag(activeTagId,path);toastDone('标签和历史关联都迁移好了。');};
+$('mergeTag').onclick=async()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=await appDialog({title:'合并标签',text:'填写要合并到的完整标签路径。',input:'line',placeholder:'#个人洞察/新想法'});if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('不能合并到自己的子标签。');return;}migrateTag(activeTagId,path);toastDone('标签已经合并。');};
+$('deleteTag').onclick=async()=>{if(!activeTagId)return;const ids=descendantTagIds(activeTagId),name=tagPath(activeTagId);if(!await appDialog({title:'删除标签关系？',text:'删除 #'+name+' 及其子标签的关联？原记录不会删除。',okText:'删除',danger:true}))return;const removed=new Set(ids);replaceRelationIds(recordTags,{},removed);replaceRelationIds(goalTags,{},removed);replaceRelationIds(taskTags,{},removed);ids.forEach(id=>bury('tag',id));tags=tags.filter(t=>!removed.has(t.id));saveTagData();$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();toastDone('只删了标签关系，原记录还在。');};
 
 function updateTagSuggest(){
   const el=$('noteText'),box=$('tagSuggest'),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|[\s，。！？；：、,.!?;:])#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
   const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,6),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
   box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('');box.classList.toggle('show',!!items.length);
 }
+function commitNoteEdit(value,start,end=start){const el=$('noteText');el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
+function toggleNoteLinePrefix(kind){
+  const el=$('noteText'),value=el.value,start=el.selectionStart,lineStart=value.lastIndexOf('\n',start-1)+1,lineEnd=value.indexOf('\n',start),end=lineEnd<0?value.length:lineEnd,line=value.slice(lineStart,end);
+  const pattern=kind==='bullet'?/^-\s/:/^\d+\.\s/;const match=line.match(pattern);
+  if(match){const next=value.slice(0,lineStart)+line.slice(match[0].length)+value.slice(end);commitNoteEdit(next,Math.max(lineStart,start-match[0].length));}
+  else{const prefix=kind==='bullet'?'- ':'1. ';const next=value.slice(0,lineStart)+prefix+value.slice(lineStart);commitNoteEdit(next,start+prefix.length);}
+}
+document.querySelectorAll('[data-editor-tool]').forEach(button=>{
+  button.addEventListener('pointerdown',e=>e.preventDefault());
+  button.onclick=()=>{
+    const el=$('noteText'),start=el.selectionStart,end=el.selectionEnd,tool=button.dataset.editorTool;
+    if(tool==='tag'){commitNoteEdit(el.value.slice(0,start)+'#'+el.value.slice(end),start+1);updateTagSuggest();return;}
+    if(tool==='bold'){const selected=el.value.slice(start,end);if(selected)commitNoteEdit(el.value.slice(0,start)+'**'+selected+'**'+el.value.slice(end),start+2,end+2);else commitNoteEdit(el.value.slice(0,start)+'****'+el.value.slice(end),start+2);return;}
+    toggleNoteLinePrefix(tool);
+  };
+});
+$('noteText').addEventListener('keydown',e=>{
+  if(e.key!=='Enter'||e.isComposing||e.keyCode===229||e.shiftKey||e.target.selectionStart!==e.target.selectionEnd)return;
+  const el=e.target,start=el.selectionStart,lineStart=el.value.lastIndexOf('\n',start-1)+1,line=el.value.slice(lineStart,start),bullet=line.match(/^(\s*)-\s(.*)$/),number=line.match(/^(\s*)(\d+)\.\s(.*)$/),match=bullet||number;if(!match)return;
+  e.preventDefault();const content=bullet?bullet[2]:number[3];
+  if(!content.trim()){commitNoteEdit(el.value.slice(0,lineStart)+el.value.slice(start),lineStart);return;}
+  const prefix=bullet?bullet[1]+'- ':number[1]+(Number(number[2])+1)+'. ';commitNoteEdit(el.value.slice(0,start)+'\n'+prefix+el.value.slice(start),start+1+prefix.length);
+});
 $('noteText').addEventListener('input',updateTagSuggest);$('noteText').addEventListener('click',updateTagSuggest);
 $('tagSuggest').onclick=e=>{const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=$('noteText'),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);$('tagSuggest').classList.remove('show');};
 
