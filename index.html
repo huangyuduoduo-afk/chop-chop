@@ -3640,6 +3640,17 @@ $('noteText').addEventListener('beforeinput',e=>{
   const prefix=bullet?bullet[1]+'- ':number[1]+(Number(number[2])+1)+'. ';
   commitNoteEdit(el.value.slice(0,start)+'\n'+prefix+el.value.slice(start),start+1+prefix.length);
 });
+$('noteText').addEventListener('input',e=>{
+  if(e.inputType&&e.inputType!=='insertLineBreak'&&e.inputType!=='insertParagraph')return;
+  const el=e.target,start=el.selectionStart;
+  if(start!==el.selectionEnd||start<1||el.value[start-1]!=='\n')return;
+  const lineEnd=start-1,lineStart=el.value.lastIndexOf('\n',lineEnd-1)+1,line=el.value.slice(lineStart,lineEnd),bullet=line.match(/^(\s*)-\s(.*)$/),number=line.match(/^(\s*)(\d+)\.\s(.*)$/),m=bullet||number;
+  if(!m)return;
+  const content=bullet?bullet[2]:number[3];
+  if(!content.trim()){commitNoteEdit(el.value.slice(0,lineStart)+el.value.slice(start),lineStart);return;}
+  const prefix=bullet?bullet[1]+'- ':number[1]+(Number(number[2])+1)+'. ';
+  commitNoteEdit(el.value.slice(0,start)+prefix+el.value.slice(start),start+prefix.length);
+});
 $('noteText').addEventListener('input',updateTagSuggest);$('noteText').addEventListener('click',updateTagSuggest);
 $('tagSuggest').onclick=e=>{const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=$('noteText'),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);$('tagSuggest').classList.remove('show');};
 
