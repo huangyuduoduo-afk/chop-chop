@@ -1042,9 +1042,9 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <h3>AI</h3>
     <label>服务</label>
     <select id="provider">
+      <option value="deepseek-v4-pro">DeepSeek V4 Pro（更强，稍慢）</option>
+      <option value="deepseek-v4-flash">DeepSeek V4 Flash（快，日常）</option>
       <option value="anthropic">Claude（Anthropic）</option>
-      <option value="deepseek">DeepSeek V3（快）</option>
-      <option value="deepseek-r1">DeepSeek R1（更懂，稍慢）</option>
     </select>
     <label>API key</label>
     <input type="password" id="apiKey" placeholder="sk-…">
@@ -1539,22 +1539,28 @@ async function callAnthropic(sys, messages, key){
   if(data.error) throw new Error(data.error.message || "API 错误");
   return (data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join("").trim();
 }
-async function callDeepSeek(sys, messages, key, model){
+function migrateProviderValue(){
+  const saved=LS.get("qyx_provider","deepseek-v4-pro");
+  const provider=saved==="deepseek"?"deepseek-v4-flash":saved==="deepseek-r1"?"deepseek-v4-pro":saved;
+  if(provider!==saved) LS.setSilent("qyx_provider",provider);
+  return provider;
+}
+migrateProviderValue();
+async function callDeepSeek(sys, messages, key, model, thinking=false){
   if(!key) throw new Error("DeepSeek 需要在设置里填 key");
   const res = await fetch("https://api.deepseek.com/chat/completions", {
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
-    body: JSON.stringify({ model: model||"deepseek-chat", max_tokens:600, messages:[{role:"system",content:sys}, ...messages] })
+    body: JSON.stringify({ model:model||"deepseek-v4-pro", thinking:{type:thinking?"enabled":"disabled"}, max_tokens:600, messages:[{role:"system",content:sys}, ...messages] })
   });
   const data = await res.json();
   if(data.error) throw new Error(data.error.message || "API 错误");
   return (data.choices?.[0]?.message?.content || "").trim();
 }
-async function runAI(sys, messages){
+async function runAI(sys, messages, options={}){
   const key = LS.get("qyx_key", "");
-  const provider = LS.get("qyx_provider", "anthropic");
-  if(provider==="deepseek") return await callDeepSeek(sys, messages, key, "deepseek-chat");
-  if(provider==="deepseek-r1") return await callDeepSeek(sys, messages, key, "deepseek-reasoner");
+  const provider = migrateProviderValue();
+  if(provider==="deepseek-v4-flash"||provider==="deepseek-v4-pro") return await callDeepSeek(sys,messages,key,provider,options.thinking===true);
   return await callAnthropic(sys, messages, key);
 }
 function aiContext(){
@@ -2021,7 +2027,7 @@ $("aiReviewBtn").onclick = async ()=>{
   ].join("\n");
   let text;
   try{
-    text = await runAI(`你是我的私人手账回望助手。只根据我提供的最近7天材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}]);
+    text = await runAI(`你是我的私人手账回望助手。只根据我提供的最近7天材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}],{thinking:true});
   }catch(e){ text = localReviewFallback(recentLog,recentBottles); }
   const cleaned = cleanAIText(text);
   showAIReview(cleaned);
@@ -3045,7 +3051,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "3.5.7";
+const APP_VERSION = "3.5.8";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -3487,7 +3493,7 @@ $('tagSuggest').onclick=e=>{const b=e.target.closest('[data-tag-choice]');if(!b)
 
 $("gearBtn").onclick = ()=>{
   $("apiKey").value = LS.get("qyx_key","");
-  $("provider").value = LS.get("qyx_provider","anthropic");
+  $("provider").value = migrateProviderValue();
   $("ghToken").value = LS.get("qyx_ghtoken","");
   $("dicePool").value = dicePool.join("\n");
   $("sitReminderText").value = LS.get("qyx_sit_reminder","站起来走走");
