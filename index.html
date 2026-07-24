@@ -3629,7 +3629,7 @@ document.querySelectorAll('[data-editor-tool]').forEach(button=>{
   };
 });
 $('noteText').addEventListener('beforeinput',e=>{
-  if(e.inputType!=='insertLineBreak')return;
+  if(e.inputType!=='insertLineBreak'&&e.inputType!=='insertParagraph')return;
   const el=e.target;
   if(el.selectionStart!==el.selectionEnd)return;
   const start=el.selectionStart,lineStart=el.value.lastIndexOf('\n',start-1)+1,line=el.value.slice(lineStart,start),bullet=line.match(/^(\s*)-\s(.*)$/),number=line.match(/^(\s*)(\d+)\.\s(.*)$/),m=bullet||number;
