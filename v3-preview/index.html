@@ -799,7 +799,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 <div class="aura a"></div><div class="aura b"></div><div class="aura c"></div>
 
 <header>
-  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill">3.5</span></div>
+  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill">4.0</span></div>
   <div class="head-meta">
     <span class="head-clock" id="headClock"></span>
     <button class="sync" id="syncBtn" aria-label="同步" title="同步到云端">
@@ -3125,7 +3125,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.0.0-preview";
+const APP_VERSION = "4.0.1-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
