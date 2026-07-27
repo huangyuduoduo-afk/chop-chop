@@ -262,6 +262,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 .opts-history-date{font:700 11px var(--mono);color:var(--ink-faint);letter-spacing:.08em;margin-bottom:5px}
 .opts-history-item{display:grid;grid-template-columns:minmax(0,1fr) 30px 30px;align-items:center;gap:4px;padding:5px 0;color:var(--ink-soft);font-size:13px}
 .opts-history-item span{overflow-wrap:anywhere}
+.opts-history-item .edit-text{cursor:pointer}
 .opts-history-item button,.opts-history-more{border:0;background:transparent;color:var(--sage-deep);cursor:pointer;font-family:var(--sans)}
 .opts-history-item button{width:28px;height:28px;border-radius:50%;font-size:16px}
 .opts-history-item button:hover{background:rgba(124,155,110,.1)}
@@ -881,6 +882,10 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="2">关联目标</button><button class="task-tag-btn" data-task-tag="2" title="添加主题标签"># 标签</button><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div><div class="task-tag-row" data-task-tags="2"></div>
       <div class="esubs" data-i="2"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
+      <div id="optsHistoryBlock">
+        <h2 class="fold" data-target="optsHistoryBody"><span class="arr">▶</span>写过的事项<span class="count" id="optsHistoryCount"></span></h2>
+        <div class="opts-history-body" id="optsHistoryBody" style="display:none"></div>
+      </div>
     </div>
 
     <div class="glass bonus" id="bonusCard">
@@ -918,11 +923,6 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <div id="ongoingBlock" style="display:none">
       <h2 class="fold" data-target="ongoingChips"><span class="arr">▶</span>定过的 · 点一下排回<span class="count" id="ongoingCount"></span></h2>
       <div class="chips" id="ongoingChips" style="display:none"></div>
-    </div>
-
-    <div id="optsHistoryBlock">
-      <h2 class="fold" data-target="optsHistoryBody"><span class="arr">▶</span>写过的事项<span class="count" id="optsHistoryCount"></span></h2>
-      <div class="opts-history-body" id="optsHistoryBody" style="display:none"></div>
     </div>
 
     <div class="micro-row">
@@ -1463,6 +1463,19 @@ function rememberOpt(text,t=Date.now()){
   optsHist=optsHist.sort((a,b)=>a.t-b.t).slice(-800);
   saveOptsHist();
 }
+(function backfillOptsHist(){
+  let changed=false;
+  [...opts,...bench].forEach(text=>{
+    if(!text||!text.trim())return;
+    if(optsHist.some(item=>item.text===text))return;
+    optsHist.push({t:Date.now(),text});
+    changed=true;
+  });
+  if(changed){
+    optsHist=optsHist.sort((a,b)=>a.t-b.t).slice(-800);
+    saveOptsHist();
+  }
+})();
 function addToOpts(text){
   unbury("opt", text);
   if(opts.includes(text)||bench.includes(text)) return false;
@@ -1484,8 +1497,9 @@ function renderOptsHistory(){
   if(!days.length){body.innerHTML='<div class="opts-history-empty">过一天再回来，这里会收好你写过的事项。</div>';return;}
   body.innerHTML=days.map(key=>{
     const items=groups[key],shown=optsHistExpanded.has(key)?items:items.slice(0,6),date=new Date(items[0].t);
-    return `<section class="opts-history-day"><div class="opts-history-date">${date.getMonth()+1}/${date.getDate()}</div>${shown.map(item=>{const current=opts.includes(item.text)||bench.includes(item.text);return `<div class="opts-history-item"><span>${esc(item.text)}</span><button class="restore" data-ohist-restore="${esc(optsHistKey(item))}" ${current?"disabled":""} title="${current?"已经在今天":"排回今天"}">＋</button><button class="remove" data-ohist-remove="${esc(optsHistKey(item))}" title="删除">✕</button></div>`;}).join("")}${items.length>6&&!optsHistExpanded.has(key)?`<button class="opts-history-more" data-ohist-more="${key}">更多 · ${items.length-6} 条</button>`:""}</section>`;
+    return `<section class="opts-history-day"><div class="opts-history-date">${date.getMonth()+1}/${date.getDate()}</div>${shown.map(item=>{const current=opts.includes(item.text)||bench.includes(item.text);return `<div class="opts-history-item"><span class="edit-text" data-ohist-edit="${esc(optsHistKey(item))}" title="点击修改">${esc(item.text)}</span><button class="restore" data-ohist-restore="${esc(optsHistKey(item))}" ${current?"disabled":""} title="${current?"已经在今天":"排回今天"}">＋</button><button class="remove" data-ohist-remove="${esc(optsHistKey(item))}" title="删除">✕</button></div>`;}).join("")}${items.length>6&&!optsHistExpanded.has(key)?`<button class="opts-history-more" data-ohist-more="${key}">更多 · ${items.length-6} 条</button>`:""}</section>`;
   }).join("");
+  body.querySelectorAll("[data-ohist-edit]").forEach(span=>{span.onclick=async()=>{const key=span.dataset.ohistEdit,item=optsHist.find(x=>optsHistKey(x)===key);if(!item)return;const value=await appDialog({title:"修改事项",input:"line",value:item.text});if(value===null)return;const next=value.trim();if(!next){toastDone("文字不能为空，可以用 ✕ 删除。");return;}const current=optsHist.find(x=>optsHistKey(x)===key);if(!current||next===current.text)return;const oldKey=optsHistKey(current);bury("ohist",oldKey);current.text=next;unbury("ohist",optsHistKey(current));saveOptsHist();renderOptsHistory();};});
   body.querySelectorAll("[data-ohist-restore]").forEach(button=>{button.onclick=()=>{const item=optsHist.find(x=>optsHistKey(x)===button.dataset.ohistRestore);if(item&&addToOpts(item.text))toastDone("排进去了。");};});
   body.querySelectorAll("[data-ohist-remove]").forEach(button=>{button.onclick=()=>{const key=button.dataset.ohistRemove;optsHist=optsHist.filter(item=>optsHistKey(item)!==key);bury("ohist",key);saveOptsHist();renderOptsHistory();};});
   body.querySelectorAll("[data-ohist-more]").forEach(button=>{button.onclick=()=>{optsHistExpanded.add(button.dataset.ohistMore);renderOptsHistory();};});
@@ -2243,6 +2257,15 @@ function ensureEnough(){
     if(enough && enough.items && enough.items.some(i=>i.text)){
       const previous = Object.assign({},enough,{items:enough.items.map(normalizeEnoughItem).filter(i=>i.text.trim()&&i.status!=="deleted")});
       if(previous.items.length) LS.set("qyx_enough_prev", previous);
+      const harvestT=new Date(enough.d+"T12:00:00").getTime();
+      enough.items.forEach(item=>{
+        (item.subs||[]).forEach(sub=>{
+          if(sub.status==="completed")return;
+          if(!sub.text||!sub.text.trim())return;
+          if(isDead("esub:"+enough.d,sub.text))return;
+          rememberOpt(sub.text,harvestT);
+        });
+      });
     }
     enough = {d:today,items:[blankEnoughItem(),blankEnoughItem(),blankEnoughItem()]};
     LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
@@ -2275,20 +2298,27 @@ function renderEnough(){
       chip.innerHTML = `<button class="chk" title="点击切换：完成 / 时间结束 / 未完成">${sub.status==="completed"?"✓":sub.status==="expired"?"×":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
       chip.querySelector(".chk").onclick = ()=>{
         const item=enough.items[i];
+        const prev=sub.status;
         sub.status=sub.status==="incomplete"?"completed":sub.status==="completed"?"expired":"incomplete";
         sub.done=sub.status==="completed";
         sub.updatedAt=Date.now();
         syncParentFromSubs(item);
         saveEnough();
         if(sub.status==="completed") addDoneLogOnce(sub.text,"三件·小项");
+        else if(prev==="completed") removeDoneLogToday(sub.text,"三件·小项");
         renderEnough();
       };
       chip.querySelector(".stx").onclick = async ()=>{
-        const value=await appDialog({title:"修改小项",input:"line",value:sub.text});
+        const oldText=sub.text;
+        const value=await appDialog({title:"修改小项",input:"line",value:oldText});
         if(value===null) return;
         const next=value.trim();
         if(!next){ toastDone("小项文字不能为空，可以用右侧 × 删除。");return; }
-        const old=sub.text;bury("esub:"+enough.d,old);unbury("esub:"+enough.d,next);sub.text=next;sub.updatedAt=Date.now();saveEnough();renderEnough();
+        const item=enough.items[i],current=(item.subs||[]).find(s=>s.text===oldText)||(item.subs||[])[si];
+        if(!current||next===current.text)return;
+        bury("esub:"+enough.d,current.text);unbury("esub:"+enough.d,next);
+        if(current.status==="completed"){removeDoneLogToday(current.text,"三件·小项");addDoneLogOnce(next,"三件·小项");}
+        current.text=next;current.updatedAt=Date.now();syncParentFromSubs(item);saveEnough();renderEnough();
       };
       chip.querySelector(".todice").onclick = ()=>{ addToOpts(sub.text); toastDone("排进去了。"); };
       chip.querySelector(".x").onclick = ()=>{
@@ -2331,7 +2361,10 @@ function setEnoughStatus(i,status){
     addDoneLogOnce(item.text,"三件");buddySay("done");
     const filled=enough.items.filter(x=>x.text.trim()&&enoughStatus(x)!=="deleted");
     if(filled.length===3&&filled.every(x=>enoughStatus(x)==="completed")) toastDone("今天，够了。");
-  }else if(item.status==="expired") toastDone("这件事先停在这里，留给以后回望。");
+  }else{
+    if(before==="completed"&&item.status!=="completed")removeDoneLogToday(item.text,"三件");
+    if(item.status==="expired")toastDone("这件事先停在这里，留给以后回望。");
+  }
 }
 document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
   c.onclick = ()=>{
@@ -2781,6 +2814,18 @@ function addDoneLogOnce(text,src){
   const existing=log.find(e=>e.type==="done"&&doneLogIdentity(e)===key);
   return existing||addLog("done",text,null,src);
 }
+function removeDoneLogToday(text,src){
+  const key=`${dayKey(Date.now())}|done|${src||""}|${text}`;
+  const idx=log.findIndex(e=>e.type==="done"&&doneLogIdentity(e)===key);
+  if(idx<0)return false;
+  const e=log[idx];
+  bury("log",logKey(e));
+  delete recordTags[e.id];saveTagData(true);
+  log.splice(idx,1);
+  LS.set("qyx_log",log);
+  renderLog();
+  return true;
+}
 function dayTitle(k){
   const today = dayKey(Date.now());
   const yest = dayKey(Date.now()-864e5);
@@ -3179,7 +3224,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.0.3-preview";
+const APP_VERSION = "4.0.4-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
