@@ -851,7 +851,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 
     <div class="ai-panel prime" id="aiPanel">
       <div class="ai-head"><span class="ah-dot">◍</span>背景 + 选项 + 你的想法</div>
-      <textarea id="aiInput" rows="2" placeholder="背景 + 选项 + 你的想法，一两句就够"></textarea>
+      <textarea id="aiInput" rows="2" placeholder="背景 + 选项 + 你的想法（有截止时间一定写上）"></textarea>
       <button class="send" id="aiSend">开始梳理 ✦</button>
       <div class="ai-reply" id="aiReply"></div>
       <div class="ai-actions" id="aiActions">
@@ -1707,17 +1707,24 @@ $("aiSend").onclick = async ()=>{
   $("aiErr").style.display = "none";
   $("aiFollow").style.display = "none";
   const {timeStr, optStr, threeStr, ruleStr} = aiContext();
-  const sys = `${timeStr}。${threeStr}${optStr}${ruleStr}用户带着一个小纠结来。
-第一步（在心里做，不输出）：认真读完整条消息，找出真正的卡点——它经常藏在中后段，比如某个担心（"怕手动打印搞砸"）或她自己已经流露的倾向。选项表面之争往往不是重点。
-第二步，输出（总共不超过50字，大白话）：
-第一行：针对真正卡点的结论，不超过20字。如果她其实已有倾向，直接确认她的倾向：「你已经想选X了，就X」。
-第二行（可省略）：「下次：」加一条可复用的准则，不超过20字。
+  const sys = `${timeStr}。${threeStr}${optStr}${ruleStr}用户带着一个决策卡点来。先在心里完成判断（不输出思考过程）：
+第一步，判断本次真正要优化什么——不套固定规则，每次重新判断。常见维度：
+- 碎片时间利用：离下一个固定时间点还剩多久？哪个候选能完整装进这个窗口？
+- 可中断性：哪个候选一旦展开就难收摊？窗口小的时候避开它。
+- 精力与身体状态、长期目标推进、晚间收尾。
+截止点/时间窗口是最常见的隐藏约束，永远先算时间。
+第二步，若用户消息里已流露倾向，优先确认其倾向，不另起炉灶。
+
+输出恰好按此格式（最多三行，总共不超过70字，大白话）：
+第1行：「这次按X算：」+一句关键约束。例：「这次按碎片时间算：离验血只剩24分钟。」
+第2行：裁决+第一步，动词开头，具体到现在就能做。例：「做YTWL，现在摆好垫子。」
+第3行（可省略）：「没算：Y」点明本次被排除的因素；或「下次：」+可存准则（≤20字）。
+
 规则：
-- 有适用的旧准则就直接用并点明：「按你的准则：X」。
-- 纠结成本明显高于事情本身时，直说「这题不值得纠结」然后随便定一个。
-- 可逆的、能更快开始的、步骤少的优先。晚上九点后偏向能收尾、不兴奋的。
-- 只有涉及大额金钱、健康、重要关系时才可以不拍板，改说「这个值得慢慢想」加一句原因。
-- 不复述她的话，不解释利弊，不列选项，不安慰，不抒情，不用「她」。`;
+- 有适用旧准则直接用并点明「按你的准则：X」。
+- 纠结成本明显高于事情本身：第1行写「这题不值得纠结」，第2行随便定一个+第一步。
+- 大额金钱、重大健康决定、重要关系不拍板，改说「这个值得慢慢想」+一句原因。
+- 不解释利弊清单，不安慰，不抒情，不用「她」。`;
   const userMsg = ctx || (opts.length ? "（没写背景，看选项和时间直接切）" : "（没写选项也没写背景，就是卡住了，给一个此刻就能动的最小动作）");
   aiHistory = [{role:"user", content:userMsg}];
   try{
@@ -1765,7 +1772,10 @@ $("aiAnswerSend").onclick = async ()=>{
   const btn = $("aiAnswerSend"), reply = $("aiReply");
   btn.disabled = true; btn.textContent = "…";
   const {timeStr, optStr, threeStr, ruleStr} = aiContext();
-  const sys = `${timeStr}。${threeStr}${optStr}${ruleStr}你刚才拍了板，用户不服，说了理由。先认真理解她的理由里真正的顾虑（可能她自己刚刚才想明白），再给最终裁决——可以改判也可以维持。第一行结论不超过20字；可加一行「下次：」准则（不超过20字）。总共不超过50字，大白话，不复述，不解释，不安慰。这是最后一句。`;
+  const sys = `${timeStr}。${threeStr}${optStr}${ruleStr}用户对上一轮裁决追问或不服。把这条新消息当作对「本次优化什么」的修正信息：
+重新判断优化维度，按主提示词的三行格式重新输出（总≤70字）。
+严格禁止：复述或评论对话过程（禁说「你刚才说」「你驳我」）；揣测用户动机（禁说「你其实是怕/在意…」）；为上一轮裁决辩护。只输出重新判断后的结果。
+维持原判时，第1行必须给出新信息为何不改变框架的那个约束，而不是重复旧理由。`;
   aiHistory.push({role:"user", content:ans});
   try{
     const text = await runAI(sys, aiHistory);
@@ -3169,7 +3179,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.0.2-preview";
+const APP_VERSION = "4.0.3-preview";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
