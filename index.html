@@ -779,13 +779,15 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .ref-suggest .rs-t{display:block;font:500 11px var(--sans);color:var(--ink-faint);margin-bottom:2px}
 .ref-suggest .rs-x{display:block;font:500 12.5px "Noto Serif SC",var(--kai);color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ref-suggest .rs-hit{background:#F1F6EC;color:var(--sage-deep)}
-.md-ref{display:block;border-left:2px solid var(--sage-deep);border-radius:0;background:#F1F6EC;padding:5px 9px;margin:5px 0 2px;cursor:pointer}
-.md-ref .mr-d{display:block;font:500 11px var(--sans);color:var(--sage-deep)}
-.md-ref .mr-t{font:500 12px "Noto Serif SC",var(--kai);color:var(--ink)}
+.md-ref{display:block;border-left:2px solid var(--sage-deep);border-radius:0;background:#F1F6EC;padding:6px 10px;margin:5px 0 2px;cursor:pointer}
+.md-ref .mr-d{display:block;font:500 11px var(--sans);color:var(--sage-deep);margin-bottom:2px}
+.md-ref .mr-t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:500 12.5px "Noto Serif SC",var(--kai);color:var(--ink);line-height:1.65}
+.md-ref.open .mr-t{-webkit-line-clamp:unset;overflow:visible}
+.md-ref .mr-x{display:none;font:500 11px var(--sans);color:var(--ink-faint);margin-top:4px}
+.md-ref .mr-go{display:none;font:500 11px var(--sans);color:var(--sage-deep);margin-top:5px}
+.md-ref.open .mr-x,.md-ref.open .mr-go{display:block}
 .md-ref.gone{border-left-color:rgba(75,66,55,.2);background:rgba(75,66,55,.05);cursor:default}
-.md-ref .mr-x{display:block;font:500 11px var(--sans);color:var(--ink-faint)}
-.md-ref .mr-full{display:block;font:500 12px "Noto Serif SC",var(--kai);color:var(--ink);line-height:1.6;margin-top:4px}
-.md-ref .mr-go{display:inline-block;font:500 11px var(--sans);color:var(--sage-deep);margin-top:5px}
+.md-ref.gone .mr-x{display:block}
 .entry.ref-hit{background:rgba(215,232,204,.58);box-shadow:0 0 0 7px rgba(215,232,204,.22);border-radius:12px}
 .tag-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.tag-head h3,.tag-head p{margin:0}.tag-head p{margin-top:3px}.tag-close{border:0;background:transparent;font-size:22px;color:#8D857B;cursor:pointer}.tag-list-row{display:grid;grid-template-columns:1fr auto;text-align:left;gap:3px 10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer;color:#5D574F}.tag-list-row b{color:#526548}.tag-list-row small{grid-column:1/-1;color:#918A80}.tag-related-row{padding:9px 0;border-bottom:1px dashed rgba(75,66,55,.1)}.tag-related-row time{font-size:9px;color:#9A9186}.tag-related-row p{margin:2px 0}.tag-manage .danger{color:#B56E5B}.tag-tree-node{margin-left:0}.tag-tree-row{display:flex;align-items:stretch;gap:3px;margin-bottom:6px}.tag-tree-toggle,.tag-tree-spacer{width:25px;flex:0 0 25px}.tag-tree-toggle{border:0;background:transparent;color:#7E8D75;cursor:pointer;font-size:14px}.tag-tree-main{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto;gap:2px 8px;text-align:left;padding:10px 12px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer;color:#5D574F}.tag-tree-main b{color:#526548;overflow:hidden;text-overflow:ellipsis}.tag-tree-main small{grid-column:1/-1;color:#918A80}.tag-tree-children{margin:1px 0 0 12px;padding-left:7px;border-left:1px solid rgba(96,120,79,.13)}#enoughCard .enough-row{gap:6px}#enoughCard .enough-row input{min-width:0}
 nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{border-radius:25px;padding:8px 0 7px}nav button.on{background:linear-gradient(135deg,#FF955B,var(--v3-orange))}
@@ -1478,10 +1480,10 @@ function renderInlineMarkdownLite(line){
   html=html.replace(/(^|[\s，。！？；：、,.!?;:])#([^\s#，。！？；：、,.!?;:<>&]+)/g,'$1<span class="md-tag">#$2</span>');
   REF_RE.lastIndex=0;
   html=html.replace(REF_RE,(all,ymd,hm,sf)=>{
-    const {hit}=resolveRef(ymd,hm,sf);
+    const {hit,siblings}=resolveRef(ymd,hm,sf);
     if(!hit) return `<span class="md-ref gone">${all}<span class="mr-x">这条记录已经不在了</span></span>`;
-    const head=fmtDT(hit.t).slice(0,5);
-    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${head}</span><span class="mr-t">${esc(String(hit.text||"").trim().slice(0,14))}…</span></span>`;
+    const more=siblings.length>1?`<span class="mr-x">这一分钟还有 ${siblings.length-1} 条记录</span>`:"";
+    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t).slice(0,5)}</span><span class="mr-t">${esc(String(hit.text||"").trim())}</span>${more}<span class="mr-go">去那条 →</span></span>`;
   });
   html=html.replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>");
   return html;
@@ -3314,17 +3316,12 @@ function renderLog(){
         toastDone("删了。");
       };
       row.querySelectorAll(".md-ref[data-ref]").forEach(node=>{
-        node.onclick=(ev)=>{
+        node.onclick=(ev)=>{ev.stopPropagation();node.classList.toggle("open");};
+        const go=node.querySelector(".mr-go");
+        if(go) go.onclick=(ev)=>{
           ev.stopPropagation();
-          if(node.classList.contains("open")){node.classList.remove("open");node.querySelector(".mr-body")?.remove();return;}
           const m=/@(\d{6})-(\d{4})([a-z]?)/.exec(node.dataset.ref);if(!m)return;
-          const {hit,siblings}=resolveRef(m[1],m[2],m[3]);if(!hit)return;
-          const box=document.createElement("span");box.className="mr-body";
-          box.innerHTML=`<span class="mr-full">${esc(String(hit.text||"").trim())}</span>`
-            +(siblings.length>1?`<span class="mr-x">这一分钟还有 ${siblings.length-1} 条记录</span>`:"")
-            +`<span class="mr-go">去那条 →</span>`;
-          box.querySelector(".mr-go").onclick=(e2)=>{e2.stopPropagation();jumpToEntry(hit);};
-          node.appendChild(box);node.classList.add("open");
+          const {hit}=resolveRef(m[1],m[2],m[3]);if(hit) jumpToEntry(hit);
         };
       });
       const etx = row.querySelector(".etx");
@@ -3644,7 +3641,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.1";
+const APP_VERSION = "4.3.2";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
