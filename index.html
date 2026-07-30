@@ -774,8 +774,11 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 /* 导出中心：复用设置与历史记录中的既有入口 */
 .export-modal .modal{max-height:88vh}.export-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.export-close{border:0;background:transparent;color:var(--ink-soft);font-size:20px;cursor:pointer}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.export-grid .wide{grid-column:1/-1}.export-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 14px}.export-checks label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid rgba(75,66,55,.1);border-radius:12px;background:rgba(255,255,255,.52);color:var(--ink);font-size:11px}.export-checks input{width:auto}.export-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-formats button,.export-open-btn{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:14px;padding:11px;color:var(--ink);cursor:pointer;font-family:var(--sans)}.export-formats button:first-child{background:#EEF4E9;color:#5F7B4E}.export-hint{min-height:18px;margin-top:9px!important;color:#718466!important}.custom-range[hidden]{display:none}.settings-export{width:100%;margin-top:7px}
 .tag-suggest{display:none;position:absolute;left:18px;right:18px;top:118px;z-index:12;padding:7px;background:rgba(255,253,249,.98);border:1px solid rgba(108,132,89,.2);border-radius:14px;box-shadow:0 12px 28px rgba(75,66,55,.14)}.tag-suggest.show{display:grid;gap:3px}.tag-suggest button{border:0;background:transparent;text-align:left;padding:7px 9px;border-radius:9px;color:#5D7550;cursor:pointer;font:500 11px "Noto Serif SC",var(--kai)}.tag-chip{border:0;background:#EAF1E4;color:#60784F;border-radius:999px;padding:3px 8px;cursor:pointer;font:500 9.5px "Noto Serif SC",var(--kai);white-space:nowrap}.record-tags,.entity-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.task-tag-row{display:flex;flex-wrap:wrap;gap:4px;margin:-3px 0 4px 72px}.tag-bind,.task-tag-btn{border:0;background:transparent;color:#71875F;cursor:pointer;font:600 10px "Noto Serif SC",var(--kai);padding:4px}.tag-memory-card{padding:18px 20px;margin:17px 0;border-radius:24px;display:flex;align-items:center;gap:13px}.tag-memory-card>span{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#E8F0E3;color:#668653;font-size:20px}.tag-memory-card div{flex:1}.tag-memory-card b,.tag-memory-card small{display:block}.tag-memory-card b{font:600 17px "Noto Serif SC",var(--kai)}.tag-memory-card small{font-size:10.5px;color:var(--ink-soft);margin-top:2px}.tag-memory-card button{border:1px solid rgba(96,120,79,.2);background:#fff;border-radius:999px;padding:8px 13px;color:#60784F;cursor:pointer}.tag-modal .modal{max-width:570px;max-height:88vh}.tag-toolbar{display:flex;gap:8px;align-items:center;margin:10px 0}.tag-toolbar select{margin:0}.tag-list{display:grid;gap:7px}.tag-list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer}.tag-list-item .tag-main{flex:1;min-width:0}.tag-list-item b,.tag-list-item small{display:block}.tag-list-item b{font:600 12px "Noto Serif SC",var(--kai);color:#526548;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag-list-item small{font-size:9.5px;color:#918A80;margin-top:2px}.tag-count{font-size:10px;color:#71875F}.tag-empty{padding:24px;text-align:center;color:var(--ink-soft);font:500 11px "Noto Serif SC",var(--kai)}.tag-detail-head{display:flex;align-items:center;gap:8px}.tag-back{border:0;background:transparent;color:#71875F;cursor:pointer}.tag-detail-stats{padding:10px 12px;margin:10px 0;border-radius:13px;background:#F1F5ED;color:#66745D;font-size:10px;line-height:1.8}.tag-manage{display:flex;gap:6px;margin-bottom:12px}.tag-manage button{border:1px solid rgba(75,66,55,.1);background:#fff;border-radius:999px;padding:6px 10px;color:#786F65;cursor:pointer;font-size:10px}.tag-related h4{margin:13px 0 6px;font:600 11px "Noto Serif SC",var(--kai);color:#6A7B5F}.tag-record{padding:8px 0;border-bottom:1px dashed rgba(75,66,55,.1);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#5D574F}.tag-record time{display:block;color:#9A9186;font-size:9px}.tag-modal [hidden]{display:none!important}
-.ref-suggest button{display:block;width:100%;text-align:left;line-height:1.5}
-.ref-suggest .rs-t{display:block;font:500 11px var(--sans);color:var(--ink-faint)}
+.ref-suggest{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ref-suggest button{display:block;width:100%;text-align:left;line-height:1.6;padding:9px 10px;white-space:normal}
+.ref-suggest .rs-t{display:block;font:500 11px var(--sans);color:var(--ink-faint);margin-bottom:2px}
+.ref-suggest .rs-x{display:block;font:500 12.5px "Noto Serif SC",var(--kai);color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ref-suggest .rs-hit{background:#F1F6EC;color:var(--sage-deep)}
 .md-ref{display:block;border-left:2px solid var(--sage-deep);border-radius:0;background:#F1F6EC;padding:5px 9px;margin:5px 0 2px;cursor:pointer}
 .md-ref .mr-d{display:block;font:500 11px var(--sans);color:var(--sage-deep)}
 .md-ref .mr-t{font:500 12px "Noto Serif SC",var(--kai);color:var(--ink)}
@@ -3641,7 +3644,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.0";
+const APP_VERSION = "4.3.1";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4115,6 +4118,14 @@ function updateTagSuggest(){
   const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,6),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
   box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('');box.classList.toggle('show',!!items.length);
 }
+function hlHit(text,q){
+  const safe=esc(text);
+  if(!q) return safe;
+  const eq=esc(q);
+  const i=safe.indexOf(eq);
+  if(i<0) return safe;
+  return safe.slice(0,i)+'<span class="rs-hit">'+eq+'</span>'+safe.slice(i+eq.length);
+}
 function updateRefSuggest(){
   const el=$('noteText'),box=$('refSuggest');
   const before=el.value.slice(0,el.selectionStart),m=before.match(/@([^\s@]*)$/);
@@ -4123,8 +4134,8 @@ function updateRefSuggest(){
   const q=m[1].trim();
   const pool=log.filter(e=>e.type==="note"&&String(e.text||"").trim())
     .filter(e=>!q||String(e.text||"").includes(q))
-    .sort((a,b)=>b.t-a.t).slice(0,6);
-  box.innerHTML=pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span>${esc(String(e.text||"").trim().slice(0,18))}</button>`).join('');
+    .sort((a,b)=>b.t-a.t).slice(0,30);
+  box.innerHTML=pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(String(e.text||"").trim().slice(0,60),q)}</span></button>`).join('');
   box.classList.toggle('show',!!pool.length);
 }
 function commitNoteEdit(value,start,end=start){const el=$('noteText');el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
