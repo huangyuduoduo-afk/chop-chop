@@ -698,6 +698,12 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
   display:inline-flex;margin-left:9px;vertical-align:5px;padding:2px 8px;border-radius:999px;
   background:rgba(145,168,124,.16);color:#71875F;font:700 9px var(--sans);letter-spacing:.12em
 }
+#appDialogPick{max-height:44vh;overflow-y:auto;display:grid;gap:6px;margin:6px 0 2px}
+.pick-row{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid rgba(75,66,55,.14);background:#fff;border-radius:14px;padding:10px 12px;font:500 13px "Noto Serif SC",var(--kai);color:var(--ink);cursor:pointer}
+.pick-row .pick-box{flex:0 0 16px;height:16px;border:1.5px solid rgba(75,66,55,.28);border-radius:5px}
+.pick-row.on{border-color:var(--sage-deep);background:#F1F6EC}
+.pick-row.on .pick-box{background:var(--sage-deep);border-color:var(--sage-deep)}
+.pick-empty{font:500 12px var(--sans);color:var(--ink-faint);padding:8px 2px}
 .glass{background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,251,245,.48));
   border:1px solid rgba(255,255,255,.88);box-shadow:var(--v3-shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .view.on{animation:v3-enter .34s ease both}@keyframes v3-enter{from{opacity:0;transform:translateY(8px)}}
@@ -818,7 +824,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 <div class="aura a"></div><div class="aura b"></div><div class="aura c"></div>
 
 <header>
-  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill">4.1</span></div>
+  <div class="wordmark">chop chop<span class="bang">!</span><span class="version-pill" id="verPill"></span></div>
   <div class="head-meta">
     <span class="head-clock" id="headClock"></span>
     <button class="sync" id="syncBtn" aria-label="同步" title="同步到云端">
@@ -1082,6 +1088,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <p id="appDialogText"></p>
     <input id="appDialogLine" type="text" hidden>
     <textarea id="appDialogArea" hidden></textarea>
+    <div id="appDialogPick" hidden></div>
     <div class="app-dialog-actions">
       <button type="button" id="appDialogCancel">取消</button>
       <button type="button" class="primary" id="appDialogOk">确定</button>
@@ -1366,21 +1373,46 @@ function addLog(type, text, mood, src, q){
   return entry;
 }
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
-let appDialogResolve=null,appDialogInput=null,appDialogConfirm=false;
+let appDialogResolve=null,appDialogInput=null,appDialogConfirm=false,appDialogPick=null;
 function closeAppDialog(ok){
   if(!appDialogResolve)return;
-  const resolve=appDialogResolve,value=appDialogConfirm?!!ok:(ok?appDialogInput.value:null);
-  appDialogResolve=null;appDialogInput=null;$("appDialogBg").classList.remove("show");resolve(value);
+  const resolve=appDialogResolve;
+  const value = appDialogPick
+    ? (ok ? appDialogPick.options.filter((o,i)=>appDialogPick.chosen.has(i)).map(o=>o.value) : null)
+    : (appDialogConfirm ? !!ok : (ok ? appDialogInput.value : null));
+  appDialogResolve=null;appDialogInput=null;appDialogPick=null;
+  $("appDialogBg").classList.remove("show");
+  resolve(value);
+}
+function renderAppDialogPick(cfg){
+  const box=$("appDialogPick");
+  appDialogPick={multi:!!cfg.multi,max:cfg.max||0,chosen:new Set(),options:cfg.options||[]};
+  box.innerHTML=appDialogPick.options.length
+    ? appDialogPick.options.map((o,i)=>`<button type="button" class="pick-row" data-pick="${i}"><span class="pick-box"></span><span class="pick-tx">${esc(o.label)}</span></button>`).join("")
+    : '<div class="pick-empty">这里还没有可选的。</div>';
+  box.querySelectorAll("[data-pick]").forEach(btn=>{
+    btn.onclick=()=>{
+      const i=+btn.dataset.pick,st=appDialogPick;
+      if(!st.multi){ st.chosen.clear(); st.chosen.add(i); closeAppDialog(true); return; }
+      if(st.chosen.has(i)){ st.chosen.delete(i); btn.classList.remove("on"); return; }
+      if(st.max&&st.chosen.size>=st.max){ toastDone("一次最多 "+st.max+" 条。"); return; }
+      st.chosen.add(i); btn.classList.add("on");
+    };
+  });
 }
 function appDialog(opts={}){
   return new Promise(resolve=>{
     if(appDialogResolve)closeAppDialog(false);
-    appDialogResolve=resolve;appDialogConfirm=!opts.input;
+    appDialogResolve=resolve;
+    appDialogConfirm=!opts.input&&!opts.pick;
+    appDialogPick=null;
     $("appDialogTitle").textContent=opts.title||"请确认";
     $("appDialogText").textContent=opts.text||"";
     $("appDialogText").hidden=!opts.text;
     $("appDialogLine").hidden=opts.input!=="line";
     $("appDialogArea").hidden=opts.input!=="area";
+    $("appDialogPick").hidden=!opts.pick;
+    if(opts.pick) renderAppDialogPick(opts.pick);
     appDialogInput=opts.input==="area"?$("appDialogArea"):opts.input==="line"?$("appDialogLine"):null;
     if(appDialogInput){appDialogInput.value=opts.value||"";appDialogInput.placeholder=opts.placeholder||"";}
     $("appDialogOk").textContent=opts.okText||"确定";
@@ -1582,12 +1614,39 @@ function addToToday(text,goalId){
   saveEnough();saveTagData();renderEnough();renderOptsHistory();
   return "today";
 }
+/* 智能排进今天：第三个返回值用于提示关联目标冲突，不覆盖已有目标。 */
+async function addToTodaySmart(text,goalId){
+  ensureEnough();
+  const t=String(text||"").trim();
+  if(!t) return {r:"cancel"};
+  const dup=enough.items.some(x=>x.text.trim()===t||(x.subs||[]).some(s=>String(s.text||"").trim()===t));
+  if(dup) return {r:"exists"};
+  const written=enough.items.map((x,i)=>({x,i})).filter(o=>o.x.text.trim());
+  const hasEmpty=enough.items.some(x=>!x.text.trim());
+  if(!written.length) return {r:addToToday(t,goalId)};
+  const options=[];
+  if(hasEmpty) options.push({label:"作为新的一件（大项）",value:"top"});
+  written.forEach(o=>options.push({label:"放到「"+o.x.text.trim()+"」下面",value:"sub:"+o.i}));
+  const picked=await appDialog({title:"排到哪里？",text:t,pick:{options,multi:false}});
+  if(!picked||!picked.length) return {r:"cancel"};
+  const v=picked[0];
+  if(v==="top") return {r:addToToday(t,goalId)};
+  const item=enough.items[+v.slice(4)];
+  unbury("esub:"+enough.d,t);
+  item.subs.push({text:t,done:false,status:"incomplete",updatedAt:Date.now()});
+  item.updatedAt=Date.now();
+  syncParentFromSubs(item);
+  let noted=false;
+  if(goalId&&!taskGoals[item.id]){ taskGoals[item.id]=goalId; noted=true; }
+  saveEnough();saveTagData();renderEnough();renderOptsHistory();
+  return {r:"sub",parent:item.text.trim(),noted,goalConflict:!!(goalId&&taskGoals[item.id]&&String(taskGoals[item.id])!==String(goalId))};
+}
 const optsHistExpanded=new Set();
 function renderOptsHistory(){
   const body=$("optsHistoryBody"),today=dayKey(Date.now());
   const doneTexts=new Set(log.filter(e=>e.type==="done").map(e=>String(e.text||"").trim()));
   /* 完全相等过滤意味着每日重复事项完成过一次后也不再出现；重复事项应由未来的“常规”功能承接。 */
-  const past=optsHist.filter(item=>dayKey(item.t)!==today&&!isDead("ohist",optsHistKey(item))&&!doneTexts.has(String(item.text||"").trim())&&!opts.includes(item.text)&&!bench.includes(item.text)&&!enough.items.some(x=>x.text.trim()===String(item.text||"").trim())).sort((a,b)=>b.t-a.t);
+  const past=optsHist.filter(item=>dayKey(item.t)!==today&&!isDead("ohist",optsHistKey(item))&&!doneTexts.has(String(item.text||"").trim())&&!opts.includes(item.text)&&!bench.includes(item.text)&&!enough.items.some(x=>x.text.trim()===String(item.text||"").trim()||(x.subs||[]).some(s=>String(s.text||"").trim()===String(item.text||"").trim()))).sort((a,b)=>b.t-a.t);
   $("optsHistoryCount").textContent=past.length?` ${past.length}`:"";
   const groups={};
   past.forEach(item=>{const key=dayKey(item.t);(groups[key]||(groups[key]=[])).push(item);});
@@ -1598,7 +1657,7 @@ function renderOptsHistory(){
     return `<section class="opts-history-day"><div class="opts-history-date">${date.getMonth()+1}/${date.getDate()}</div>${shown.map(item=>`<div class="opts-history-item"><span class="edit-text" data-ohist-edit="${esc(optsHistKey(item))}" title="点击修改">${esc(item.text)}</span><button class="restore" data-ohist-restore="${esc(optsHistKey(item))}" title="排回今天">＋</button><button class="remove" data-ohist-remove="${esc(optsHistKey(item))}" title="删除">✕</button></div>`).join("")}${items.length>6&&!optsHistExpanded.has(key)?`<button class="opts-history-more" data-ohist-more="${key}">更多 · ${items.length-6} 条</button>`:""}</section>`;
   }).join("");
   body.querySelectorAll("[data-ohist-edit]").forEach(span=>{span.onclick=async()=>{const key=span.dataset.ohistEdit,item=optsHist.find(x=>optsHistKey(x)===key);if(!item)return;const value=await appDialog({title:"修改事项",input:"line",value:item.text});if(value===null)return;const next=value.trim();if(!next){toastDone("文字不能为空，可以用 ✕ 删除。");return;}const current=optsHist.find(x=>optsHistKey(x)===key);if(!current||next===current.text)return;const oldKey=optsHistKey(current);bury("ohist",oldKey);current.text=next;unbury("ohist",optsHistKey(current));saveOptsHist();renderOptsHistory();};});
-  body.querySelectorAll("[data-ohist-restore]").forEach(button=>{button.onclick=()=>{const item=optsHist.find(x=>optsHistKey(x)===button.dataset.ohistRestore);if(!item)return;const r=addToToday(item.text);if(r==="today")toastDone("排进今天了。");else if(r==="exists")toastDone("今天已经有这一条了。");else toastDone("今天三件已经满了，先做掉或删掉一件。");};});
+  body.querySelectorAll("[data-ohist-restore]").forEach(button=>{button.onclick=async()=>{const item=optsHist.find(x=>optsHistKey(x)===button.dataset.ohistRestore);if(!item)return;const out=await addToTodaySmart(item.text);if(out.r==="today")toastDone("排进今天了。");else if(out.r==="sub")toastDone("放到「"+out.parent+"」下面了。");else if(out.r==="exists")toastDone("今天已经有这一条了。");};});
   body.querySelectorAll("[data-ohist-remove]").forEach(button=>{button.onclick=()=>{const key=button.dataset.ohistRemove;optsHist=optsHist.filter(item=>optsHistKey(item)!==key);bury("ohist",key);saveOptsHist();renderOptsHistory();};});
   body.querySelectorAll("[data-ohist-more]").forEach(button=>{button.onclick=()=>{optsHistExpanded.add(button.dataset.ohistMore);renderOptsHistory();};});
 }
@@ -1963,11 +2022,13 @@ function renderMonth(){
             sp.text = v.trim(); saveMonths(); renderSplits();
           }
         };
-        chip.querySelector(".to-today").onclick = ()=>{
-          const r=addToToday(sp.text,a.id);
-          if(r==="today")toastDone("排进今天了，也关联了这个月度目标。");
-          else if(r==="exists")toastDone("今天已经有这一条了。");
-          else toastDone("今天三件已经满了，先做掉或删掉一件。");
+        chip.querySelector(".to-today").onclick = async ()=>{
+          const out=await addToTodaySmart(sp.text,a.id);
+          if(out.r==="today")toastDone("排进今天了，也关联了这个月度目标。");
+          else if(out.r==="sub"){
+            if(out.goalConflict)toastDone("放到「"+out.parent+"」下面了；这个大项已有其他关联目标，未覆盖。");
+            else toastDone("放到「"+out.parent+"」下面了"+(out.noted?"，也关联了这个月度目标。":"。"));
+          }else if(out.r==="exists")toastDone("今天已经有这一条了。");
         };
         chip.querySelector(".x").onclick = ()=>{
           a.splits.splice(si,1);
@@ -2398,9 +2459,9 @@ function mergeEnoughSnapshot(local,remote){
     const winner=enoughItemFreshness(second)>enoughItemFreshness(first)?second:first;
     const loser=winner===first?second:first;
     const out=cloneEnoughItem(winner);
-    const subMap=new Map((out.subs||[]).map(s=>[s.text,s]));
+    const subMap=new Map((out.subs||[]).filter(s=>!isDead("esub:"+base.d,s.text)).map(s=>[s.text,s]));
     (loser.subs||[]).forEach(s=>{
-      if(isDead("esub:"+local.d,s.text)) return;
+      if(isDead("esub:"+base.d,s.text)) return;
       const old=subMap.get(s.text);
       if(!old) subMap.set(s.text,Object.assign({},s));
       else if((s.updatedAt||0)>(old.updatedAt||0)) subMap.set(s.text,Object.assign({},s));
@@ -3438,7 +3499,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.1.1";
+const APP_VERSION = "4.2.0";
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
@@ -3621,7 +3682,7 @@ function mergeAll(o){
       it.done=it.status==="completed";
       it.updatedAt=Math.max(localUpdated,remoteUpdated);
       const norm = a=>(a||[]).map(normalizeEnoughSub);
-      const sm = new Map(norm(it.subs).map(x=>[x.text, x]));
+      const sm = new Map(norm(it.subs).filter(x=>!isDead("esub:"+enough.d, x.text)).map(x=>[x.text, x]));
       norm(rit.subs).forEach(x=>{
         if(isDead("esub:"+enough.d, x.text)) return;
         if(sm.has(x.text)){
@@ -3652,6 +3713,12 @@ function mergeAll(o){
         text:i.text,status:enoughStatus(i),done:enoughStatus(i)==="completed",
         subs:(i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed"}))
       }));
+      const dayLog=log.filter(e=>dayKey(e.t)===mergedPrev.d);
+      oldSum.stats={
+        cut:dayLog.filter(e=>e.type==="dice"||e.type==="ai").length,
+        notes:dayLog.filter(e=>e.type==="note").length,
+        done:dayLog.filter(e=>e.type==="done").length
+      };
       LS.setSilent("qyx_sums",summaries);
     }
   }
@@ -3947,6 +4014,7 @@ $("gearBtn").onclick = ()=>{
   const lb = LS.get("qyx_lastbackup", null);
   $("syncStatus").textContent = lb ? "上次同步：" + new Date(lb).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
   $("verLine").textContent = "版本 " + APP_VERSION;
+  $("verPill").textContent = APP_VERSION;
   updateNudgeRatio();
   $("historyList").innerHTML = "";
   $("settingsBg").classList.add("show");
