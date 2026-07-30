@@ -171,6 +171,10 @@ header{
 .esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}.task-goal-btn{flex-shrink:0;border:0;background:transparent;color:#67805A;font:600 9.5px var(--sans);padding:4px 2px;cursor:pointer}.task-goal-chip{border:1px solid rgba(95,127,82,.2);background:#F1F6EC;color:#5E7951;border-radius:999px;padding:3px 8px;cursor:pointer;font:600 9.5px "Noto Serif SC",var(--kai)}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
+.routine-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0 12px 35px;padding-top:4px}
+.routine-chip{padding-left:0;background:rgba(227,238,245,.58);border-color:rgba(127,178,212,.28)}
+.routine-chip .routine-use{border:0;background:none;color:#496D89;font:500 12.5px "Noto Serif SC",var(--kai);padding:6px 7px 6px 12px;cursor:pointer}
+.routine-add{border:1px dashed rgba(75,66,55,.24);background:rgba(255,255,255,.45);color:var(--ink-soft);border-radius:999px;padding:6px 12px;font:500 12px "Noto Serif SC",var(--kai);cursor:pointer}
 
 main{flex:1;overflow-y:auto;overflow-x:clip;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:8px 22px 132px;position:relative;z-index:2}
 .view{display:none;animation:fade .3s ease}
@@ -893,6 +897,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <div class="esubs" data-i="1"></div>
       <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="2">关联目标</button><button class="task-tag-btn" data-task-tag="2" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="2"></span><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div><div class="task-tag-row" data-task-tags="2"></div>
       <div class="esubs" data-i="2"></div>
+      <div class="routine-row" id="routineRow"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
       <div id="optsHistoryBlock">
         <h2 class="fold" data-target="optsHistoryBody"><span class="arr">▶</span>往日写过的事项<span class="count" id="optsHistoryCount"></span></h2>
@@ -1234,6 +1239,7 @@ let bottles  = LS.get("qyx_bottles", []);
 let opts     = LS.get("qyx_opts", []);
 let bench    = LS.get("qyx_bench", []);
 let optsHist = LS.get("qyx_opts_hist", []);
+let routines = LS.get("qyx_routines", []);
 let polishHistory = LS.get("qyx_polish_history", []);
 let tags = LS.get("qyx_tags", []);
 let recordTags = LS.get("qyx_record_tags", {});
@@ -1570,6 +1576,7 @@ let lastDice = null;
 function saveOpts(){ LS.set("qyx_opts", opts); }
 function saveBench(){ LS.set("qyx_bench", bench); }
 function saveOptsHist(){ LS.set("qyx_opts_hist", optsHist); }
+function saveRoutines(){ LS.set("qyx_routines", routines); }
 function optsHistKey(item){ return (item.t||0)+"|"+(item.text||""); }
 function rememberOpt(text,t=Date.now()){
   if(optsHist.some(item=>dayKey(item.t)===dayKey(t)&&item.text===text))return;
@@ -1642,11 +1649,22 @@ async function addToTodaySmart(text,goalId){
   return {r:"sub",parent:item.text.trim(),noted,goalConflict:!!(goalId&&taskGoals[item.id]&&String(taskGoals[item.id])!==String(goalId))};
 }
 const optsHistExpanded=new Set();
-function renderOptsHistory(){
-  const body=$("optsHistoryBody"),today=dayKey(Date.now());
+function pastOptsHistory(){
+  const today=dayKey(Date.now());
   const doneTexts=new Set(log.filter(e=>e.type==="done").map(e=>String(e.text||"").trim()));
-  /* 完全相等过滤意味着每日重复事项完成过一次后也不再出现；重复事项应由未来的“常规”功能承接。 */
-  const past=optsHist.filter(item=>dayKey(item.t)!==today&&!isDead("ohist",optsHistKey(item))&&!doneTexts.has(String(item.text||"").trim())&&!opts.includes(item.text)&&!bench.includes(item.text)&&!enough.items.some(x=>x.text.trim()===String(item.text||"").trim()||(x.subs||[]).some(s=>String(s.text||"").trim()===String(item.text||"").trim()))).sort((a,b)=>b.t-a.t);
+  const routineTexts=new Set(routines.map(r=>String(r.text||"").trim()));
+  const inPlay=new Set();
+  enough.items.forEach(x=>{const t=x.text.trim();if(t)inPlay.add(t);(x.subs||[]).forEach(s=>{const st=String(s.text||"").trim();if(st)inPlay.add(st);});});
+  return optsHist.filter(item=>{
+    const t=String(item.text||"").trim();
+    return dayKey(item.t)!==today && !isDead("ohist",optsHistKey(item))
+      && !doneTexts.has(t) && !opts.includes(item.text) && !bench.includes(item.text)
+      && !inPlay.has(t) && !routineTexts.has(t);
+  }).sort((a,b)=>b.t-a.t);
+}
+function renderOptsHistory(){
+  const body=$("optsHistoryBody");
+  const past=pastOptsHistory();
   $("optsHistoryCount").textContent=past.length?` ${past.length}`:"";
   const groups={};
   past.forEach(item=>{const key=dayKey(item.t);(groups[key]||(groups[key]=[])).push(item);});
@@ -2590,6 +2608,39 @@ function renderEnough(){
   const filled = enough.items.filter(i=>i.text.trim()&&enoughStatus(i)!=="deleted");
   const allDone = filled.length===3 && filled.every(i=>enoughStatus(i)==="completed");
   $("enoughFin").style.display = allDone ? "block" : "none";
+  renderRoutines();
+}
+/* 停用判据：两周内，常规区被点用（其文字出现在当天三件事的小项里）的天数少于 5 天，
+   说明这个入口没有降低启动成本，删除本功能。判据从导出数据看，不在应用内做统计。 */
+function renderRoutines(){
+  const row=$("routineRow");
+  row.innerHTML=routines.slice(0,6).map(r=>`<span class="split-chip routine-chip"><button class="routine-use" data-routine-use="${esc(r.id)}">${esc(r.text)}</button><button class="x" data-routine-remove="${esc(r.id)}">✕</button></span>`).join("")+'<button class="routine-add" id="routineAdd">＋ 常规</button>';
+  row.querySelectorAll("[data-routine-use]").forEach(button=>{button.onclick=async()=>{
+    const routine=routines.find(r=>String(r.id)===String(button.dataset.routineUse));if(!routine)return;
+    const out=await addToTodaySmart(routine.text);
+    if(out.r==="today")toastDone("排进今天了。");
+    else if(out.r==="sub"){
+      const parent=enough.items.find(x=>x.text.trim()===out.parent);
+      if(parent&&taskGoals[parent.id])toastDone("放到「"+out.parent+"」下面了。这件挂着月目标，加进去它就不会自动打勾了。");
+      else toastDone("放到「"+out.parent+"」下面了。");
+    }else if(out.r==="exists")toastDone("今天已经有这一条了。");
+  };});
+  row.querySelectorAll("[data-routine-remove]").forEach(button=>{button.onclick=()=>{
+    const id=button.dataset.routineRemove;
+    routines=routines.filter(r=>String(r.id)!==String(id));
+    bury("routine",id);saveRoutines();renderRoutines();renderOptsHistory();
+  };});
+  $("routineAdd").onclick=async()=>{
+    if(routines.length>=6){toastDone("常规最多 6 条，先删一条");return;}
+    const value=await appDialog({title:"添加常规",input:"line"});
+    if(value===null)return;
+    const text=value.trim();if(!text)return;
+    if(routines.some(r=>String(r.text||"").trim()===text)){toastDone("已经在常规里了。");return;}
+    const now=Date.now(),id=entityId("routine_",text+"|"+now+"|"+Math.random());
+    unbury("routine",id);routines.push({id,text,updatedAt:now});
+    routines.sort((a,b)=>(a.updatedAt||0)-(b.updatedAt||0)||String(a.id).localeCompare(String(b.id)));
+    saveRoutines();renderRoutines();renderOptsHistory();
+  };
 }
 document.querySelectorAll("#enoughCard [data-task-tag]").forEach(b=>{b.onclick=()=>{const item=enough.items[+b.dataset.taskTag];bindTagsFor("task",item.id,taskTags[item.id]||[]);};});
 document.querySelectorAll("#enoughCard [data-task-goal]").forEach(b=>{b.onclick=()=>{const item=enough.items[+b.dataset.taskGoal];if(!item.text.trim()){toastDone('先写上这件事。');return;}bindGoalForTask(item);};});
@@ -2642,16 +2693,36 @@ document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
 });
 document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
   b.onclick = async ()=>{
-    const i = +b.dataset.i;
-    if(!enough.items[i].text.trim()){ toastDone("先写上这件事。"); return; }
-    const v = await appDialog({title:"拆一个小项",input:"line"});
-    if(v && v.trim()){
-      unbury("esub:"+enough.d, v.trim());
-      enough.items[i].subs.push({text:v.trim(),done:false,status:"incomplete",updatedAt:Date.now()});
-      syncParentFromSubs(enough.items[i]);
-      saveEnough();
-      renderEnough();
+    const i = +b.dataset.i, item = enough.items[i];
+    if(!item.text.trim()){ toastDone("先写上这件事。"); return; }
+    const pool=pastOptsHistory().slice(0,40);
+    let texts=[];
+    if(pool.length){
+      const options=pool.map(x=>({label:x.text,value:"h:"+x.text}));
+      options.push({label:"＋ 手写一个",value:"__manual"});
+      const picked=await appDialog({title:"拆小项",text:item.text.trim(),pick:{options,multi:true,max:5}});
+      if(picked===null) return;
+      texts=picked.filter(v=>v!=="__manual").map(v=>v.slice(2));
+      if(picked.includes("__manual")||!picked.length){
+        const v=await appDialog({title:"拆一个小项",input:"line"});
+        if(v&&v.trim()) texts.push(v.trim());
+      }
+    }else{
+      const v=await appDialog({title:"拆一个小项",input:"line"});
+      if(v&&v.trim()) texts.push(v.trim());
     }
+    let added=0;
+    texts.forEach(t=>{
+      const s=t.trim(); if(!s) return;
+      if((item.subs||[]).some(x=>String(x.text||"").trim()===s)) return;
+      unbury("esub:"+enough.d,s);
+      item.subs.push({text:s,done:false,status:"incomplete",updatedAt:Date.now()});
+      added++;
+    });
+    if(!added) return;
+    item.updatedAt=Date.now();
+    syncParentFromSubs(item);
+    saveEnough(); renderEnough(); renderOptsHistory();
   };
 });
 
@@ -3499,9 +3570,9 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.2.0-preview";
+const APP_VERSION = "4.2.1-preview";
 $("verPill").textContent = APP_VERSION;
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -3586,6 +3657,14 @@ function mergeAll(o){
   (o.qyx_opts_hist||[]).forEach(x=>{const k=ohKey(x);if(!isDead("ohist",k)&&!ohMap.has(k))ohMap.set(k,x);});
   optsHist=[...ohMap.values()].sort((a,b)=>a.t-b.t).slice(-800);
   LS.setSilent("qyx_opts_hist",optsHist);
+  const rtMap=new Map(routines.filter(x=>!isDead("routine",x.id)).map(x=>[x.id,x]));
+  (o.qyx_routines||[]).forEach(x=>{
+    if(!x||!x.id||isDead("routine",x.id))return;
+    const old=rtMap.get(x.id);
+    if(!old||(x.updatedAt||0)>(old.updatedAt||0))rtMap.set(x.id,x);
+  });
+  routines=[...rtMap.values()].sort((a,b)=>(a.updatedAt||0)-(b.updatedAt||0)||String(a.id).localeCompare(String(b.id)));
+  LS.setSilent("qyx_routines",routines);
   const tagMap=new Map(tags.map(t=>[t.id,t]));
   (o.qyx_tags||[]).forEach(t=>{if(!isDead("tag",t.id)){const old=tagMap.get(t.id);if(!old||(t.updated_time||0)>(old.updated_time||0))tagMap.set(t.id,t);}});
   tags=[...tagMap.values()].filter(t=>!isDead("tag",t.id));
