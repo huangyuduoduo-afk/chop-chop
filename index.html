@@ -1475,6 +1475,12 @@ function stripRefs(text){
     return hit?`（引用${fmtDT(hit.t)}：${String(hit.text||"").trim().slice(0,20)}）`:"（引用了一条已删除的记录）";
   });
 }
+function refInline(text){
+  return String(text||"").replace(/@(\d{6})-(\d{4})([a-z]?)/g,(all,ymd,hm,sf)=>{
+    const {hit}=resolveRef(ymd,hm,sf);
+    return hit?`⟨引用·${fmtDT(hit.t).slice(0,5)}⟩`:"⟨引用·已删除⟩";
+  });
+}
 function renderInlineMarkdownLite(line){
   let html=esc(line);
   html=html.replace(/(^|[\s，。！？；：、,.!?;:])#([^\s#，。！？；：、,.!?;:<>&]+)/g,'$1<span class="md-tag">#$2</span>');
@@ -1483,7 +1489,7 @@ function renderInlineMarkdownLite(line){
     const {hit,siblings}=resolveRef(ymd,hm,sf);
     if(!hit) return `<span class="md-ref gone">${all}<span class="mr-x">这条记录已经不在了</span></span>`;
     const more=siblings.length>1?`<span class="mr-x">这一分钟还有 ${siblings.length-1} 条记录</span>`:"";
-    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t).slice(0,5)}</span><span class="mr-t">${esc(String(hit.text||"").trim())}</span>${more}<span class="mr-go">去那条 →</span></span>`;
+    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t).slice(0,5)}</span><span class="mr-t">${esc(refInline(String(hit.text||"").trim()))}</span>${more}<span class="mr-go">去那条 →</span></span>`;
   });
   html=html.replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>");
   return html;
@@ -3641,7 +3647,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.2";
+const APP_VERSION = "4.3.3";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4132,7 +4138,7 @@ function updateRefSuggest(){
   const pool=log.filter(e=>e.type==="note"&&String(e.text||"").trim())
     .filter(e=>!q||String(e.text||"").includes(q))
     .sort((a,b)=>b.t-a.t).slice(0,30);
-  box.innerHTML=pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(String(e.text||"").trim().slice(0,60),q)}</span></button>`).join('');
+  box.innerHTML=pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(refInline(String(e.text||"").trim()).slice(0,60),q)}</span></button>`).join('');
   box.classList.toggle('show',!!pool.length);
 }
 function commitNoteEdit(value,start,end=start){const el=$('noteText');el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
