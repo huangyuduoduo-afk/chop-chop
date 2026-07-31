@@ -713,7 +713,8 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .pick-sec::after{content:"▾";margin-left:auto;transition:transform .15s}
 .pick-sec.open::after{transform:rotate(180deg)}
 .pick-sec-body{display:grid;gap:6px}
-#appDialog2Bg{z-index:55}
+#appDialogBg{z-index:60}
+#appDialog2Bg{z-index:65}
 .pick-empty{font:500 12px var(--sans);color:var(--ink-faint);padding:8px 2px}
 .glass{background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,251,245,.48));
   border:1px solid rgba(255,255,255,.88);box-shadow:var(--v3-shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
@@ -1115,7 +1116,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
   <div class="modal app-dialog-modal" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle">
     <h3 id="appDialogTitle"></h3>
     <p id="appDialogText"></p>
-    <input id="appDialogLine" type="text" hidden>
+    <input id="appDialogLine" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" hidden>
     <textarea id="appDialogArea" hidden></textarea>
     <div id="appDialogPick" hidden></div>
     <div class="app-dialog-actions">
@@ -1128,7 +1129,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 <div class="modal-bg" id="appDialog2Bg">
   <div class="modal app-dialog-modal" role="dialog" aria-modal="true" aria-labelledby="appDialog2Title">
     <h3 id="appDialog2Title"></h3>
-    <input id="appDialog2Input" type="text">
+    <input id="appDialog2Input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <div class="app-dialog-actions">
       <button type="button" id="appDialog2Cancel">取消</button>
       <button type="button" class="primary" id="appDialog2Ok">确定</button>
@@ -3726,13 +3727,13 @@ document.querySelectorAll("[data-export-format]").forEach(btn=>btn.onclick=()=>{
 function toastDone(msg){
   const t = document.createElement("div");
   t.textContent = msg;
-  t.style.cssText = "position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(75,66,55,.92);backdrop-filter:blur(10px);color:#FBF4EA;padding:11px 26px;border-radius:999px;font-size:14px;z-index:99;font-family:var(--kai);letter-spacing:.12em;box-shadow:0 8px 26px rgba(75,66,55,.3)";
+  t.style.cssText = "position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(75,66,55,.92);backdrop-filter:blur(10px);color:#FBF4EA;padding:11px 26px;border-radius:999px;font-size:14px;z-index:200;font-family:var(--kai);letter-spacing:.12em;box-shadow:0 8px 26px rgba(75,66,55,.3)";
   document.body.appendChild(t);
   setTimeout(()=>t.remove(), 1600);
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.4-preview";
+const APP_VERSION = "4.3.5-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4197,7 +4198,29 @@ $('tagSort').onchange=renderTagLibrary;
 $('tagList').onclick=e=>{const b=e.target.closest('[data-tag-toggle]');if(!b)return;e.preventDefault();e.stopPropagation();const id=b.dataset.tagToggle;if(tagTreeOpen.has(id))tagTreeOpen.delete(id);else tagTreeOpen.add(id);LS.setSilent('qyx_tag_tree_open',[...tagTreeOpen]);renderTagLibrary();};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-open-tag]');if(b){e.preventDefault();e.stopPropagation();openTagDetail(b.dataset.openTag);}});
 $('renameTag').onclick=async()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=await appDialog({title:'修改标签名称',text:'填写完整标签路径。',input:'line',value:'#'+old});if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('新标签不能放进自己的子层级。');return;}migrateTag(activeTagId,path);toastDone('标签和历史关联都迁移好了。');};
-$('mergeTag').onclick=async()=>{if(!activeTagId)return;const old=tagPath(activeTagId),next=await appDialog({title:'合并标签',text:'填写要合并到的完整标签路径。',input:'line',placeholder:'#个人洞察/新想法'});if(next===null)return;const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('不能合并到自己的子标签。');return;}migrateTag(activeTagId,path);toastDone('标签已经合并。');};
+$('mergeTag').onclick=async()=>{
+  if(!activeTagId)return;
+  const old=tagPath(activeTagId);
+  const banned=new Set(descendantTagIds(activeTagId));
+  const cands=tags.filter(t=>!banned.has(t.id))
+    .map(t=>({label:'#'+tagPath(t.id),value:'p:'+tagPath(t.id)}))
+    .sort((a,b)=>a.label.localeCompare(b.label,'zh'));
+  const picked=await appDialog({
+    title:'合并标签',
+    text:'把 #'+old+' 合并到哪一个标签？',
+    pick:{
+      multi:false,
+      options:[{label:'＋ 手写一个路径',value:'__manual',plain:true}].concat(cands)
+    }
+  });
+  if(picked===null||!picked.length) return;
+  let next;
+  if(picked[0]==='__manual'){
+    next=await appDialog({title:'合并标签',text:'填写要合并到的完整标签路径。',input:'line',placeholder:'#个人洞察/新想法'});
+    if(next===null) return;
+  }else next=picked[0].slice(2);
+  const path=normalizeTagPath(next);if(!path||path===old)return;if(path.startsWith(old+'/')){alert('不能合并到自己的子标签。');return;}migrateTag(activeTagId,path);toastDone('标签已经合并。');
+};
 $('deleteTag').onclick=async()=>{if(!activeTagId)return;const ids=descendantTagIds(activeTagId),name=tagPath(activeTagId);if(!await appDialog({title:'删除标签关系？',text:'删除 #'+name+' 及其子标签的关联？原记录不会删除。',okText:'删除',danger:true}))return;const removed=new Set(ids);replaceRelationIds(recordTags,{},removed);replaceRelationIds(goalTags,{},removed);replaceRelationIds(taskTags,{},removed);ids.forEach(id=>bury('tag',id));tags=tags.filter(t=>!removed.has(t.id));saveTagData();$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();toastDone('只删了标签关系，原记录还在。');};
 
 function updateTagSuggest(){
