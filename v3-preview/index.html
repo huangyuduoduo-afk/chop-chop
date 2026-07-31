@@ -707,6 +707,13 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .pick-row .pick-box{flex:0 0 16px;height:16px;border:1.5px solid rgba(75,66,55,.28);border-radius:5px}
 .pick-row.on{border-color:var(--sage-deep);background:#F1F6EC}
 .pick-row.on .pick-box{background:var(--sage-deep);border-color:var(--sage-deep)}
+.pick-row.plain{justify-content:flex-start;border-style:dashed}
+.pick-row .pick-edit{margin-left:auto;font:500 11px var(--sans);color:var(--ink-faint);padding:2px 6px;border-radius:8px;background:rgba(75,66,55,.06)}
+.pick-sec{display:flex;align-items:center;gap:6px;width:100%;text-align:left;border:0;background:transparent;padding:8px 4px 4px;font:500 12px var(--sans);color:var(--ink-faint);cursor:pointer}
+.pick-sec::after{content:"▾";margin-left:auto;transition:transform .15s}
+.pick-sec.open::after{transform:rotate(180deg)}
+.pick-sec-body{display:grid;gap:6px}
+#appDialog2Bg{z-index:55}
 .pick-empty{font:500 12px var(--sans);color:var(--ink-faint);padding:8px 2px}
 .glass{background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,251,245,.48));
   border:1px solid rgba(255,255,255,.88);box-shadow:var(--v3-shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
@@ -1118,6 +1125,17 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
   </div>
 </div>
 
+<div class="modal-bg" id="appDialog2Bg">
+  <div class="modal app-dialog-modal" role="dialog" aria-modal="true" aria-labelledby="appDialog2Title">
+    <h3 id="appDialog2Title"></h3>
+    <input id="appDialog2Input" type="text">
+    <div class="app-dialog-actions">
+      <button type="button" id="appDialog2Cancel">取消</button>
+      <button type="button" class="primary" id="appDialog2Ok">确定</button>
+    </div>
+  </div>
+</div>
+
 <!-- 设置 -->
 <div class="modal-bg" id="settingsBg">
   <div class="modal">
@@ -1409,17 +1427,46 @@ function closeAppDialog(ok){
 }
 function renderAppDialogPick(cfg){
   const box=$("appDialogPick");
-  appDialogPick={multi:!!cfg.multi,max:cfg.max||0,chosen:new Set(),options:cfg.options||[]};
-  box.innerHTML=appDialogPick.options.length
-    ? appDialogPick.options.map((o,i)=>`<button type="button" class="pick-row" data-pick="${i}"><span class="pick-box"></span><span class="pick-tx">${esc(o.label)}</span></button>`).join("")
-    : '<div class="pick-empty">这里还没有可选的。</div>';
+  appDialogPick={multi:!!cfg.multi,max:cfg.max||0,chosen:new Set(),options:cfg.options||[],section:cfg.section||null};
+  const rowHTML=(o,i)=>o.plain
+    ? `<button type="button" class="pick-row plain" data-pick="${i}"><span class="pick-tx">${esc(o.label)}</span></button>`
+    : `<button type="button" class="pick-row" data-pick="${i}"><span class="pick-box"></span><span class="pick-tx">${esc(o.label)}</span>${o.editable?'<span class="pick-edit" data-pick-edit="'+i+'">改</span>':''}</button>`;
+  let html=appDialogPick.options.map(rowHTML).join("");
+  if(appDialogPick.section){
+    const s=appDialogPick.section,base=appDialogPick.options.length;
+    s.options.forEach((o,k)=>{appDialogPick.options.push(Object.assign({},o,{_sec:true}));});
+    html+=`<button type="button" class="pick-sec" data-pick-sec="1">${esc(s.label)} · ${s.options.length}</button>`
+        +`<div class="pick-sec-body"${s.collapsed?" hidden":""}>`
+        +appDialogPick.options.slice(base).map((o,k)=>rowHTML(o,base+k)).join("")
+        +`</div>`;
+  }
+  box.innerHTML=html||'<div class="pick-empty">这里还没有可选的。</div>';
+  const secBody=box.querySelector(".pick-sec-body");
+  const secBtn=box.querySelector("[data-pick-sec]");
+  if(secBtn) secBtn.onclick=()=>{ secBody.hidden=!secBody.hidden; secBtn.classList.toggle("open",!secBody.hidden); };
   box.querySelectorAll("[data-pick]").forEach(btn=>{
-    btn.onclick=()=>{
-      const i=+btn.dataset.pick,st=appDialogPick;
+    btn.onclick=(ev)=>{
+      if(ev.target.closest("[data-pick-edit]"))return;
+      const i=+btn.dataset.pick,st=appDialogPick,o=st.options[i];
+      if(o.plain){ st.chosen.add(i); closeAppDialog(true); return; }
       if(!st.multi){ st.chosen.clear(); st.chosen.add(i); closeAppDialog(true); return; }
       if(st.chosen.has(i)){ st.chosen.delete(i); btn.classList.remove("on"); return; }
       if(st.max&&st.chosen.size>=st.max){ toastDone("一次最多 "+st.max+" 条。"); return; }
       st.chosen.add(i); btn.classList.add("on");
+    };
+  });
+  box.querySelectorAll("[data-pick-edit]").forEach(el=>{
+    el.onclick=async(ev)=>{
+      ev.stopPropagation();
+      const i=+el.dataset.pickEdit,o=appDialogPick.options[i];
+      const next=await appDialog2Line("修改事项",o.label);
+      if(next===null)return;
+      const t=next.trim();
+      if(!t){ toastDone("文字不能为空。"); return; }
+      if(typeof o.onEdit==="function" && o.onEdit(o.label,t)===false) return;
+      o.label=t; o.value="h:"+t;
+      const btn=box.querySelector('[data-pick="'+i+'"] .pick-tx');
+      if(btn) btn.textContent=t;
     };
   });
 }
@@ -1444,11 +1491,33 @@ function appDialog(opts={}){
     requestAnimationFrame(()=>appDialogInput?.focus());
   });
 }
+let appDialog2Resolve=null;
+function closeAppDialog2(ok){
+  if(!appDialog2Resolve)return;
+  const resolve=appDialog2Resolve,value=ok?$("appDialog2Input").value:null;
+  appDialog2Resolve=null;
+  $("appDialog2Bg").classList.remove("show");
+  resolve(value);
+}
+function appDialog2Line(title,value){
+  return new Promise(resolve=>{
+    if(appDialog2Resolve)closeAppDialog2(false);
+    appDialog2Resolve=resolve;
+    $("appDialog2Title").textContent=title||"修改";
+    $("appDialog2Input").value=value||"";
+    $("appDialog2Bg").classList.add("show");
+    requestAnimationFrame(()=>{$("appDialog2Input").focus();$("appDialog2Input").select();});
+  });
+}
 $("appDialogOk").onclick=()=>closeAppDialog(true);
 $("appDialogCancel").onclick=()=>closeAppDialog(false);
 $("appDialogBg").onclick=e=>{if(e.target===$("appDialogBg"))closeAppDialog(false);};
 $("appDialogLine").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();closeAppDialog(true);}});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("appDialogBg").classList.contains("show"))closeAppDialog(false);});
+$("appDialog2Ok").onclick=()=>closeAppDialog2(true);
+$("appDialog2Cancel").onclick=()=>closeAppDialog2(false);
+$("appDialog2Bg").onclick=e=>{if(e.target===$("appDialog2Bg"))closeAppDialog2(false);};
+$("appDialog2Input").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();closeAppDialog2(true);}});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("appDialog2Bg").classList.contains("show"))closeAppDialog2(false);else if($("appDialogBg").classList.contains("show"))closeAppDialog(false);});
 /* 本功能由 Owner 明确豁免「每个功能预写停用条件」这条规则，是第一个豁免的功能。2026-07-30。 */
 const REF_RE=/@(\d{6})-(\d{4})([a-z]?)/g;
 function refMinuteMatches(ymd,hm){
@@ -2752,18 +2821,34 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     const i = +b.dataset.i, item = enough.items[i];
     if(!item.text.trim()){ toastDone("先写上这件事。"); return; }
     const pool=pastOptsHistory().slice(0,40);
-    let texts=[];
-    if(pool.length){
-      const options=pool.map(x=>({label:x.text,value:"h:"+x.text}));
-      options.push({label:"＋ 手写一个",value:"__manual"});
-      const picked=await appDialog({title:"拆小项",text:item.text.trim(),pick:{options,multi:true,max:5}});
-      if(picked===null) return;
-      texts=picked.filter(v=>v!=="__manual").map(v=>v.slice(2));
-      if(picked.includes("__manual")||!picked.length){
-        const v=await appDialog({title:"拆一个小项",input:"line"});
-        if(v&&v.trim()) texts.push(v.trim());
+    const picked=await appDialog({
+      title:"拆小项",
+      text:item.text.trim(),
+      pick:{
+        multi:true,
+        max:5,
+        options:[{label:"＋ 手写一个",value:"__manual",plain:true}],
+        section:pool.length?{
+          label:"以前写过的",
+          collapsed:true,
+          options:pool.map(x=>({
+            label:x.text,
+            value:"h:"+x.text,
+            editable:true,
+            onEdit:(oldText,next)=>{
+              const cur=optsHist.find(y=>String(y.text||"")===oldText);
+              if(!cur)return false;
+              const oldKey=optsHistKey(cur);
+              bury("ohist",oldKey); cur.text=next; unbury("ohist",optsHistKey(cur));
+              saveOptsHist(); renderOptsHistory();
+            }
+          }))
+        }:null
       }
-    }else{
+    });
+    if(picked===null) return;
+    let texts=picked.filter(v=>v!=="__manual").map(v=>v.slice(2));
+    if(picked.includes("__manual")){
       const v=await appDialog({title:"拆一个小项",input:"line"});
       if(v&&v.trim()) texts.push(v.trim());
     }
@@ -3647,7 +3732,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.3-preview";
+const APP_VERSION = "4.3.4-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
