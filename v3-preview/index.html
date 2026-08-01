@@ -782,6 +782,8 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-sea-hero{margin:0 0 16px;padding:20px;border-radius:24px;background:linear-gradient(145deg,rgba(226,240,247,.8),rgba(255,255,255,.55));border:1px solid rgba(156,191,208,.45)}
 .v3-sea-hero h2{font:600 21px "Noto Serif SC",var(--kai);color:#507D99}.v3-sea-hero p{font-size:12px;color:#7190A3;margin-top:4px}
 .ai-review-card{padding:20px;margin:18px 0;border-radius:24px}.ai-review-card .head{display:flex;justify-content:space-between;align-items:center}.ai-review-card h2{font:600 19px "Noto Serif SC",var(--kai)}.ai-review-card .beta{font-size:9px;background:#E7EEDF;color:#60784F;padding:3px 7px;border-radius:9px}.ai-review-card>p{font-size:12px;color:var(--ink-soft);margin:5px 0 12px}.ai-review-card>button:not(.ai-review-toggle){width:100%;border:0;border-radius:17px;padding:12px;background:linear-gradient(135deg,#A4B891,#78985F);color:#fff;cursor:pointer}.ai-review-result{display:none;position:relative;margin-top:13px;padding:14px;border-radius:15px;background:rgba(239,245,234,.72);font-family:"Noto Serif SC",var(--kai);font-size:12.5px;line-height:1.9;white-space:pre-line;letter-spacing:.035em}.ai-review-result.show{display:block}.ai-review-result.folded{max-height:13.2em;overflow:hidden}.ai-review-result.folded::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3.8em;background:linear-gradient(transparent,rgba(239,245,234,.98))}.ai-review-toggle{display:none!important;width:auto!important;margin:7px auto 0!important;padding:4px 13px!important;border:0!important;background:transparent!important;color:#6D865A!important;font-size:11px;cursor:pointer}.ai-review-toggle.show{display:block!important}
+.ai-review-range{font:600 10px var(--sans);color:var(--sage-deep);margin-bottom:7px;letter-spacing:.03em}.ai-review-hint{margin:0 0 7px!important;color:#71875F!important}.ai-review-hist{margin-top:8px}.ai-review-hist-body[hidden],.ai-review-hist-full[hidden]{display:none!important}.ai-review-hist-item{gap:9px;border-top:1px solid rgba(75,66,55,.08)}.ai-review-hist-item span:first-child{white-space:nowrap;color:#71875F}.ai-review-hist-item span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-review-hist-full{padding:3px 8px 10px;font:500 11.5px/1.8 "Noto Serif SC",var(--kai);white-space:pre-line;color:var(--ink-soft)}.review-hint-setting{display:flex;align-items:center;gap:8px;margin-top:12px}.review-hint-setting input{width:auto;margin:0}
+#tagLibraryBg{z-index:70}
 
 /* 导出中心：复用设置与历史记录中的既有入口 */
 .export-modal .modal{max-height:88vh}.export-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.export-close{border:0;background:transparent;color:var(--ink-soft);font-size:20px;cursor:pointer}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.export-grid .wide{grid-column:1/-1}.export-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 14px}.export-checks label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid rgba(75,66,55,.1);border-radius:12px;background:rgba(255,255,255,.52);color:var(--ink);font-size:11px}.export-checks input{width:auto}.export-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-formats button,.export-open-btn{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:14px;padding:11px;color:var(--ink);cursor:pointer;font-family:var(--sans)}.export-formats button:first-child{background:#EEF4E9;color:#5F7B4E}.export-hint{min-height:18px;margin-top:9px!important;color:#718466!important}.custom-range[hidden]{display:none}.settings-export{width:100%;margin-top:7px}
@@ -1028,11 +1030,14 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <div class="memory-map" id="memoryMap"></div>
     </section>
     <div class="ai-review-card glass">
-      <div class="head"><h2>本周回顾 · AI 望望</h2><span class="beta">BETA</span></div>
-      <p>从最近 7 天的记录和瓶子里，看看反复出现的主题。</p>
-      <button id="aiReviewBtn">生成我的本周回望</button>
+      <div class="head"><h2>回望 · AI 望望</h2><span class="beta">BETA</span></div>
+      <p>从这段时间的记录和瓶子里，看看反复出现的主题。</p>
+      <p class="ai-review-hint" id="aiReviewHint" hidden></p>
+      <button id="aiReviewBtn">生成回望</button>
       <div class="ai-review-result" id="aiReviewResult"></div>
       <button class="ai-review-toggle" id="aiReviewToggle">展开</button>
+      <button class="ai-review-hist pick-sec" id="aiReviewHistBtn" hidden></button>
+      <div class="ai-review-hist-body pick-sec-body" id="aiReviewHistBody" hidden></div>
     </div>
   </section>
 
@@ -1125,6 +1130,8 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <p id="appDialogText"></p>
     <input id="appDialogLine" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" hidden>
     <textarea id="appDialogArea" hidden></textarea>
+    <div class="tag-suggest" id="dlgTagSuggest"></div>
+    <div class="tag-suggest ref-suggest" id="dlgRefSuggest"></div>
     <div id="appDialogPick" hidden></div>
     <div class="app-dialog-actions">
       <button type="button" id="appDialogCancel">取消</button>
@@ -1157,6 +1164,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <label>API key</label>
     <input type="password" id="apiKey" placeholder="sk-…">
     <p style="margin-top:8px">key 只存在这台设备的浏览器里。DeepSeek 的 key 记得把上面服务也切过去。</p>
+    <label class="review-hint-setting"><input type="checkbox" id="reviewHintSetting">回望积累了足够材料时，显示一行轻提示</label>
 
     <h3 style="margin-top:20px">云同步（GitHub）</h3>
     <p>同步=本机和云端<b>合并</b>，两边记录取并集，谁也不会覆盖谁。平时不用管，改动后会自动同步。</p>
@@ -1423,6 +1431,8 @@ function addLog(type, text, mood, src, q){
 }
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 let appDialogResolve=null,appDialogInput=null,appDialogConfirm=false,appDialogPick=null;
+let suggestEl=null,dialogSuggestBound=false;
+function suggestTarget(){return suggestEl||$("noteText");}
 function closeAppDialog(ok){
   if(!appDialogResolve)return;
   const resolve=appDialogResolve;
@@ -1431,6 +1441,9 @@ function closeAppDialog(ok){
   else if(appDialogPick) value = ok ? appDialogPick.options.filter((o,i)=>appDialogPick.chosen.has(i)).map(o=>o.value) : null;
   else value = appDialogConfirm ? !!ok : (ok ? appDialogInput.value : null);
   appDialogResolve=null;appDialogInput=null;appDialogPick=null;
+  suggestEl=null;
+  $("dlgTagSuggest").classList.remove("show");
+  $("dlgRefSuggest").classList.remove("show");
   $("appDialogBg").classList.remove("show");
   resolve(value);
 }
@@ -1494,6 +1507,14 @@ function appDialog(opts={}){
     if(opts.pick) renderAppDialogPick(opts.pick);
     appDialogInput=opts.input==="area"?$("appDialogArea"):opts.input==="line"?$("appDialogLine"):null;
     if(appDialogInput){appDialogInput.value=opts.value||"";appDialogInput.placeholder=opts.placeholder||"";}
+    if(opts.input==="area"){
+      suggestEl=$("appDialogArea");
+      if(!dialogSuggestBound){
+        $("appDialogArea").addEventListener("input",updateTagSuggest);
+        $("appDialogArea").addEventListener("input",updateRefSuggest);
+        dialogSuggestBound=true;
+      }
+    }else suggestEl=null;
     $("appDialogOk").textContent=opts.okText||"确定";
     $("appDialogOk").classList.toggle("danger",!!opts.danger);
     $("appDialogBg").classList.add("show");
@@ -2354,10 +2375,7 @@ function renderSea(){
   const n = bottles.length;
   $("seaCount").textContent = n ? `海里漂着 ${n} 个瓶子。` : "海里还没有瓶子。";
   $("bottleShow").innerHTML = "";
-  const savedReview = LS.get("qyx_ai_review", null);
-  if(savedReview && savedReview.v===2 && savedReview.text){
-    showAIReview(savedReview.text);
-  }
+  renderReviewCard();
   renderRoam();
   renderMemoryMap();
   updatePearl();
@@ -2524,6 +2542,21 @@ function showBottle(b){
 }
 
 /* ---------- 3.0 AI 回望 ---------- */
+/* qyx_ai_review：v2 是单个对象，v3 是数组（最多 12 条，新的在前）。
+   读时兼容旧结构，写时一律数组。不新增同步键。 */
+function readReviews(){
+  const raw=LS.get("qyx_ai_review",null);
+  if(!raw) return [];
+  if(Array.isArray(raw)) return raw;
+  return raw.text?[{t:raw.t||Date.now(),from:(raw.t||Date.now())-7*864e5,to:raw.t||Date.now(),text:raw.text}]:[];
+}
+function saveReviews(list){ LS.set("qyx_ai_review",list.slice(0,12)); }
+function fmtDay(t){const d=new Date(t);return `${d.getMonth()+1}月${d.getDate()}日`;}
+function reviewRangeText(item){
+  if(!item||!item.from||!item.to)return "";
+  const days=Math.max(1,Math.round((item.to-item.from)/864e5));
+  return `${fmtDay(item.from)} – ${fmtDay(item.to)} · 共 ${days} 天`;
+}
 function cleanAIText(raw){
   return String(raw||"")
     .replace(/```[a-zA-Z]*\s*/g,"").replace(/```/g,"")
@@ -2538,7 +2571,10 @@ function cleanAIText(raw){
 }
 function showAIReview(raw){
   const out = $("aiReviewResult"), toggle = $("aiReviewToggle");
-  out.textContent = cleanAIText(raw);
+  const item=typeof raw==="string"?{text:raw}:raw||{};
+  const range=reviewRangeText(item);
+  out.innerHTML=(range?`<div class="ai-review-range">${esc(range)}</div>`:"")+`<div class="ai-review-text"></div>`;
+  out.querySelector(".ai-review-text").textContent=cleanAIText(item.text);
   out.classList.add("show"); out.classList.remove("folded");
   toggle.classList.remove("show"); toggle.textContent = "展开";
   requestAnimationFrame(()=>{
@@ -2552,17 +2588,52 @@ $("aiReviewToggle").onclick = ()=>{
   const folded = out.classList.toggle("folded");
   $("aiReviewToggle").textContent = folded ? "展开" : "收起";
 };
-function localReviewFallback(recentLog, recentBottles){
+function renderReviewHistory(list=readReviews()){
+  const btn=$("aiReviewHistBtn"),body=$("aiReviewHistBody"),older=list.slice(1);
+  btn.hidden=!older.length;body.hidden=true;btn.classList.remove("open");
+  btn.textContent=older.length?`以前的回望 · ${older.length}`:"";
+  body.innerHTML=older.map((item,i)=>`<button type="button" class="pick-sec ai-review-hist-item" data-review-hist="${i}"><span>${esc(reviewRangeText(item))}</span><span>${esc(cleanAIText(item.text).slice(0,40))}</span></button><div class="ai-review-hist-full" data-review-full="${i}" hidden>${esc(cleanAIText(item.text))}</div>`).join("");
+}
+$("aiReviewHistBtn").onclick=()=>{const body=$("aiReviewHistBody"),open=body.hidden;body.hidden=!open;$("aiReviewHistBtn").classList.toggle("open",open);};
+$("aiReviewHistBody").onclick=e=>{const row=e.target.closest("[data-review-hist]");if(!row)return;const full=$("aiReviewHistBody").querySelector(`[data-review-full="${row.dataset.reviewHist}"]`);full.hidden=!full.hidden;row.classList.toggle("open",!full.hidden);};
+/* 亮起条件：距上次回望 ≥ 7 天，且这段时间内 type==="note" 的记录 ≥ 20 条。
+   只是让按钮旁边多一行字，不弹窗、不红点、不计数、不催。
+   停用条件：若这行字出现后两周内一次都没被点，删掉这行提示（不影响回望功能本身）。 */
+function updateReviewHint(){
+  const hint=$("aiReviewHint");
+  if(localStorage.getItem("qyx_review_hint")==="0"){localStorage.removeItem("qyx_review_hint_since");hint.hidden=true;hint.textContent="";return;}
+  const hist=readReviews(),last=hist.length?hist[0].t:0,notes=log.filter(e=>e.type==="note");
+  const earliest=notes.length?Math.min(...notes.map(e=>e.t)):Date.now(),from=last||earliest,to=Date.now();
+  const count=notes.filter(e=>e.t>=from&&e.t<=to).length;
+  const on=to-from>=7*864e5&&count>=20;
+  if(!on){localStorage.removeItem("qyx_review_hint_since");hint.hidden=true;hint.textContent="";return;}
+  let since=Number(localStorage.getItem("qyx_review_hint_since"))||0;
+  if(!since){since=to;localStorage.setItem("qyx_review_hint_since",String(since));}
+  const quiet=to-since>=14*864e5;
+  hint.hidden=quiet;hint.textContent=quiet?"":`攒了 ${count} 条记录了`;
+}
+function renderReviewCard(){
+  const hist=readReviews();
+  $("aiReviewBtn").textContent=hist.length?"回望这段时间":"生成回望";
+  if(hist.length)showAIReview(hist[0]);else{$("aiReviewResult").classList.remove("show","folded");$("aiReviewResult").innerHTML="";$("aiReviewToggle").classList.remove("show");}
+  renderReviewHistory(hist);updateReviewHint();
+}
+function localReviewFallback(recentLog,recentBottles,from,to){
   const done = recentLog.filter(e=>e.type==="done").length;
   const notes = recentLog.filter(e=>e.type==="note").length;
-  return `最近7天，你留下了 ${notes} 条记录，完成了 ${done} 件事，海里新增了 ${recentBottles.length} 个瓶子。\n再多记几天，主题脉络会越来越清楚。`;
+  return `${fmtDay(from)}到${fmtDay(to)}，你留下了 ${notes} 条记录，完成了 ${done} 件事，海里新增了 ${recentBottles.length} 个瓶子。\n再多记几天，主题脉络会越来越清楚。`;
 }
 $("aiReviewBtn").onclick = async ()=>{
   const btn = $("aiReviewBtn"), out = $("aiReviewResult");
-  const cutoff = Date.now()-7*864e5;
-  const recentLog = log.filter(e=>e.t>=cutoff);
-  const recentBottles = bottles.filter(b=>b.t>=cutoff);
-  if(!recentLog.length && !recentBottles.length){ showAIReview("最近还没有足够记录。先正常使用几天，回望会慢慢长出来。");return; }
+  localStorage.removeItem("qyx_review_hint_since");
+  const hist=readReviews();
+  const last=hist.length?hist[0].t:0;
+  const earliest=Math.min(...[...log.map(e=>e.t),...bottles.map(b=>b.t),Date.now()]);
+  const from=last||earliest;
+  const to=Date.now();
+  const recentLog=log.filter(e=>e.t>=from&&e.t<=to);
+  const recentBottles=bottles.filter(b=>b.t>=from&&b.t<=to);
+  if(!recentLog.length&&!recentBottles.length){showAIReview({from,to,text:"最近还没有足够记录。先正常使用几天，回望会慢慢长出来。"});return;}
   btn.disabled=true;btn.textContent="正在回望…";
   const material = [
     ...recentLog.slice(-80).map(e=>`[${dayKey(e.t)} ${TAG[e.type]||e.type}] ${stripRefs(e.text)}`),
@@ -2570,12 +2641,13 @@ $("aiReviewBtn").onclick = async ()=>{
   ].join("\n");
   let text;
   try{
-    text = await runAI(`你是我的私人手账回望助手。只根据我提供的最近7天材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}],{thinking:true});
-  }catch(e){ text = localReviewFallback(recentLog,recentBottles); }
+    text = await runAI(`你是我的私人手账回望助手。只根据我提供的 ${fmtDay(from)} 到 ${fmtDay(to)} 的材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}],{thinking:true});
+  }catch(e){ text=localReviewFallback(recentLog,recentBottles,from,to); }
   const cleaned = cleanAIText(text);
-  showAIReview(cleaned);
-  LS.set("qyx_ai_review",{t:Date.now(),v:2,text:cleaned});
-  btn.disabled=false;btn.textContent="重新生成本周回望";
+  const item={t:to,from,to,text:cleaned};
+  saveReviews([item].concat(hist));
+  showAIReview(item);renderReviewHistory([item].concat(hist));updateReviewHint();
+  btn.disabled=false;btn.textContent="回望这段时间";
 };
 
 /* ---------- 今天做完哪三件就够了 ---------- */
@@ -3658,8 +3730,7 @@ function buildExportBundle(){
   if(parts.has("ai")){
     bundle.aiEntries=entries.filter(e=>e.type==="ai").map(e=>Object.assign({},e,{text:stripRefs(e.text),q:stripRefs(e.q||"")}));
     bundle.aiPolish=polishHistory.filter(e=>inside(e.t)).sort((a,b)=>a.t-b.t).map(e=>Object.assign({},e,{original:stripRefs(e.original||""),polished:stripRefs(e.polished||"")}));
-    const review=LS.get("qyx_ai_review",null);
-    bundle.aiReview=review&&inside(review.t||0)?Object.assign({},review,{text:cleanAIText(review.text)}):null;
+    bundle.aiReviews=readReviews().filter(review=>inside(review.t||0)).map(review=>Object.assign({},review,{text:cleanAIText(review.text)}));
   }
   if(parts.has("tasks")){
     const taskDays={};
@@ -3689,10 +3760,10 @@ function buildExportMarkdown(b){
   if(b.journals){ lines.push("## 日记记录",""); b.journals.length?b.journals.forEach(e=>lines.push("- "+dt(e.t)+(e.mood?" "+e.mood:"")+"　"+e.text)):lines.push("这段时间没有日记记录。"); lines.push(""); }
   if(b.aiEntries){
     lines.push("## AI 整理与总结","");
-    if(b.aiReview){ lines.push("### 本周 AI 回望","",cleanAIText(b.aiReview.text),""); }
+    (b.aiReviews||[]).forEach(review=>lines.push("### AI 回望 · "+reviewRangeText(review),"",cleanAIText(review.text),""));
     (b.aiPolish||[]).forEach(e=>lines.push("### "+dt(e.t)+" 语音整理","","原文："+e.original,"","整理后："+e.polished,""));
     b.aiEntries.forEach(e=>{ lines.push("### "+dt(e.t)+" AI 整理",""); if(e.q) lines.push("原始输入："+e.q,""); lines.push(cleanAIText(e.text),""); });
-    if(!b.aiReview&&!b.aiEntries.length) lines.push("这段时间没有 AI 整理内容。","");
+    if(!(b.aiReviews||[]).length&&!b.aiEntries.length) lines.push("这段时间没有 AI 整理内容。","");
   }
   if(b.tasks){
     lines.push("## 今日三件事","");
@@ -3770,7 +3841,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.6-preview";
+const APP_VERSION = "4.3.7-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4038,11 +4109,12 @@ function mergeAll(o){
   rules.sort((a,b)=>b.t-a.t);
   if(rules.length>30) rules = rules.slice(0,30);
   LS.setSilent("qyx_rules", rules);
-  // AI 回望：保留更新时间较新的结果
-  const localReview = LS.get("qyx_ai_review", null);
-  const remoteReview = o.qyx_ai_review;
-  if(remoteReview && (!localReview || (remoteReview.t||0)>(localReview.t||0))){
-    LS.setSilent("qyx_ai_review", remoteReview);
+  // AI 回望：按生成时间并集合并，最多保留 12 条
+  {
+    const norm=v=>!v?[]:(Array.isArray(v)?v:(v.text?[{t:v.t||0,from:(v.t||0)-7*864e5,to:v.t||0,text:v.text}]:[]));
+    const m=new Map();
+    norm(LS.get("qyx_ai_review",null)).concat(norm(o.qyx_ai_review)).forEach(r=>{if(r&&r.t&&!m.has(r.t))m.set(r.t,r);});
+    LS.setSilent("qyx_ai_review",[...m.values()].sort((a,b)=>b.t-a.t).slice(0,12));
   }
   if(o.qyx_sit_reminder && !LS.get("qyx_sit_reminder","")){
     LS.setSilent("qyx_sit_reminder", o.qyx_sit_reminder);
@@ -4261,8 +4333,8 @@ $('mergeTag').onclick=async()=>{
 $('deleteTag').onclick=async()=>{if(!activeTagId)return;const ids=descendantTagIds(activeTagId),name=tagPath(activeTagId);if(!await appDialog({title:'删除标签关系？',text:'删除 #'+name+' 及其子标签的关联？原记录不会删除。',okText:'删除',danger:true}))return;const removed=new Set(ids);replaceRelationIds(recordTags,{},removed);replaceRelationIds(goalTags,{},removed);replaceRelationIds(taskTags,{},removed);ids.forEach(id=>bury('tag',id));tags=tags.filter(t=>!removed.has(t.id));saveTagData();$('tagDetailView').hidden=true;$('tagLibraryView').hidden=false;renderTagLibrary();toastDone('只删了标签关系，原记录还在。');};
 
 function updateTagSuggest(){
-  const el=$('noteText'),box=$('tagSuggest'),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|[\s，。！？；：、,.!?;:])#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
-  $('refSuggest').classList.remove('show');
+  const el=suggestTarget(),main=el===$("noteText"),box=main?$("tagSuggest"):$("dlgTagSuggest"),refBox=main?$("refSuggest"):$("dlgRefSuggest"),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|[\s，。！？；：、,.!?;:])#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
+  refBox.classList.remove('show');
   const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,20),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
   box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('')
     +`<button class="ts-lib" data-tag-lib="1">打开标签库 →</button>`;
@@ -4285,10 +4357,10 @@ function hlHit(text,q){
   return safe.slice(0,i)+'<span class="rs-hit">'+eq+'</span>'+safe.slice(i+eq.length);
 }
 function updateRefSuggest(){
-  const el=$('noteText'),box=$('refSuggest');
+  const el=suggestTarget(),main=el===$("noteText"),box=main?$("refSuggest"):$("dlgRefSuggest"),tagBox=main?$("tagSuggest"):$("dlgTagSuggest");
   const before=el.value.slice(0,el.selectionStart),m=before.match(/@([^\s@]*)$/);
   if(!m||/^\d{6}-/.test(m[1])){box.classList.remove('show');box.innerHTML='';return;}
-  $('tagSuggest').classList.remove('show');
+  tagBox.classList.remove('show');
   const q=m[1].trim();
   const pool=log.filter(e=>e.type==="note"&&String(e.text||"").trim())
     .filter(e=>!q||String(e.text||"").includes(q))
@@ -4297,7 +4369,7 @@ function updateRefSuggest(){
   box.innerHTML=head+pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(refWindow(refInline(String(e.text||"").trim()),q,60),q)}</span></button>`).join('');
   box.classList.toggle('show',true);
 }
-function commitNoteEdit(value,start,end=start){const el=$('noteText');el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
+function commitNoteEdit(value,start,end=start){const el=suggestTarget();el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
 function toggleNoteLinePrefix(kind){
   const el=$('noteText'),value=el.value,start=el.selectionStart,lineStart=value.lastIndexOf('\n',start-1)+1,lineEnd=value.indexOf('\n',start),end=lineEnd<0?value.length:lineEnd,line=value.slice(lineStart,end);
   const pattern=kind==='bullet'?/^-\s/:/^\d+\.\s/;const match=line.match(pattern);
@@ -4338,16 +4410,18 @@ $('noteText').addEventListener('input',e=>{
   commitNoteEdit(el.value.slice(0,start)+prefix+el.value.slice(start),start+prefix.length);
 });
 $('noteText').addEventListener('input',updateTagSuggest);$('noteText').addEventListener('input',updateRefSuggest);$('noteText').addEventListener('click',updateTagSuggest);$('noteText').addEventListener('click',updateRefSuggest);
-$('tagSuggest').onclick=e=>{const lib=e.target.closest('[data-tag-lib]');if(lib){$('tagSuggest').classList.remove('show');$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=false;$('tagDetailView').hidden=true;renderTagLibrary();return;}const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=$('noteText'),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);$('tagSuggest').classList.remove('show');};
-$('refSuggest').onclick=e=>{
+function handleTagSuggest(e){const box=e.currentTarget,lib=e.target.closest('[data-tag-lib]');if(lib){box.classList.remove('show');$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=false;$('tagDetailView').hidden=true;renderTagLibrary();return;}const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=suggestTarget(),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);box.classList.remove('show');}
+$('tagSuggest').onclick=handleTagSuggest;$('dlgTagSuggest').onclick=handleTagSuggest;
+function handleRefSuggest(e){
   const b=e.target.closest('[data-ref-choice]');if(!b)return;
-  const el=$('noteText'),cur=el.selectionStart;
+  const el=suggestTarget(),cur=el.selectionStart;
   const start=el.value.slice(0,cur).search(/@([^\s@]*)$/);
   if(start<0)return;
   const token=b.dataset.refChoice+' ';
   commitNoteEdit(el.value.slice(0,start)+token+el.value.slice(cur),start+token.length);
-  $('refSuggest').classList.remove('show');
-};
+  e.currentTarget.classList.remove('show');
+}
+$('refSuggest').onclick=handleRefSuggest;$('dlgRefSuggest').onclick=handleRefSuggest;
 
 $("gearBtn").onclick = ()=>{
   $("apiKey").value = LS.get("qyx_key","");
@@ -4355,6 +4429,7 @@ $("gearBtn").onclick = ()=>{
   $("ghToken").value = LS.get("qyx_ghtoken","");
   $("dicePool").value = dicePool.join("\n");
   $("sitReminderText").value = LS.get("qyx_sit_reminder","站起来走走");
+  $("reviewHintSetting").checked=localStorage.getItem("qyx_review_hint")!=="0";
   const lb = LS.get("qyx_lastbackup", null);
   $("syncStatus").textContent = lb ? "上次同步：" + new Date(lb).toLocaleString("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
   $("verLine").textContent = "版本 " + APP_VERSION;
@@ -4369,13 +4444,14 @@ $("saveSettings").onclick = ()=>{
   LS.set("qyx_provider", $("provider").value);
   LS.set("qyx_ghtoken", $("ghToken").value.trim());
   LS.set("qyx_sit_reminder", $("sitReminderText").value.trim() || "站起来走走");
+  localStorage.setItem("qyx_review_hint",$("reviewHintSetting").checked?"1":"0");
   const newPool = $("dicePool").value.split("\n").map(s=>s.trim()).filter(Boolean);
   dicePool.forEach(old=>{ if(!newPool.includes(old)) bury("dice", old); });
   newPool.forEach(v=>unbury("dice", v));
   dicePool = newPool.length ? newPool : DEFAULT_DICE;
   LS.set("qyx_dice", dicePool);
   $("settingsBg").classList.remove("show");
-  renderHabitReminder();
+  renderHabitReminder();updateReviewHint();
   toastDone("保存了。");
 };
 
