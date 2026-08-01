@@ -2938,6 +2938,7 @@ document.querySelectorAll("#enoughCard input").forEach(inp=>{
     if(!inp.value.trim()){
       if(wasCompleted) removeDoneLogToday(prevText,"三件");
       item.status="incomplete";
+      item.subs=[];
     }
     item.done=item.status==="completed";
     item.updatedAt=Date.now();
