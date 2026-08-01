@@ -225,6 +225,10 @@ h2 .count{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(
   transition:transform .12s ease;
 }
 .add-row .plus:active{transform:scale(.92)}
+.kind-row{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
+.kind-opt{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--glass-line);background:transparent;color:var(--ink-soft);cursor:pointer}
+.kind-opt.on{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
+.kind-hint{font-size:11px;color:var(--ink-soft);opacity:.7}
 textarea,input[type=text],input[type=number],input[type=password],select{
   width:100%;border:1px solid rgba(75,66,55,.12);border-radius:17px;
   background:var(--glass-strong);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -424,6 +428,11 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--tang);bo
 }
 .anchor.adone .achk{background:linear-gradient(145deg,#8BA775,#688A57);border-color:#789563;box-shadow:0 4px 11px rgba(99,130,79,.28)}
 .anchor.adone .anchor-head .txt{text-decoration:none;opacity:1;color:#5E6F54;font-weight:600}.goal-crown{display:inline-block;margin-left:8px;color:#C88D2C;font-size:1.16em;line-height:1;vertical-align:-.04em;text-shadow:0 1px 0 rgba(255,255,255,.92)}.medal-check{line-height:1}
+.watch-dot{display:inline-block;width:18px;text-align:center;color:var(--ink-soft);opacity:.5}
+.anchor.awatch .anchor-trail{display:block}
+.card-ops{margin-top:8px}
+.card-ops summary{font-size:11px;color:var(--ink-soft);opacity:.6;cursor:pointer;list-style:none}
+.card-ops summary::-webkit-details-marker{display:none}
 .past-month{font-family:var(--kai);font-size:13.5px;color:var(--ink-soft);padding:5px 4px;line-height:1.8}
 .pm-ym{font-weight:700;color:var(--ink);margin-right:10px}
 .split-add{
@@ -1000,6 +1009,11 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <input type="text" id="anchorText" placeholder="比如：摄影上有点进展">
       <button class="plus" id="addAnchor">＋</button>
     </div>
+    <div class="kind-row">
+      <button class="kind-opt on" id="kindWatch" data-kind="watch">观察</button>
+      <button class="kind-opt" id="kindGoal" data-kind="goal">目标位</button>
+      <span class="kind-hint">观察位只归集，不打勾。</span>
+    </div>
     <div id="anchorList"></div>
     <div id="pastMonths"></div>
   </section>
@@ -1279,9 +1293,11 @@ let months   = LS.get("qyx_months", {});
 function normMonths(){
   Object.keys(months).forEach(ym=>{
     (months[ym]||[]).forEach(a=>{
+      a.kind = (a.kind === "watch") ? "watch" : "goal";
       a.splits = (a.splits||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
       a.hist = a.hist||[];
-      a.done = !!a.done;
+      a.done = (a.kind === "watch") ? false : !!a.done;
+      if(a.kind === "watch") a.splits.forEach(x=>{ x.done = false; });
     });
   });
 }
@@ -2168,6 +2184,10 @@ function aHist(a, ev){
   a.hist.push({t: Date.now(), ev});
   if(a.hist.length>60) a.hist = a.hist.slice(-60);
 }
+const MONTH_MAX = 12;
+const GOAL_MAX = 2;
+function isWatch(a){ return a && a.kind === "watch"; }
+function goalCount(){ return monthAnchors().filter(a=>!isWatch(a)).length; }
 function monthAnchors(){
   const ym = ymNow();
   if(!months[ym]) months[ym] = [];
@@ -2176,7 +2196,7 @@ function monthAnchors(){
 function saveMonths(){ LS.set("qyx_months", months); }
 function renderMonth(){
   const d = new Date();
-  $("monthHead").innerHTML = `${d.getMonth()+1}月目标<span class="count">${monthAnchors().length}/5</span>`;
+  $("monthHead").innerHTML = `${d.getMonth()+1}月<span class="count">目标位 ${goalCount()}/${GOAL_MAX} · 观察位 ${monthAnchors().filter(isWatch).length}</span>`;
   const list = $("anchorList"); list.innerHTML = "";
   renderPastMonths();
   const anchors = monthAnchors();
@@ -2186,11 +2206,12 @@ function renderMonth(){
   }
   anchors.forEach(a=>{
     const card = document.createElement("div");
-    card.className = "anchor glass" + (a.done ? " adone" : "");
+    const watch = isWatch(a);
+    card.className = "anchor glass" + (a.done ? " adone" : "") + (watch ? " awatch" : "");
     card.innerHTML = `
       <div class="anchor-head">
-    <button class="achk" title="${a.done?'完成勋章':'标记完成'}">${a.done?'<span class="medal-check">✓</span>':''}</button>
-    <span class="txt">${esc(a.text)}${a.done?'<span class="goal-crown" aria-label="已完成">♛</span>':''}</span>
+    ${watch ? '<span class="watch-dot" title="观察位">◦</span>' : `<button class="achk" title="${a.done?'完成勋章':'标记完成'}">${a.done?'<span class="medal-check">✓</span>':''}</button>`}
+    <span class="txt">${esc(a.text)}${(!watch && a.done)?'<span class="goal-crown" aria-label="已完成">♛</span>':''}</span>
         <button class="split-btn">拆一拆</button><button class="tag-bind"># 标签</button>
         <button class="trail" title="轨迹">◷</button>
         <button class="edit" title="编辑">✎</button>
@@ -2205,8 +2226,9 @@ function renderMonth(){
       (a.splits||[]).forEach((sp,si)=>{
         const chip = document.createElement("span");
         chip.className = "split-chip" + (sp.done ? " sdone" : "");
-        chip.innerHTML = `<button class="chk">${sp.done?"✓":""}</button><span class="st">${esc(sp.text)}</span><button class="to-today">排进今天</button><button class="x">✕</button>`;
-        chip.querySelector(".chk").onclick = ()=>{
+        chip.innerHTML = `${watch ? '' : `<button class="chk">${sp.done?"✓":""}</button>`}<span class="st">${esc(sp.text)}</span><button class="to-today">排进今天</button><button class="x">✕</button>`;
+        const chkBtn = chip.querySelector(".chk");
+        if(chkBtn) chkBtn.onclick = ()=>{
           sp.done = !sp.done;
           if(sp.done){
             addLog("done", sp.text, null, "月目标·小项");
@@ -2284,7 +2306,8 @@ function renderMonth(){
         a.text = v.trim(); saveMonths(); renderMonth();
       }
     };
-    card.querySelector(".achk").onclick = (ev)=>{
+    const achkBtn = card.querySelector(".achk");
+    if(achkBtn) achkBtn.onclick = (ev)=>{
       a.done = !a.done;
       if(a.done){
         addLog("done", a.text, null, "月目标");
@@ -2305,17 +2328,19 @@ function renderMonth(){
         }));
         const tagIds=new Set(goalTags[a.id]||[]),tagPaths=new Set([...tagIds].map(tagPath));
         const trail=[
-          ...(a.hist||[]).map(h=>({t:h.t,prefix:"·",text:h.ev})),
           ...log.filter(e=>e.type==="done"&&taskTexts.has(e.text)).map(e=>({t:e.t,prefix:"✓",text:e.text})),
           ...log.filter(e=>e.type==="note"&&([...(recordTags[e.id]||[])].some(id=>tagIds.has(id))||parseTagPaths(e.text).some(path=>tagPaths.has(path)))).map(e=>({t:e.t,prefix:"✎",text:e.text}))
         ];
+        const cardOps=(a.hist||[]).map(h=>({t:h.t,prefix:"·",text:h.ev})).sort((x,y)=>y.t-x.t);
         const seen=new Set(),derived=trail.filter(x=>{const key=x.prefix+"|"+x.t+"|"+x.text;if(seen.has(key))return false;seen.add(key);return true;}).sort((x,y)=>y.t-x.t);
-        tb.innerHTML = derived.length
+        tb.innerHTML = (derived.length
           ? derived.map(h=>`<div class="trail-line"><span class="trail-t">${fmtDT(h.t)}</span><span>${h.prefix} ${esc(h.text)}</span></div>`).join("")
-          : '<div class="trail-line"><span>这里只显示记录过的。没记录不等于没发生。</span></div>';
+          : '<div class="trail-line"><span>这里只显示记录过的。没记录不等于没发生。</span></div>')
+          + (cardOps.length ? `<details class="card-ops"><summary>卡片操作 ${cardOps.length} 次</summary>${cardOps.map(h=>`<div class="trail-line"><span class="trail-t">${fmtDT(h.t)}</span><span>${h.prefix} ${esc(h.text)}</span></div>`).join("")}</details>` : "");
         tb.style.display = "block";
       } else tb.style.display = "none";
     };
+    if(watch) card.querySelector(".trail").click();
     card.querySelector(".del").onclick = async ()=>{
       if(!await appDialog({title:"删除本月方向？",text:"删掉「"+a.text+"」？",okText:"删除",danger:true})) return;
       const anchors = monthAnchors();
@@ -2357,13 +2382,22 @@ function renderPastMonths(){
   });
   box.appendChild(h); box.appendChild(body);
 }
+let newAnchorKind = "watch";
+[["kindWatch","watch"],["kindGoal","goal"]].forEach(([id,k])=>{
+  $(id).onclick = ()=>{
+    newAnchorKind = k;
+    $("kindWatch").classList.toggle("on", k==="watch");
+    $("kindGoal").classList.toggle("on", k==="goal");
+  };
+});
 $("addAnchor").onclick = ()=>{
   const t = $("anchorText").value.trim();
   if(!t) return;
   const anchors = monthAnchors();
-  if(anchors.length>=5){ alert("最多五件。想加，先删一个。"); return; }
+  if(anchors.length>=MONTH_MAX){ alert("这个月已经有 "+MONTH_MAX+" 条了。想加，先删一个。"); return; }
+  if(newAnchorKind==="goal" && goalCount()>=GOAL_MAX){ alert("目标位只有 "+GOAL_MAX+" 个。想加，先删一个，或者放进观察位。"); return; }
   unbury("anchor:"+ymNow(), t);
-  anchors.push({id: Date.now(), text: t, splits: [], hist: [{t: Date.now(), ev: "立下"}]});
+  anchors.push({id: Date.now(), text: t, kind: newAnchorKind, splits: [], hist: [{t: Date.now(), ev: newAnchorKind==="watch" ? "开始观察" : "立下"}]});
   saveMonths();
   $("anchorText").value = "";
   renderMonth();
@@ -2750,6 +2784,7 @@ function ensureEnough(){
 /* 最近 10 个自然日内，该月目标出现且未完成的天数；同日多个事项只计一天。 */
 function waitingDays(goalId){
   if(!goalId)return 0;
+  if(isWatch(goalById(goalId)))return 0;
   const now=Date.now(),today=dayKey(now);let n=0;
   for(let i=0;i<10;i++){
     const s=summaries[dayKey(now-i*86400000)];
@@ -3841,7 +3876,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.7-preview";
+const APP_VERSION = "4.4.0-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -3991,7 +4026,7 @@ function mergeAll(o){
       if(isDead("anchor:"+ym, ra.text)) return;
       const la = months[ym].find(x=>x.text===ra.text);
       if(!la){
-        if(months[ym].length<5){
+        if(months[ym].length<MONTH_MAX){
           ra.splits = normSp(ra.splits).filter(x=>!isDead("split:"+ra.text, x.text));
           ra.hist = ra.hist||[];
           months[ym].push(ra);
