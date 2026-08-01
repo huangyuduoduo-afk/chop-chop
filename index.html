@@ -574,7 +574,11 @@ nav button{position:relative}
 .mood-btn.on{filter:none;opacity:1;border-color:var(--tang);background:#fff;transform:scale(1.08)}
 .emood{float:right;margin:-2px 2px 3px 8px;font-size:20px;line-height:1}
 .record-nudge{margin:10px 0 4px;padding:13px 14px;border:1px solid rgba(145,168,124,.28);border-radius:16px;background:rgba(240,246,235,.76);color:#5F6558}
-.record-nudge[hidden]{display:none}.record-nudge{position:relative;padding-right:38px}.record-nudge time{display:block;font:600 10px var(--mono);color:#839078;letter-spacing:.05em}.record-nudge p{margin:5px 0 0;font:500 12px/1.75 "Noto Serif SC",var(--kai);white-space:pre-wrap}.record-nudge-close{position:absolute;right:9px;top:8px;border:0;background:transparent;color:#819078;font-size:16px;cursor:pointer}
+.record-nudge[hidden]{display:none}.record-nudge{position:relative;padding-right:38px}.record-nudge time{display:block;font:600 10px var(--mono);color:#839078;letter-spacing:.05em}.record-nudge p{margin:5px 0 0;font:500 12px/1.75 "Noto Serif SC",var(--kai);white-space:pre-wrap}.record-nudge-close{border:0;background:transparent;color:#819078;font-size:16px;cursor:pointer;padding:2px;line-height:1}
+.record-nudge .nudge-acts{position:absolute;top:8px;right:10px;display:flex;align-items:center;gap:10px}
+.record-nudge .nudge-act{border:0;background:transparent;padding:2px;color:var(--ink-faint);cursor:pointer;line-height:0}
+.record-nudge .nudge-act:active{color:var(--sage-deep)}
+.record-nudge .nudge-act.on{color:var(--sage-deep)}
 .letter .seal{
   position:absolute;right:16px;bottom:14px;
   width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;
@@ -782,8 +786,11 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 /* 导出中心：复用设置与历史记录中的既有入口 */
 .export-modal .modal{max-height:88vh}.export-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.export-close{border:0;background:transparent;color:var(--ink-soft);font-size:20px;cursor:pointer}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.export-grid .wide{grid-column:1/-1}.export-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 14px}.export-checks label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid rgba(75,66,55,.1);border-radius:12px;background:rgba(255,255,255,.52);color:var(--ink);font-size:11px}.export-checks input{width:auto}.export-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-formats button,.export-open-btn{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:14px;padding:11px;color:var(--ink);cursor:pointer;font-family:var(--sans)}.export-formats button:first-child{background:#EEF4E9;color:#5F7B4E}.export-hint{min-height:18px;margin-top:9px!important;color:#718466!important}.custom-range[hidden]{display:none}.settings-export{width:100%;margin-top:7px}
 .tag-suggest{display:none;position:absolute;left:18px;right:18px;top:118px;z-index:12;padding:7px;background:rgba(255,253,249,.98);border:1px solid rgba(108,132,89,.2);border-radius:14px;box-shadow:0 12px 28px rgba(75,66,55,.14)}.tag-suggest.show{display:grid;gap:3px}.tag-suggest button{border:0;background:transparent;text-align:left;padding:7px 9px;border-radius:9px;color:#5D7550;cursor:pointer;font:500 11px "Noto Serif SC",var(--kai)}.tag-chip{border:0;background:#EAF1E4;color:#60784F;border-radius:999px;padding:3px 8px;cursor:pointer;font:500 9.5px "Noto Serif SC",var(--kai);white-space:nowrap}.record-tags,.entity-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.task-tag-row{display:flex;flex-wrap:wrap;gap:4px;margin:-3px 0 4px 72px}.tag-bind,.task-tag-btn{border:0;background:transparent;color:#71875F;cursor:pointer;font:600 10px "Noto Serif SC",var(--kai);padding:4px}.tag-memory-card{padding:18px 20px;margin:17px 0;border-radius:24px;display:flex;align-items:center;gap:13px}.tag-memory-card>span{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#E8F0E3;color:#668653;font-size:20px}.tag-memory-card div{flex:1}.tag-memory-card b,.tag-memory-card small{display:block}.tag-memory-card b{font:600 17px "Noto Serif SC",var(--kai)}.tag-memory-card small{font-size:10.5px;color:var(--ink-soft);margin-top:2px}.tag-memory-card button{border:1px solid rgba(96,120,79,.2);background:#fff;border-radius:999px;padding:8px 13px;color:#60784F;cursor:pointer}.tag-modal .modal{max-width:570px;max-height:88vh}.tag-toolbar{display:flex;gap:8px;align-items:center;margin:10px 0}.tag-toolbar select{margin:0}.tag-list{display:grid;gap:7px}.tag-list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer}.tag-list-item .tag-main{flex:1;min-width:0}.tag-list-item b,.tag-list-item small{display:block}.tag-list-item b{font:600 12px "Noto Serif SC",var(--kai);color:#526548;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag-list-item small{font-size:9.5px;color:#918A80;margin-top:2px}.tag-count{font-size:10px;color:#71875F}.tag-empty{padding:24px;text-align:center;color:var(--ink-soft);font:500 11px "Noto Serif SC",var(--kai)}.tag-detail-head{display:flex;align-items:center;gap:8px}.tag-back{border:0;background:transparent;color:#71875F;cursor:pointer}.tag-detail-stats{padding:10px 12px;margin:10px 0;border-radius:13px;background:#F1F5ED;color:#66745D;font-size:10px;line-height:1.8}.tag-manage{display:flex;gap:6px;margin-bottom:12px}.tag-manage button{border:1px solid rgba(75,66,55,.1);background:#fff;border-radius:999px;padding:6px 10px;color:#786F65;cursor:pointer;font-size:10px}.tag-related h4{margin:13px 0 6px;font:600 11px "Noto Serif SC",var(--kai);color:#6A7B5F}.tag-record{padding:8px 0;border-bottom:1px dashed rgba(75,66,55,.1);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#5D574F}.tag-record time{display:block;color:#9A9186;font-size:9px}.tag-modal [hidden]{display:none!important}
+.tag-suggest{max-height:44vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tag-suggest .ts-lib{border-top:.5px solid rgba(75,66,55,.14);color:var(--sage-deep)}
 .ref-suggest{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ref-suggest button{display:block;width:100%;text-align:left;line-height:1.6;padding:9px 10px;white-space:normal}
+.ref-suggest .rs-head{padding:7px 10px 5px;font:500 11px var(--sans);color:var(--ink-faint);position:sticky;top:0;background:#fff}
 .ref-suggest .rs-t{display:block;font:500 11px var(--sans);color:var(--ink-faint);margin-bottom:2px}
 .ref-suggest .rs-x{display:block;font:500 12.5px "Noto Serif SC",var(--kai);color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ref-suggest .rs-hit{background:#F1F6EC;color:var(--sage-deep)}
@@ -1419,9 +1426,10 @@ let appDialogResolve=null,appDialogInput=null,appDialogConfirm=false,appDialogPi
 function closeAppDialog(ok){
   if(!appDialogResolve)return;
   const resolve=appDialogResolve;
-  const value = appDialogPick
-    ? (ok ? appDialogPick.options.filter((o,i)=>appDialogPick.chosen.has(i)).map(o=>o.value) : null)
-    : (appDialogConfirm ? !!ok : (ok ? appDialogInput.value : null));
+  let value;
+  if(appDialogPick&&appDialogInput) value = ok ? {line:appDialogInput.value,picked:appDialogPick.options.filter((o,i)=>appDialogPick.chosen.has(i)).map(o=>o.value)} : null;
+  else if(appDialogPick) value = ok ? appDialogPick.options.filter((o,i)=>appDialogPick.chosen.has(i)).map(o=>o.value) : null;
+  else value = appDialogConfirm ? !!ok : (ok ? appDialogInput.value : null);
   appDialogResolve=null;appDialogInput=null;appDialogPick=null;
   $("appDialogBg").classList.remove("show");
   resolve(value);
@@ -1559,7 +1567,7 @@ function renderInlineMarkdownLite(line){
     const {hit,siblings}=resolveRef(ymd,hm,sf);
     if(!hit) return `<span class="md-ref gone">${all}<span class="mr-x">这条记录已经不在了</span></span>`;
     const more=siblings.length>1?`<span class="mr-x">这一分钟还有 ${siblings.length-1} 条记录</span>`:"";
-    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t).slice(0,5)}</span><span class="mr-t">${esc(refInline(String(hit.text||"").trim()))}</span>${more}<span class="mr-go">去那条 →</span></span>`;
+    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t)}</span><span class="mr-t">${esc(refInline(String(hit.text||"").trim()))}</span>${more}<span class="mr-go">去那条 →</span></span>`;
   });
   html=html.replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>");
   return html;
@@ -1609,16 +1617,42 @@ function updateNudgeRatio(){
   el.textContent=shown?`开屏提醒响应：${acted}/${shown}（${Math.round(acted/shown*100)}%）`:"开屏提醒响应：尚无数据";
   // 停用判据：连续两周 acted/shown < 30% 时删除本功能；这里只读展示，方便到期直接判断。
 }
+function markNudge(entry,kind){
+  const now=Date.now();
+  log.push({id:entityId("mark_",now),t:now,type:"mark",mark:kind,text:refToken(entry),updatedAt:now});
+  LS.set("qyx_log",log); renderLog();
+  markNudgeActed();
+}
+/* Push 卡片的三个控件收集的是「此刻对这条旧记录的反应」，不是「这条记录的属性」。
+   同一条记录在不同时刻可能得到不同反应，那个差异本身才是要研究的东西，
+   所以一律追加成事件、永不覆盖。高亮信号不得参与任何选择逻辑（只读派生层）。 */
 function showRecordNudge(){
   if(!$("v-log").classList.contains("on"))return;
   const data=readNudgeLocal(),today=dayKey(Date.now()),day=data.days[today]||{shown:0,acted:0};
   if(day.shown>=2||nudgeClosedDay===today)return;
-  const now=Date.now(),pool=log.filter(e=>e.type==="note"&&e.t<=now-7*864e5&&e.t>=now-60*864e5).sort((a,b)=>concreteness(b.text)-concreteness(a.text)).slice(0,20);
+  const now=Date.now(),pool=log.filter(e=>e.type==="note"&&e.t<=now-7*864e5&&e.t>=now-60*864e5&&!isDead("nudge",logKey(e))).sort((a,b)=>concreteness(b.text)-concreteness(a.text)).slice(0,20);
   if(!pool.length)return;
   const picked=pool[Math.floor(Math.random()*pool.length)],box=$("recordNudge");
   day.shown++;data.shown=(data.shown||0)+1;data.days[today]=day;writeNudgeLocal(data);
-  box.innerHTML=`<button class="record-nudge-close" type="button" aria-label="收起">✕</button><time>${fmtDT(picked.t)}</time><p>${esc(picked.text)}</p>`;
+  box.innerHTML=`<div class="nudge-acts">`
+    +`<button class="nudge-act" data-nudge-act="trash" type="button" aria-label="不再出现这条"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"/></svg></button>`
+    +`<button class="nudge-act" data-nudge-act="light" type="button" aria-label="有启发"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.3.3.5.7.5 1.1v1h6v-1c0-.4.2-.8.5-1.1A6 6 0 0 0 12 3Z"/></svg></button>`
+    +`<button class="record-nudge-close" type="button" aria-label="收起">✕</button>`
+    +`</div><time>${fmtDT(picked.t)}</time><p>${esc(picked.text)}</p>`;
   box.hidden=false;nudgeActUntil=Date.now()+3*60*1000;nudgeActed=false;
+  const acts=box.querySelector(".nudge-acts");
+  acts.querySelector('[data-nudge-act="light"]').onclick=(ev)=>{
+    ev.currentTarget.classList.add("on");
+    markNudge(picked,"light");
+    toastDone("记下了。");
+    setTimeout(hideRecordNudge,600);
+  };
+  acts.querySelector('[data-nudge-act="trash"]').onclick=()=>{
+    bury("nudge",logKey(picked));
+    markNudge(picked,"trash");
+    hideRecordNudge();
+    toastDone("这条不会再出现了。记录本身还在。");
+  };
   box.querySelector(".record-nudge-close").onclick=()=>{nudgeClosedDay=today;hideRecordNudge();};
   updateNudgeRatio();
 }
@@ -2822,13 +2856,15 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
     const i = +b.dataset.i, item = enough.items[i];
     if(!item.text.trim()){ toastDone("先写上这件事。"); return; }
     const pool=pastOptsHistory().slice(0,40);
-    const picked=await appDialog({
+    const res=await appDialog({
       title:"拆小项",
       text:item.text.trim(),
+      input:"line",
+      placeholder:"手写一个小项",
       pick:{
         multi:true,
         max:5,
-        options:[{label:"＋ 手写一个",value:"__manual",plain:true}],
+        options:[],
         section:pool.length?{
           label:"以前写过的",
           collapsed:true,
@@ -2847,12 +2883,10 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
         }:null
       }
     });
-    if(picked===null) return;
-    let texts=picked.filter(v=>v!=="__manual").map(v=>v.slice(2));
-    if(picked.includes("__manual")){
-      const v=await appDialog({title:"拆一个小项",input:"line"});
-      if(v&&v.trim()) texts.push(v.trim());
-    }
+    if(res===null) return;
+    let texts=[];
+    if(res.line&&res.line.trim()) texts.push(res.line.trim());
+    texts=texts.concat((res.picked||[]).map(v=>v.slice(2)));
     let added=0;
     texts.forEach(t=>{
       const s=t.trim(); if(!s) return;
@@ -3393,6 +3427,9 @@ function renderLog(){
       let inner;
       if(e.type==="ai" && e.q){
         inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="aiq">${esc(e.q)}</div><div class="aia md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
+      }else if(e.type==="mark"){
+        const markLabel=e.mark==="light"?"有启发":"不再出现";
+        inner = `<span class="tag mark">${markLabel}</span>${src}${md}<div class="etx md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
       }else{
         inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="etx md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
       }
@@ -3733,7 +3770,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.3.5";
+const APP_VERSION = "4.3.6";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4226,8 +4263,18 @@ $('deleteTag').onclick=async()=>{if(!activeTagId)return;const ids=descendantTagI
 function updateTagSuggest(){
   const el=$('noteText'),box=$('tagSuggest'),before=el.value.slice(0,el.selectionStart),m=before.match(/(?:^|[\s，。！？；：、,.!?;:])#([^\s#]*)$/);if(!m){box.classList.remove('show');box.innerHTML='';return;}
   $('refSuggest').classList.remove('show');
-  const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,6),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
-  box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('');box.classList.toggle('show',!!items.length);
+  const q=normalizeTagPath(m[1]),matches=allTagPaths().filter(x=>!q||x.path.includes(q)).slice(0,20),items=matches.map(x=>({path:x.path,label:'#'+x.path}));if(q&&!matches.some(x=>x.path===q))items.push({path:q,label:'创建 #'+q});
+  box.innerHTML=items.map(x=>`<button data-tag-choice="${esc(x.path)}">${esc(x.label)}</button>`).join('')
+    +`<button class="ts-lib" data-tag-lib="1">打开标签库 →</button>`;
+  box.classList.toggle('show',true);
+}
+function refWindow(text,q,n){
+  const s=String(text||"");
+  if(!q) return s.slice(0,n);
+  const i=s.indexOf(q);
+  if(i<0||i<n-10) return s.slice(0,n);
+  const from=Math.max(0,i-20);
+  return "…"+s.slice(from,from+n);
 }
 function hlHit(text,q){
   const safe=esc(text);
@@ -4246,8 +4293,9 @@ function updateRefSuggest(){
   const pool=log.filter(e=>e.type==="note"&&String(e.text||"").trim())
     .filter(e=>!q||String(e.text||"").includes(q))
     .sort((a,b)=>b.t-a.t).slice(0,30);
-  box.innerHTML=pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(refInline(String(e.text||"").trim()).slice(0,60),q)}</span></button>`).join('');
-  box.classList.toggle('show',!!pool.length);
+  const head=`<div class="rs-head">${q?`在筛「${esc(q)}」 · ${pool.length} 条`:"继续打字可以筛选 · 最近 30 条"}</div>`;
+  box.innerHTML=head+pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(refWindow(refInline(String(e.text||"").trim()),q,60),q)}</span></button>`).join('');
+  box.classList.toggle('show',true);
 }
 function commitNoteEdit(value,start,end=start){const el=$('noteText');el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
 function toggleNoteLinePrefix(kind){
@@ -4290,7 +4338,7 @@ $('noteText').addEventListener('input',e=>{
   commitNoteEdit(el.value.slice(0,start)+prefix+el.value.slice(start),start+prefix.length);
 });
 $('noteText').addEventListener('input',updateTagSuggest);$('noteText').addEventListener('input',updateRefSuggest);$('noteText').addEventListener('click',updateTagSuggest);$('noteText').addEventListener('click',updateRefSuggest);
-$('tagSuggest').onclick=e=>{const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=$('noteText'),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);$('tagSuggest').classList.remove('show');};
+$('tagSuggest').onclick=e=>{const lib=e.target.closest('[data-tag-lib]');if(lib){$('tagSuggest').classList.remove('show');$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=false;$('tagDetailView').hidden=true;renderTagLibrary();return;}const b=e.target.closest('[data-tag-choice]');if(!b)return;const el=$('noteText'),start=el.value.slice(0,el.selectionStart).search(/#([^\s#]*)$/),before=el.value.slice(0,start),after=el.value.slice(el.selectionStart);el.value=before+'#'+b.dataset.tagChoice+' '+after;el.focus();el.setSelectionRange((before+'#'+b.dataset.tagChoice+' ').length,(before+'#'+b.dataset.tagChoice+' ').length);$('tagSuggest').classList.remove('show');};
 $('refSuggest').onclick=e=>{
   const b=e.target.closest('[data-ref-choice]');if(!b)return;
   const el=$('noteText'),cur=el.selectionStart;
