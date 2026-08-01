@@ -226,8 +226,8 @@ h2 .count{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(
 }
 .add-row .plus:active{transform:scale(.92)}
 .kind-row{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
-.kind-opt{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--glass-line);background:transparent;color:var(--ink-soft);cursor:pointer}
-.kind-opt.on{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
+.kind-add{font-size:12.5px;padding:6px 14px;border-radius:999px;border:1px solid var(--glass-line);background:transparent;color:var(--ink-soft);cursor:pointer}
+.kind-add:active{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
 .kind-hint{font-size:11px;color:var(--ink-soft);opacity:.7}
 textarea,input[type=text],input[type=number],input[type=password],select{
   width:100%;border:1px solid rgba(75,66,55,.12);border-radius:17px;
@@ -722,7 +722,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .pick-row.on .pick-box{background:var(--sage-deep);border-color:var(--sage-deep)}
 .pick-row.plain{justify-content:flex-start;border-style:dashed}
 .pick-row .pick-edit{margin-left:auto;font:500 11px var(--sans);color:var(--ink-faint);padding:2px 6px;border-radius:8px;background:rgba(75,66,55,.06)}
-.pick-sec{display:flex;align-items:center;gap:6px;width:100%;text-align:left;border:0;background:transparent;padding:8px 4px 4px;font:500 12px var(--sans);color:var(--ink-faint);cursor:pointer}
+.pick-sec{display:flex;align-items:center;gap:6px;width:100%;min-width:0;text-align:left;border:0;background:transparent;padding:8px 4px 4px;font:500 12px var(--sans);color:var(--ink-faint);cursor:pointer}
 .pick-sec::after{content:"▾";margin-left:auto;transition:transform .15s}
 .pick-sec.open::after{transform:rotate(180deg)}
 .pick-sec-body{display:grid;gap:6px}
@@ -790,8 +790,8 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .habit-grid{gap:12px}.habit{border-radius:22px;min-height:103px}.anchor{border-radius:24px!important}.anchor-head .txt{font-family:"Noto Serif SC",var(--kai)}
 .v3-sea-hero{margin:0 0 16px;padding:20px;border-radius:24px;background:linear-gradient(145deg,rgba(226,240,247,.8),rgba(255,255,255,.55));border:1px solid rgba(156,191,208,.45)}
 .v3-sea-hero h2{font:600 21px "Noto Serif SC",var(--kai);color:#507D99}.v3-sea-hero p{font-size:12px;color:#7190A3;margin-top:4px}
-.ai-review-card{padding:20px;margin:18px 0;border-radius:24px}.ai-review-card .head{display:flex;justify-content:space-between;align-items:center}.ai-review-card h2{font:600 19px "Noto Serif SC",var(--kai)}.ai-review-card .beta{font-size:9px;background:#E7EEDF;color:#60784F;padding:3px 7px;border-radius:9px}.ai-review-card>p{font-size:12px;color:var(--ink-soft);margin:5px 0 12px}.ai-review-card>button:not(.ai-review-toggle){width:100%;border:0;border-radius:17px;padding:12px;background:linear-gradient(135deg,#A4B891,#78985F);color:#fff;cursor:pointer}.ai-review-result{display:none;position:relative;margin-top:13px;padding:14px;border-radius:15px;background:rgba(239,245,234,.72);font-family:"Noto Serif SC",var(--kai);font-size:12.5px;line-height:1.9;white-space:pre-line;letter-spacing:.035em}.ai-review-result.show{display:block}.ai-review-result.folded{max-height:13.2em;overflow:hidden}.ai-review-result.folded::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3.8em;background:linear-gradient(transparent,rgba(239,245,234,.98))}.ai-review-toggle{display:none!important;width:auto!important;margin:7px auto 0!important;padding:4px 13px!important;border:0!important;background:transparent!important;color:#6D865A!important;font-size:11px;cursor:pointer}.ai-review-toggle.show{display:block!important}
-.ai-review-range{font:600 10px var(--sans);color:var(--sage-deep);margin-bottom:7px;letter-spacing:.03em}.ai-review-hint{margin:0 0 7px!important;color:#71875F!important}.ai-review-hist{margin-top:8px}.ai-review-hist-body[hidden],.ai-review-hist-full[hidden]{display:none!important}.ai-review-hist-item{gap:9px;border-top:1px solid rgba(75,66,55,.08)}.ai-review-hist-item span:first-child{white-space:nowrap;color:#71875F}.ai-review-hist-item span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-review-hist-full{padding:3px 8px 10px;font:500 11.5px/1.8 "Noto Serif SC",var(--kai);white-space:pre-line;color:var(--ink-soft)}.review-hint-setting{display:flex;align-items:center;gap:8px;margin-top:12px}.review-hint-setting input{width:auto;margin:0}
+.ai-review-card{padding:20px;margin:18px 0;border-radius:24px}.ai-review-card .head{display:flex;justify-content:space-between;align-items:center}.ai-review-card h2{font:600 19px "Noto Serif SC",var(--kai)}.ai-review-card .beta{font-size:9px;background:#E7EEDF;color:#60784F;padding:3px 7px;border-radius:9px}.ai-review-card>p{font-size:12px;color:var(--ink-soft);margin:5px 0 12px}.ai-review-card>button:not(.ai-review-toggle){width:100%;border:0;border-radius:17px;padding:12px;background:linear-gradient(135deg,#A4B891,#78985F);color:#fff;cursor:pointer}.ai-review-result{display:none;position:relative;margin-top:13px;padding:14px;border-radius:15px;background:rgba(239,245,234,.72);font-family:"Noto Serif SC",var(--kai);font-size:12.5px;line-height:1.9;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;letter-spacing:.035em}.ai-review-result.show{display:block}.ai-review-result.folded{max-height:13.2em;overflow:hidden}.ai-review-result.folded::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3.8em;background:linear-gradient(transparent,rgba(239,245,234,.98))}.ai-review-toggle{display:none!important;width:auto!important;margin:7px auto 0!important;padding:4px 13px!important;border:0!important;background:transparent!important;color:#6D865A!important;font-size:11px;cursor:pointer}.ai-review-toggle.show{display:block!important}
+.ai-review-range{font:600 10px var(--sans);color:var(--sage-deep);margin-bottom:7px;letter-spacing:.03em}.ai-review-hint{margin:0 0 7px!important;color:#71875F!important}.ai-review-hist{margin-top:8px}.ai-review-hist-body[hidden],.ai-review-hist-full[hidden]{display:none!important}.ai-review-hist-item{gap:9px;border-top:1px solid rgba(75,66,55,.08);min-width:0;max-width:100%}.ai-review-hist-item span:first-child{white-space:nowrap;flex:0 0 auto;color:#71875F}.ai-review-hist-item span:nth-child(2){flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-review-hist-full{padding:3px 8px 10px;font:500 11.5px/1.8 "Noto Serif SC",var(--kai);white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;color:var(--ink-soft)}.review-hint-setting{display:flex;align-items:center;gap:8px;margin-top:12px}.review-hint-setting input{width:auto;margin:0}
 #tagLibraryBg{z-index:70}
 
 /* 导出中心：复用设置与历史记录中的既有入口 */
@@ -1007,11 +1007,10 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
     <h2 id="monthHead"></h2>
     <div class="add-row">
       <input type="text" id="anchorText" placeholder="比如：摄影上有点进展">
-      <button class="plus" id="addAnchor">＋</button>
     </div>
     <div class="kind-row">
-      <button class="kind-opt on" id="kindWatch" data-kind="watch">观察</button>
-      <button class="kind-opt" id="kindGoal" data-kind="goal">目标位</button>
+      <button class="kind-add" id="addWatch">＋ 观察位</button>
+      <button class="kind-add" id="addGoal">＋ 目标位</button>
       <span class="kind-hint">观察位只归集，不打勾。</span>
     </div>
     <div id="anchorList"></div>
@@ -1292,6 +1291,12 @@ let ongoing  = LS.get("qyx_ongoing", []);
 let months   = LS.get("qyx_months", {});
 function normMonths(){
   Object.keys(months).forEach(ym=>{
+    const seenIds=new Set();
+    (months[ym]||[]).forEach(a=>{
+      const key=String(a.id);
+      if(a.id && seenIds.has(key)) a.id = entityId("goal_", ym+"|"+a.text+"|"+Date.now()+"|"+Math.random());
+      else if(a.id) seenIds.add(key);
+    });
     (months[ym]||[]).forEach(a=>{
       a.kind = (a.kind === "watch") ? "watch" : "goal";
       a.splits = (a.splits||[]).map(x=> typeof x==="string" ? {text:x, done:false} : x);
@@ -1371,7 +1376,7 @@ function migrateTag(sourceId,targetPath){
   log.forEach(e=>{e.text=String(e.text||'').replaceAll('#'+oldBase,'#'+normalizeTagPath(targetPath));});tags=tags.filter(t=>!removed.has(t.id));sourceIds.forEach(id=>bury('tag',id));saveTagData();LS.set('qyx_log',log);renderTagLibrary();openTagDetail(mapping[sourceId]);
 }
 async function bindTagsFor(kind,id,current){
-  const value=await appDialog({title:'关联标签',text:'可以写多个，用空格分开。',input:'line',value:(current||[]).map(t=>'#'+tagPath(t)).join(' '),placeholder:'#心理学/正念 #学习/英语'});if(value===null)return;
+  const value=await appDialog({title:'关联标签',text:'可以写多个，用空格分开。',input:'line',value:(current||[]).map(t=>'#'+tagPath(t)).join(' '),placeholder:'输入 # 开头的标签，多个用空格分开'});if(value===null)return;
   const paths=parseTagPaths(value),ids=paths.map(ensureTagPath).filter(Boolean);if(kind==='goal')goalTags[id]=ids;else taskTags[id]=ids;saveTagData();renderMonth();renderEnough();
 }
 function goalById(id){for(const ym of Object.keys(months)){const found=(months[ym]||[]).find(a=>String(a.id)===String(id));if(found)return found;}return null;}
@@ -1813,7 +1818,7 @@ function addToToday(text,goalId){
   if(!t||enough.items.some(x=>x.text.trim()===t))return "exists";
   const slot=enough.items.find(x=>!x.text.trim());
   if(!slot)return "full";
-  slot.text=t;slot.updatedAt=Date.now();
+  slot.text=t;slot.status="incomplete";slot.done=false;slot.subs=[];slot.updatedAt=Date.now();
   if(goalId)taskGoals[slot.id]=goalId;
   saveEnough();saveTagData();renderEnough();renderOptsHistory();
   return "today";
@@ -2239,8 +2244,13 @@ function renderMonth(){
         chip.querySelector(".st").onclick = async ()=>{
           const v = await appDialog({title:"修改小选项",input:"line",value:sp.text});
           if(v && v.trim() && v.trim()!==sp.text){
-            aHist(a, "改：" + sp.text + " → " + v.trim());
-            sp.text = v.trim(); saveMonths(); renderSplits();
+            const oldSp = sp.text, newSp = v.trim();
+            if((a.splits||[]).some(x=>x!==sp && x.text===newSp)){ toastDone("这一条下面已经有同名的小项了。"); return; }
+            aHist(a, "改：" + oldSp + " → " + newSp);
+            sp.text = newSp;
+            bury("split:"+a.text, oldSp);
+            unbury("split:"+a.text, newSp);
+            saveMonths(); renderSplits();
           }
         };
         chip.querySelector(".to-today").onclick = async ()=>{
@@ -2302,8 +2312,14 @@ function renderMonth(){
     card.querySelector(".edit").onclick = async ()=>{
       const v = await appDialog({title:"修改本月方向",input:"line",value:a.text});
       if(v && v.trim() && v.trim()!==a.text){
-        aHist(a, "改名：" + a.text + " → " + v.trim());
-        a.text = v.trim(); saveMonths(); renderMonth();
+        const oldText = a.text, newText = v.trim();
+        if(monthAnchors().some(x=>x!==a && x.text===newText)){ toastDone("这个月已经有同名的一条了。"); return; }
+        aHist(a, "改名：" + oldText + " → " + newText);
+        a.text = newText;
+        bury("anchor:"+ymNow(), oldText);
+        unbury("anchor:"+ymNow(), newText);
+        renameScope("split:"+oldText, "split:"+newText);
+        saveMonths(); renderMonth();
       }
     };
     const achkBtn = card.querySelector(".achk");
@@ -2344,10 +2360,15 @@ function renderMonth(){
     card.querySelector(".del").onclick = async ()=>{
       if(!await appDialog({title:"删除本月方向？",text:"删掉「"+a.text+"」？",okText:"删除",danger:true})) return;
       const anchors = monthAnchors();
-      const idx = anchors.findIndex(x=>x.id===a.id);
+      const idx = anchors.indexOf(a);
       if(idx>-1) anchors.splice(idx,1);
-      Object.keys(taskGoals).forEach(k=>{if(String(taskGoals[k])===String(a.id))taskGoals[k]=null;});
-      delete goalTags[a.id];saveTagData(true);
+      const idStillUsed = anchors.some(x=>String(x.id)===String(a.id));
+      if(!idStillUsed){
+        Object.keys(taskGoals).forEach(k=>{if(String(taskGoals[k])===String(a.id))taskGoals[k]=null;});
+        delete goalTags[a.id];
+      }
+      saveTagData(true);
+      (a.splits||[]).forEach(sp=>bury("split:"+a.text, sp.text));
       bury("anchor:"+ymNow(), a.text);
       saveMonths(); renderMonth();
     };
@@ -2382,27 +2403,22 @@ function renderPastMonths(){
   });
   box.appendChild(h); box.appendChild(body);
 }
-let newAnchorKind = "watch";
-[["kindWatch","watch"],["kindGoal","goal"]].forEach(([id,k])=>{
-  $(id).onclick = ()=>{
-    newAnchorKind = k;
-    $("kindWatch").classList.toggle("on", k==="watch");
-    $("kindGoal").classList.toggle("on", k==="goal");
-  };
-});
-$("addAnchor").onclick = ()=>{
+function addAnchorOfKind(kind){
   const t = $("anchorText").value.trim();
   if(!t) return;
   const anchors = monthAnchors();
+  if(anchors.some(x=>x.text===t)){ toastDone("这个月已经有同名的一条了。"); return; }
   if(anchors.length>=MONTH_MAX){ alert("这个月已经有 "+MONTH_MAX+" 条了。想加，先删一个。"); return; }
-  if(newAnchorKind==="goal" && goalCount()>=GOAL_MAX){ alert("目标位只有 "+GOAL_MAX+" 个。想加，先删一个，或者放进观察位。"); return; }
+  if(kind==="goal" && goalCount()>=GOAL_MAX){ alert("目标位只有 "+GOAL_MAX+" 个。想加，先删一个，或者放进观察位。"); return; }
   unbury("anchor:"+ymNow(), t);
-  anchors.push({id: Date.now(), text: t, kind: newAnchorKind, splits: [], hist: [{t: Date.now(), ev: newAnchorKind==="watch" ? "开始观察" : "立下"}]});
+  anchors.push({id: entityId("goal_", ymNow()+"|"+t+"|"+Date.now()), text: t, kind, splits: [], hist: [{t: Date.now(), ev: kind==="watch" ? "开始观察" : "立下"}]});
   saveMonths();
   $("anchorText").value = "";
   renderMonth();
-};
-$("anchorText").addEventListener("keydown", e=>{ if(e.key==="Enter") $("addAnchor").click(); });
+}
+$("addWatch").onclick = ()=>addAnchorOfKind("watch");
+$("addGoal").onclick = ()=>addAnchorOfKind("goal");
+$("anchorText").addEventListener("keydown", e=>{ if(e.key==="Enter") addAnchorOfKind("watch"); });
 
 /* ---------- 瓶子 ---------- */
 function renderSea(){
@@ -2778,6 +2794,7 @@ function ensureEnough(){
     LS.setSilent("qyx_enough", enough);   // 自动重置不算“本机有改动”
   }
   enough.items = (enough.items||[]).map(normalizeEnoughItem).slice(0,3);
+  enough.items.forEach(i=>{ if(!String(i.text||"").trim()&&i.status!=="incomplete"){ i.status="incomplete"; i.done=false; } });
   enough.items.forEach(i=>syncParentFromSubs(i));
   while(enough.items.length<3) enough.items.push(blankEnoughItem());
 }
@@ -2915,11 +2932,16 @@ document.querySelectorAll("#enoughCard [data-task-tags]").forEach(box=>{box.oncl
 document.querySelectorAll("#enoughCard input").forEach(inp=>{
   inp.addEventListener("input", ()=>{
     const i=+inp.dataset.i,item=enough.items[i];
+    const wasCompleted=item.status==="completed",prevText=item.text;
     item.text=inp.value;
     if(item.status==="deleted") item.status="incomplete";
+    if(!inp.value.trim()){
+      if(wasCompleted) removeDoneLogToday(prevText,"三件");
+      item.status="incomplete";
+    }
     item.done=item.status==="completed";
     item.updatedAt=Date.now();
-    saveEnough();
+    saveEnough();renderEnough();
   });
 });
 function setEnoughStatus(i,status){
@@ -3876,7 +3898,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.0";
+const APP_VERSION = "4.4.2";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -3891,6 +3913,16 @@ function bury(scope, val){
     dead=[...keep.values()].flat().sort((a,b)=>a.t-b.t);
   }
   LS.set("qyx_dead", dead);
+}
+function renameScope(oldScope, newScope){
+  if(oldScope===newScope) return;
+  let touched=false;
+  dead.forEach(d=>{ if(d.s===oldScope){ d.s=newScope; touched=true; } });
+  if(touched){
+    const seen=new Set();
+    dead = dead.filter(d=>{ const k=d.s+"\u0000"+d.v; if(seen.has(k)) return false; seen.add(k); return true; });
+    LS.set("qyx_dead", dead);
+  }
 }
 function unbury(scope, val){
   const n = dead.filter(d=>!(d.s===scope && d.v===val));
