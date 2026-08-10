@@ -3899,7 +3899,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.2";
+const APP_VERSION = "4.4.3";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4355,16 +4355,34 @@ async function checkUpdate(){
     const txt = await res.text();
     const m = txt.match(/APP_VERSION\s*=\s*"([^"]+)"/);
     if(m && m[1] !== APP_VERSION){
+      const next = m[1];
+      const draft = ($("noteText").value || "").trim();
+      const tried = sessionStorage.getItem("qyx_reload_for");
+      const busy = document.querySelector(".modal-bg.show");
+      if(!draft && !busy && tried !== next){
+        sessionStorage.setItem("qyx_reload_for", next);
+        await syncNow(true);
+        location.replace(location.pathname + "?v=" + next);
+        return;
+      }
       const b = $("cloudBanner");
-      b.textContent = "⬆ 有新版本 " + m[1] + " · 点这里更新";
+      b.textContent = "⬆ 有新版本 " + next + " · 点这里更新";
       b.classList.add("show");
       b.onclick = async ()=>{
-        await syncNow(true);   // 更新前先同步，数据无虞
-        location.href = location.pathname + "?u=" + Date.now();
+        sessionStorage.setItem("qyx_reload_for", next);
+        await syncNow(true);
+        location.replace(location.pathname + "?v=" + next);
       };
     }
   }catch(e){ /* 静默 */ }
 }
+let lastUpdateCheck = Date.now();
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState !== "visible") return;
+  if(Date.now() - lastUpdateCheck < 60000) return;   /* 一分钟内不重复检查 */
+  lastUpdateCheck = Date.now();
+  checkUpdate();
+});
 
 /* ---------- settings ---------- */
 $('openTagLibrary').onclick=()=>{$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=false;$('tagDetailView').hidden=true;renderTagLibrary();};
