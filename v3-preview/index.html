@@ -3899,7 +3899,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.3-preview";
+const APP_VERSION = "4.4.4-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4348,7 +4348,10 @@ function scheduleAutoBackup(){
 }
 
 /* ---------- 版本自检：app 模式没有刷新键，靠这个拿新版 ---------- */
+let lastUpdateCheck = 0;
 async function checkUpdate(){
+  if(Date.now() - lastUpdateCheck < 60000) return;
+  lastUpdateCheck = Date.now();
   try{
     const url = location.pathname + "?nocache=" + Date.now();
     const res = await fetch(url, {cache:"no-store"});
@@ -4376,11 +4379,8 @@ async function checkUpdate(){
     }
   }catch(e){ /* 静默 */ }
 }
-let lastUpdateCheck = Date.now();
 document.addEventListener("visibilitychange", ()=>{
   if(document.visibilityState !== "visible") return;
-  if(Date.now() - lastUpdateCheck < 60000) return;   /* 一分钟内不重复检查 */
-  lastUpdateCheck = Date.now();
   checkUpdate();
 });
 
