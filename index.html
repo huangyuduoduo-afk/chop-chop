@@ -4379,11 +4379,6 @@ async function checkUpdate(){
     }
   }catch(e){ /* 静默 */ }
 }
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState !== "visible") return;
-  checkUpdate();
-});
-
 /* ---------- settings ---------- */
 $('openTagLibrary').onclick=()=>{$('tagLibraryBg').classList.add('show');$('tagLibraryView').hidden=false;$('tagDetailView').hidden=true;renderTagLibrary();};
 $('closeTagLibrary').onclick=$('closeTagDetail').onclick=()=>$('tagLibraryBg').classList.remove('show');
