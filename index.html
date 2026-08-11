@@ -1576,46 +1576,54 @@ $("appDialog2Bg").onclick=e=>{if(e.target===$("appDialog2Bg"))closeAppDialog2(fa
 $("appDialog2Input").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();closeAppDialog2(true);}});
 document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("appDialog2Bg").classList.contains("show"))closeAppDialog2(false);else if($("appDialogBg").classList.contains("show"))closeAppDialog(false);});
 /* 本功能由 Owner 明确豁免「每个功能预写停用条件」这条规则，是第一个豁免的功能。2026-07-30。 */
-const REF_RE=/@(\d{6})-(\d{4})([a-z]?)/g;
-function refMinuteMatches(ymd,hm){
+const REF_RE=/@([dq]?)(\d{6})-(\d{4})([a-z]?)/g;
+const REF_KIND={"":"note", d:"done", q:"ai"};
+const KIND_LETTER={note:"", done:"d", ai:"q"};
+const KIND_LABEL={note:"", done:"完成", ai:"问一问"};
+/* @d 锚点的已知边界：done 记录有同身份去重（dedupeDoneLogEntries），
+   合并时若留下的是另一条实例，锚点会失效并显示为灰块。可见、不静默，暂不处理。 */
+function refMinuteMatches(kind,ymd,hm){
+  const type=REF_KIND[kind||""]||"note";
   const y=2000+ +ymd.slice(0,2),mo=+ymd.slice(2,4),d=+ymd.slice(4,6),h=+hm.slice(0,2),mi=+hm.slice(2,4);
-  return log.filter(e=>e.type==="note"&&(()=>{const t=new Date(e.t);
+  return log.filter(e=>e.type===type&&(()=>{const t=new Date(e.t);
     return t.getFullYear()===y&&t.getMonth()+1===mo&&t.getDate()===d&&t.getHours()===h&&t.getMinutes()===mi;})())
     .sort((a,b)=>a.t-b.t);
 }
-function resolveRef(ymd,hm,suffix){
-  const list=refMinuteMatches(ymd,hm);
+function resolveRef(kind,ymd,hm,suffix){
+  const list=refMinuteMatches(kind,ymd,hm);
   const i=suffix&&suffix!=="a"?suffix.charCodeAt(0)-97:0;
   return {hit:list[i]||null,siblings:list};
 }
 function refToken(entry){
+  const k=KIND_LETTER[entry.type];
+  if(k===undefined) return "";
   const t=new Date(entry.t);
   const ymd=String(t.getFullYear()).slice(2)+pad(t.getMonth()+1)+pad(t.getDate());
   const hm=pad(t.getHours())+pad(t.getMinutes());
-  const list=refMinuteMatches(ymd,hm),i=list.findIndex(x=>x===entry);
-  return "@"+ymd+"-"+hm+(i>0?String.fromCharCode(97+i):"");
+  const list=refMinuteMatches(k,ymd,hm),i=list.findIndex(x=>x===entry);
+  return "@"+k+ymd+"-"+hm+(i>0?String.fromCharCode(97+i):"");
 }
 function stripRefs(text){
-  return String(text||"").replace(/@(\d{6})-(\d{4})([a-z]?)/g,(all,ymd,hm,sf)=>{
-    const {hit}=resolveRef(ymd,hm,sf);
-    return hit?`（引用${fmtDT(hit.t)}：${String(hit.text||"").trim().slice(0,20)}）`:"（引用了一条已删除的记录）";
+  return String(text||"").replace(/@([dq]?)(\d{6})-(\d{4})([a-z]?)/g,(all,kd,ymd,hm,sf)=>{
+    const {hit}=resolveRef(kd,ymd,hm,sf);
+    return hit?`（引用${fmtDT(hit.t)}${KIND_LABEL[hit.type]?" "+KIND_LABEL[hit.type]:""}：${String(hit.text||"").trim().slice(0,20)}）`:"（引用了一条已删除的记录）";
   });
 }
 function refInline(text){
-  return String(text||"").replace(/@(\d{6})-(\d{4})([a-z]?)/g,(all,ymd,hm,sf)=>{
-    const {hit}=resolveRef(ymd,hm,sf);
-    return hit?`⟨引用·${fmtDT(hit.t).slice(0,5)}⟩`:"⟨引用·已删除⟩";
+  return String(text||"").replace(/@([dq]?)(\d{6})-(\d{4})([a-z]?)/g,(all,kd,ymd,hm,sf)=>{
+    const {hit}=resolveRef(kd,ymd,hm,sf);
+    return hit?`⟨引用·${fmtDT(hit.t).slice(0,5)}${KIND_LABEL[hit.type]?" "+KIND_LABEL[hit.type]:""}⟩`:"⟨引用·已删除⟩";
   });
 }
 function renderInlineMarkdownLite(line){
   let html=esc(line);
   html=html.replace(/(^|[\s，。！？；：、,.!?;:])#([^\s#，。！？；：、,.!?;:<>&]+)/g,'$1<span class="md-tag">#$2</span>');
   REF_RE.lastIndex=0;
-  html=html.replace(REF_RE,(all,ymd,hm,sf)=>{
-    const {hit,siblings}=resolveRef(ymd,hm,sf);
+  html=html.replace(REF_RE,(all,kd,ymd,hm,sf)=>{
+    const {hit,siblings}=resolveRef(kd,ymd,hm,sf);
     if(!hit) return `<span class="md-ref gone">${all}<span class="mr-x">这条记录已经不在了</span></span>`;
     const more=siblings.length>1?`<span class="mr-x">这一分钟还有 ${siblings.length-1} 条记录</span>`:"";
-    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t)}</span><span class="mr-t">${esc(refInline(String(hit.text||"").trim()))}</span>${more}<span class="mr-go">去那条 →</span></span>`;
+    return `<span class="md-ref" data-ref="${esc(all)}"><span class="mr-d">${fmtDT(hit.t)}${KIND_LABEL[hit.type]?" · "+KIND_LABEL[hit.type]:""}</span><span class="mr-t">${esc(refInline(String(hit.text||"").trim()))}</span>${more}<span class="mr-go">去那条 →</span></span>`;
   });
   html=html.replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>");
   return html;
@@ -3615,8 +3623,8 @@ function renderLog(){
         const go=node.querySelector(".mr-go");
         if(go) go.onclick=(ev)=>{
           ev.stopPropagation();
-          const m=/@(\d{6})-(\d{4})([a-z]?)/.exec(node.dataset.ref);if(!m)return;
-          const {hit}=resolveRef(m[1],m[2],m[3]);if(hit) jumpToEntry(hit);
+          const m=/@([dq]?)(\d{6})-(\d{4})([a-z]?)/.exec(node.dataset.ref);if(!m)return;
+          const {hit}=resolveRef(m[1],m[2],m[3],m[4]);if(hit) jumpToEntry(hit);
         };
       });
       const etx = row.querySelector(".etx");
@@ -3935,7 +3943,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.6";
+const APP_VERSION = "4.4.7";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4483,11 +4491,11 @@ function updateRefSuggest(){
   if(!m||/^\d{6}-/.test(m[1])){box.classList.remove('show');box.innerHTML='';return;}
   tagBox.classList.remove('show');
   const q=m[1].trim();
-  const pool=log.filter(e=>e.type==="note"&&String(e.text||"").trim())
+  const pool=log.filter(e=>["note","done","ai"].includes(e.type)&&String(e.text||"").trim())
     .filter(e=>!q||String(e.text||"").includes(q))
     .sort((a,b)=>b.t-a.t).slice(0,30);
   const head=`<div class="rs-head">${q?`在筛「${esc(q)}」 · ${pool.length} 条`:"继续打字可以筛选 · 最近 30 条"}</div>`;
-  box.innerHTML=head+pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}</span><span class="rs-x">${hlHit(refWindow(refInline(String(e.text||"").trim()),q,60),q)}</span></button>`).join('');
+  box.innerHTML=head+pool.map(e=>`<button data-ref-choice="${esc(refToken(e))}"><span class="rs-t">${fmtDT(e.t)}${KIND_LABEL[e.type]?" · "+KIND_LABEL[e.type]:""}</span><span class="rs-x">${hlHit(refWindow(refInline(String(e.text||"").trim()),q,60),q)}</span></button>`).join('');
   box.classList.toggle('show',true);
 }
 function commitNoteEdit(value,start,end=start){const el=suggestTarget();el.value=value;el.focus();el.setSelectionRange(start,end);el.dispatchEvent(new Event('input',{bubbles:true}));}
