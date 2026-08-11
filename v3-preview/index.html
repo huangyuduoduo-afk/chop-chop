@@ -2198,7 +2198,8 @@ function aHist(a, ev){
 const MONTH_MAX = 12;
 const GOAL_MAX = 2;
 function isWatch(a){ return a && a.kind === "watch"; }
-function goalCount(){ return monthAnchors().filter(a=>!isWatch(a)).length; }
+function goalCount(){ return monthAnchors().filter(a=>!isWatch(a) && !a.done).length; }
+function goalDoneCount(){ return monthAnchors().filter(a=>!isWatch(a) && a.done).length; }
 function monthAnchors(){
   const ym = ymNow();
   if(!months[ym]) months[ym] = [];
@@ -2207,15 +2208,22 @@ function monthAnchors(){
 function saveMonths(){ LS.set("qyx_months", months); }
 function renderMonth(){
   const d = new Date();
-  $("monthHead").innerHTML = `${d.getMonth()+1}月<span class="count">目标位 ${goalCount()}/${GOAL_MAX} · 观察位 ${monthAnchors().filter(isWatch).length}</span>`;
+  const gd = goalDoneCount();
+  $("monthHead").innerHTML = `${d.getMonth()+1}月<span class="count">目标位 ${goalCount()}/${GOAL_MAX}${gd?` · 完成 ${gd}`:``} · 观察位 ${monthAnchors().filter(isWatch).length}</span>`;
   const list = $("anchorList"); list.innerHTML = "";
   renderPastMonths();
   const anchors = monthAnchors();
+  /* 渲染期派生的顺序，不写回数组：进行中的目标 → 已完成的目标 → 观察位。
+     组内保持原数组顺序，所以卡片不会因为无关操作跳来跳去。 */
+  const rank = a => isWatch(a) ? 2 : (a.done ? 1 : 0);
+  const ordered = anchors.map((a,i)=>({a,i}))
+    .sort((x,y)=> rank(x.a)-rank(y.a) || x.i-y.i)
+    .map(o=>o.a);
   if(!anchors.length){
     list.innerHTML = '<div class="empty">这个月想推进的几件事。</div>';
     return;
   }
-  anchors.forEach(a=>{
+  ordered.forEach(a=>{
     const card = document.createElement("div");
     const watch = isWatch(a);
     card.className = "anchor glass" + (a.done ? " adone" : "") + (watch ? " awatch" : "");
@@ -2422,7 +2430,7 @@ function addAnchorOfKind(kind){
   const anchors = monthAnchors();
   if(anchors.some(x=>x.text===t)){ toastDone("这个月已经有同名的一条了。"); return; }
   if(anchors.length>=MONTH_MAX){ alert("这个月已经有 "+MONTH_MAX+" 条了。想加，先删一个。"); return; }
-  if(kind==="goal" && goalCount()>=GOAL_MAX){ alert("目标位只有 "+GOAL_MAX+" 个。想加，先删一个，或者放进观察位。"); return; }
+  if(kind==="goal" && goalCount()>=GOAL_MAX){ alert("目标位只有 "+GOAL_MAX+" 个，都在进行中。想加，先完成或删掉一个，或者放进观察位。"); return; }
   unbury("anchor:"+ymNow(), t);
   anchors.push({id: entityId("goal_", ymNow()+"|"+t+"|"+Date.now()), text: t, kind, splits: [], hist: [{t: Date.now(), ev: kind==="watch" ? "开始观察" : "立下"}]});
   saveMonths();
@@ -3927,7 +3935,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.5-preview";
+const APP_VERSION = "4.4.6-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
