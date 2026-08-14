@@ -632,6 +632,7 @@ nav button{position:relative}
 .tag.done{background:var(--sage-mist);color:var(--sage-deep)}
 .tag.bonus{background:var(--tang-mist);color:var(--tang-deep)}
 .entry .est{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:3px}
+.entry-meta{font:500 11px var(--sans);color:var(--ink-faint);margin-top:5px}
 .entry .ex{
   background:none;border:none;color:var(--ink-faint);font-size:11px;cursor:pointer;
   padding:4px 2px;opacity:.45;flex-shrink:0;align-self:flex-start;
@@ -1580,6 +1581,17 @@ const REF_RE=/@([dq]?)(\d{6})-(\d{4})([a-z]?)/g;
 const REF_KIND={"":"note", d:"done", q:"ai"};
 const KIND_LETTER={note:"", done:"d", ai:"q"};
 const KIND_LABEL={note:"", done:"完成", ai:"问一问"};
+function charCount(text){
+  REF_RE.lastIndex=0;
+  return Array.from(String(text||"").replace(REF_RE,"").trim()).length;
+}
+function fmtSpan(ms){
+  const s=Math.round(ms/1000);
+  if(s<60) return s+" 秒";
+  const m=Math.floor(s/60);
+  if(m<60) return m+" 分钟";
+  return Math.floor(m/60)+" 小时 "+(m%60)+" 分钟";
+}
 /* @d 锚点的已知边界：done 记录有同身份去重（dedupeDoneLogEntries），
    合并时若留下的是另一条实例，锚点会失效并显示为灰块。可见、不静默，暂不处理。 */
 function refMinuteMatches(kind,ymd,hm){
@@ -1733,17 +1745,41 @@ function pushTrace(k,v){
   localStorage.setItem("qyx_trace_local",JSON.stringify(rows.slice(-2000)));
 }
 let recordTrace=null,traceSaving=false,traceIgnoreBlurUntil=0;
-function beginRecordTrace(){if(recordTrace||!$("v-log").classList.contains("on"))return;recordTrace={entered:Date.now(),first:0,del:0};}
-function finishRecordTrace(saved){
-  const s=recordTrace;if(!s)return;
-  if(saved&&s.first){pushTrace("lat",s.first-s.entered);pushTrace("dur",Date.now()-s.first);pushTrace("del",s.del);}
-  else if(!saved){const chars=$("noteText").value.length;if(s.first||chars)pushTrace("drop",chars);else pushTrace("idle",Date.now()-s.entered);}
-  recordTrace=null;
+function beginRecordTrace(){if(recordTrace||!$("v-log").classList.contains("on"))return;recordTrace={entered:Date.now(),first:0,del:0,active:0,resume:0};}
+function traceHold(){
+  const s=recordTrace;
+  if(!s||!s.first||!s.resume)return;
+  s.active+=Date.now()-s.resume;
+  s.resume=0;
 }
-$("noteText").addEventListener("keydown",()=>{beginRecordTrace();if(recordTrace&&!recordTrace.first)recordTrace.first=Date.now();});
+function traceResume(){
+  const s=recordTrace;
+  if(!s||!s.first||s.resume)return;
+  s.resume=Date.now();
+}
+function finishRecordTrace(saved){
+  const s=recordTrace;recordTrace=null;
+  if(!s)return null;
+  if(saved&&s.first){
+    if(s.resume)s.active+=Date.now()-s.resume;
+    const wall=Date.now()-s.first;
+    pushTrace("lat",s.first-s.entered);pushTrace("dur",wall);pushTrace("del",s.del);
+    return {wall,active:s.active||wall};
+  }
+  else if(!saved){const chars=$("noteText").value.length;if(s.first||chars)pushTrace("drop",chars);else pushTrace("idle",Date.now()-s.entered);}
+  return null;
+}
+$("noteText").addEventListener("keydown",()=>{beginRecordTrace();if(recordTrace&&!recordTrace.first){const now=Date.now();recordTrace.first=now;recordTrace.resume=now;}});
 $("noteText").addEventListener("beforeinput",e=>{beginRecordTrace();if(recordTrace&&e.inputType==="deleteContentBackward")recordTrace.del++;});
 $("noteText").addEventListener("blur",()=>setTimeout(()=>{if(Date.now()<traceIgnoreBlurUntil||traceSaving||!recordTrace)return;const active=document.activeElement;if(active&&active.closest&&active.closest(".letter"))return;finishRecordTrace(false);},0));
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")finishRecordTrace(false);else if($("v-log").classList.contains("on"))beginRecordTrace();});
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden"){
+    if(recordTrace&&recordTrace.first)traceHold();
+    else finishRecordTrace(false);
+  }else if($("v-log").classList.contains("on")){
+    beginRecordTrace();traceResume();
+  }
+});
 function qianCard(text){
   const d = document.createElement("div");
   d.className = "qian";
@@ -3362,8 +3398,9 @@ $("saveNote").onclick = ()=>{
   traceSaving=true;traceIgnoreBlurUntil=Date.now()+500;
   const t = $("noteText").value.trim();
   if(!t){traceSaving=false;return;}
-  finishRecordTrace(true);
+  const tr = finishRecordTrace(true);
   const savedEntry = addLog("note", t, selectedMood);
+  if(tr){savedEntry.wall=tr.wall;savedEntry.active=tr.active;LS.set("qyx_log",log);}
   if(pendingPolish && pendingPolish.polished===t){
     polishHistory.push({t:savedEntry.t,original:pendingPolish.original,polished:t,mode:pendingPolish.mode});
     LS.set("qyx_polish_history",polishHistory);
@@ -3598,6 +3635,10 @@ function renderLog(){
       }
       const md = e.mood ? `<span class="emood">${e.mood}</span>` : "";
       const src = e.src ? `<span class="esrc">${esc(e.src)}</span>` : "";
+      /* 这个功能的目的是校准——让 Owner 对“多少字算多少”有概念。校准会完成，然后它就没用了。
+         停用判据：当 Owner 能在保存前估准自己写了多少字（误差 20% 以内），删掉这一行显示。
+         不做使用次数统计，判据靠自己感觉，某次复盘时问一次即可。 */
+      const meta=(e.type==="note"&&e.active)?`<div class="entry-meta">${charCount(e.text)} 字 · ${fmtSpan(e.active)}${(e.wall&&e.wall-e.active>60000)?` · 中间离开 ${fmtSpan(e.wall-e.active)}`:``}</div>`:"";
       let inner;
       if(e.type==="ai" && e.q){
         inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="aiq">${esc(e.q)}</div><div class="aia md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
@@ -3605,7 +3646,7 @@ function renderLog(){
         const markLabel=e.mark==="light"?"有启发":"不再出现";
         inner = `<span class="tag mark">${markLabel}</span>${src}${md}<div class="etx md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
       }else{
-        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="etx md-lite">${renderMarkdownLite(e.text)}</div>${extra}`;
+        inner = `<span class="tag ${e.type}">${TAG[e.type]||e.type}</span>${src}${md}<div class="etx md-lite">${renderMarkdownLite(e.text)}</div>${extra}${meta}`;
       }
       const chips=renderTagChips(recordTags[e.id]||[]);
       row.innerHTML = `<span class="t">${hm}</span><div class="body">${inner}${chips?`<div class="record-tags">${chips}</div>`:""}</div><button class="ex" title="删除">✕</button>`;
@@ -3859,7 +3900,7 @@ function buildExportBundle(){
 function buildExportMarkdown(b){
   const lines=["# chop chop! 个人记录","","导出范围："+b.meta.from+" 至 "+b.meta.to,"导出时间："+new Date(b.meta.exportedAt).toLocaleString("zh-CN"),""];
   const dt=t=>new Date(t).toLocaleString("zh-CN",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
-  if(b.journals){ lines.push("## 日记记录",""); b.journals.length?b.journals.forEach(e=>lines.push("- "+dt(e.t)+(e.mood?" "+e.mood:"")+"　"+e.text)):lines.push("这段时间没有日记记录。"); lines.push(""); }
+  if(b.journals){ lines.push("## 日记记录",""); b.journals.length?b.journals.forEach(e=>{lines.push("- "+dt(e.t)+(e.mood?" "+e.mood:"")+"　"+e.text);if(e.active)lines.push("  （"+charCount(e.text)+" 字 · 在场 "+fmtSpan(e.active)+" · 挂钟 "+fmtSpan(e.wall||e.active)+"）");}):lines.push("这段时间没有日记记录。"); lines.push(""); }
   if(b.aiEntries){
     lines.push("## AI 整理与总结","");
     (b.aiReviews||[]).forEach(review=>lines.push("### AI 回望 · "+reviewRangeText(review),"",cleanAIText(review.text),""));
@@ -3943,7 +3984,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.7-preview";
+const APP_VERSION = "4.4.8-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
