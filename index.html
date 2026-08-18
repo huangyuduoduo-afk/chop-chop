@@ -1766,12 +1766,27 @@ function finishRecordTrace(saved){
     pushTrace("lat",s.first-s.entered);pushTrace("dur",wall);pushTrace("del",s.del);
     return {wall,active:s.active||wall};
   }
+  if(saved&&!s.first&&$("noteText").value.trim()){
+    const wall=Date.now()-s.entered;
+    return {wall,active:wall};
+  }
   else if(!saved){const chars=$("noteText").value.length;if(s.first||chars)pushTrace("drop",chars);else pushTrace("idle",Date.now()-s.entered);}
   return null;
 }
 $("noteText").addEventListener("keydown",()=>{beginRecordTrace();if(recordTrace&&!recordTrace.first){const now=Date.now();recordTrace.first=now;recordTrace.resume=now;}});
-$("noteText").addEventListener("beforeinput",e=>{beginRecordTrace();if(recordTrace&&e.inputType==="deleteContentBackward")recordTrace.del++;});
-$("noteText").addEventListener("blur",()=>setTimeout(()=>{if(Date.now()<traceIgnoreBlurUntil||traceSaving||!recordTrace)return;const active=document.activeElement;if(active&&active.closest&&active.closest(".letter"))return;finishRecordTrace(false);},0));
+$("noteText").addEventListener("beforeinput",e=>{
+  beginRecordTrace();
+  if(recordTrace&&!recordTrace.first){const now=Date.now();recordTrace.first=now;recordTrace.resume=now;}
+  if(recordTrace&&e.inputType==="deleteContentBackward")recordTrace.del++;
+});
+$("noteText").addEventListener("focus",()=>{beginRecordTrace();traceResume();});
+$("noteText").addEventListener("blur",()=>setTimeout(()=>{
+  if(Date.now()<traceIgnoreBlurUntil||traceSaving||!recordTrace)return;
+  const active=document.activeElement;
+  if(active&&active.closest&&active.closest(".letter"))return;
+  if(recordTrace.first)traceHold();
+  else finishRecordTrace(false);
+},120));
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="hidden"){
     if(recordTrace&&recordTrace.first)traceHold();
@@ -1865,8 +1880,9 @@ function addToOpts(text){
 function addToToday(text,goalId){
   ensureEnough();
   const t=String(text||"").trim();
-  if(!t||enough.items.some(x=>x.text.trim()===t))return "exists";
-  const slot=enough.items.find(x=>!x.text.trim());
+  const alive=x=>enoughStatus(x)!=="deleted";
+  if(!t||enough.items.some(x=>alive(x)&&x.text.trim()===t))return "exists";
+  const slot=enough.items.find(x=>!alive(x)||!x.text.trim());
   if(!slot)return "full";
   slot.text=t;slot.status="incomplete";slot.done=false;slot.subs=[];slot.updatedAt=Date.now();
   if(goalId)taskGoals[slot.id]=goalId;
@@ -1878,10 +1894,11 @@ async function addToTodaySmart(text,goalId){
   ensureEnough();
   const t=String(text||"").trim();
   if(!t) return {r:"cancel"};
-  const dup=enough.items.some(x=>x.text.trim()===t||(x.subs||[]).some(s=>String(s.text||"").trim()===t));
+  const alive=x=>enoughStatus(x)!=="deleted";
+  const dup=enough.items.some(x=>alive(x)&&(x.text.trim()===t||(x.subs||[]).some(s=>String(s.text||"").trim()===t)));
   if(dup) return {r:"exists"};
-  const written=enough.items.map((x,i)=>({x,i})).filter(o=>o.x.text.trim());
-  const hasEmpty=enough.items.some(x=>!x.text.trim());
+  const written=enough.items.map((x,i)=>({x,i})).filter(o=>alive(o.x)&&o.x.text.trim());
+  const hasEmpty=enough.items.some(x=>!alive(x)||!x.text.trim());
   if(!written.length) return {r:addToToday(t,goalId)};
   const options=[];
   if(hasEmpty) options.push({label:"作为新的一件（大项）",value:"top"});
@@ -2897,7 +2914,7 @@ function renderEnough(){
   document.querySelectorAll("#enoughCard input").forEach(inp=>{
     const i = +inp.dataset.i;
     const item=normalizeEnoughItem(enough.items[i]);
-    inp.value = item.text;
+    inp.value = enoughStatus(item)==="deleted" ? "" : item.text;
     inp.classList.toggle("donetext", item.status==="completed");
     inp.classList.toggle("expiredtext", item.status==="expired");
   });
@@ -3037,11 +3054,13 @@ document.querySelectorAll("#enoughCard .ecirc").forEach(c=>{
 document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
   b.onclick=async ()=>{
     const i=+b.dataset.i,action=b.dataset.taskAction,item=enough.items[i];
-    if(!item.text.trim()) return;
+    if(!item.text.trim()||enoughStatus(item)==="deleted") return;
     if(action==="delete"){
       if(!await appDialog({title:"删除这件事？",text:"删除后不会进入昨日总结。",okText:"删除",danger:true})) return;
       (item.subs||[]).forEach(s=>bury("esub:"+enough.d,s.text));
-      delete taskTags[item.id];taskGoals[item.id]=null;saveTagData(true);enough.items[i]=blankEnoughItem();saveEnough();renderEnough();renderOptsHistory();
+      delete taskTags[item.id];taskGoals[item.id]=null;saveTagData(true);
+      item.subs=[];item.done=false;item.status="deleted";item.updatedAt=Date.now();
+      saveEnough();renderEnough();renderOptsHistory();
       toastDone("删掉了，不会进入昨日总结。");
     }
   };
@@ -3049,7 +3068,7 @@ document.querySelectorAll("#enoughCard [data-task-action]").forEach(b=>{
 document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
   b.onclick = async ()=>{
     const i = +b.dataset.i, item = enough.items[i];
-    if(!item.text.trim()){ toastDone("先写上这件事。"); return; }
+    if(!item.text.trim()||enoughStatus(item)==="deleted"){ toastDone("先写上这件事。"); return; }
     const pool=pastOptsHistory().slice(0,40);
     const res=await appDialog({
       title:"拆小项",
@@ -3984,7 +4003,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.8";
+const APP_VERSION = "4.4.9";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4179,7 +4198,10 @@ function mergeAll(o){
       const rit = (re.items||[])[i];
       if(!rit) return;
       normalizeEnoughItem(it);normalizeEnoughItem(rit);
-      if(!it.text.trim() && rit.text){it.text = rit.text;if(rit.id)it.id=rit.id;}
+      const localDeleted=enoughStatus(it)==="deleted";
+      if(!it.text.trim() && rit.text && !localDeleted && (it.updatedAt||0)<=(rit.updatedAt||0)){
+        it.text=rit.text;if(rit.id)it.id=rit.id;
+      }
       const localUpdated=it.updatedAt||0,remoteUpdated=rit.updatedAt||0;
       const statusWinner=remoteUpdated>localUpdated?rit:it;
       it.status=enoughStatus(statusWinner);
