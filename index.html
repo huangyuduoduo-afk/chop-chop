@@ -729,6 +729,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .pick-row.on .pick-box{background:var(--sage-deep);border-color:var(--sage-deep)}
 .pick-row.plain{justify-content:flex-start;border-style:dashed}
 .pick-row .pick-edit{margin-left:auto;font:500 11px var(--sans);color:var(--ink-faint);padding:2px 6px;border-radius:8px;background:rgba(75,66,55,.06)}
+.pick-row .pick-del{margin-left:6px;font:500 11px var(--sans);color:var(--ink-faint);padding:2px 6px;border-radius:8px;background:rgba(75,66,55,.06)}
 .pick-sec{display:flex;align-items:center;gap:6px;width:100%;min-width:0;text-align:left;border:0;background:transparent;padding:8px 4px 4px;font:500 12px var(--sans);color:var(--ink-faint);cursor:pointer}
 .pick-sec::after{content:"▾";margin-left:auto;transition:transform .15s}
 .pick-sec.open::after{transform:rotate(180deg)}
@@ -798,7 +799,7 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 .v3-sea-hero{margin:0 0 16px;padding:20px;border-radius:24px;background:linear-gradient(145deg,rgba(226,240,247,.8),rgba(255,255,255,.55));border:1px solid rgba(156,191,208,.45)}
 .v3-sea-hero h2{font:600 21px "Noto Serif SC",var(--kai);color:#507D99}.v3-sea-hero p{font-size:12px;color:#7190A3;margin-top:4px}
 .ai-review-card{padding:20px;margin:18px 0;border-radius:24px}.ai-review-card .head{display:flex;justify-content:space-between;align-items:center}.ai-review-card h2{font:600 19px "Noto Serif SC",var(--kai)}.ai-review-card .beta{font-size:9px;background:#E7EEDF;color:#60784F;padding:3px 7px;border-radius:9px}.ai-review-card>p{font-size:12px;color:var(--ink-soft);margin:5px 0 12px}.ai-review-card>button:not(.ai-review-toggle){width:100%;border:0;border-radius:17px;padding:12px;background:linear-gradient(135deg,#A4B891,#78985F);color:#fff;cursor:pointer}.ai-review-result{display:none;position:relative;margin-top:13px;padding:14px;border-radius:15px;background:rgba(239,245,234,.72);font-family:"Noto Serif SC",var(--kai);font-size:12.5px;line-height:1.9;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;letter-spacing:.035em}.ai-review-result.show{display:block}.ai-review-result.folded{max-height:13.2em;overflow:hidden}.ai-review-result.folded::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3.8em;background:linear-gradient(transparent,rgba(239,245,234,.98))}.ai-review-toggle{display:none!important;width:auto!important;margin:7px auto 0!important;padding:4px 13px!important;border:0!important;background:transparent!important;color:#6D865A!important;font-size:11px;cursor:pointer}.ai-review-toggle.show{display:block!important}
-.ai-review-range{font:600 10px var(--sans);color:var(--sage-deep);margin-bottom:7px;letter-spacing:.03em}.ai-review-hint{margin:0 0 7px!important;color:#71875F!important}.ai-review-hist{margin-top:8px}.ai-review-hist-body[hidden],.ai-review-hist-full[hidden]{display:none!important}.ai-review-hist-item{gap:9px;border-top:1px solid rgba(75,66,55,.08);min-width:0;max-width:100%}.ai-review-hist-item span:first-child{white-space:nowrap;flex:0 0 auto;color:#71875F}.ai-review-hist-item span:nth-child(2){flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-review-hist-full{padding:3px 8px 10px;font:500 11.5px/1.8 "Noto Serif SC",var(--kai);white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;color:var(--ink-soft)}.review-hint-setting{display:flex;align-items:center;gap:8px;margin-top:12px}.review-hint-setting input{width:auto;margin:0}
+.ai-review-range{display:flex;align-items:center;font:600 10px var(--sans);color:var(--sage-deep);margin-bottom:7px;letter-spacing:.03em}.review-del{border:0;background:transparent;color:var(--ink-faint);font:500 11px var(--sans);padding:2px 6px;cursor:pointer}.ai-review-range .review-del{margin-left:auto}.ai-review-hint{margin:0 0 7px!important;color:#71875F!important}.ai-review-hist{margin-top:8px}.ai-review-hist-body[hidden],.ai-review-hist-full[hidden]{display:none!important}.ai-review-hist-row{display:flex;align-items:center;border-top:1px solid rgba(75,66,55,.08)}.ai-review-hist-item{flex:1;gap:9px;min-width:0;max-width:100%}.ai-review-hist-row>.review-del{flex:0 0 auto}.ai-review-hist-item span:first-child{white-space:nowrap;flex:0 0 auto;color:#71875F}.ai-review-hist-item span:nth-child(2){flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ai-review-hist-full{padding:3px 8px 10px;font:500 11.5px/1.8 "Noto Serif SC",var(--kai);white-space:pre-line;overflow-wrap:anywhere;word-break:break-word;color:var(--ink-soft)}.review-hint-setting{display:flex;align-items:center;gap:8px;margin-top:12px}.review-hint-setting input{width:auto;margin:0}
 #tagLibraryBg{z-index:70}
 
 /* 导出中心：复用设置与历史记录中的既有入口 */
@@ -1480,7 +1481,7 @@ function renderAppDialogPick(cfg){
   appDialogPick={multi:!!cfg.multi,max:cfg.max||0,chosen:new Set(),options:cfg.options||[],section:cfg.section||null};
   const rowHTML=(o,i)=>o.plain
     ? `<button type="button" class="pick-row plain" data-pick="${i}"><span class="pick-tx">${esc(o.label)}</span></button>`
-    : `<button type="button" class="pick-row" data-pick="${i}"><span class="pick-box"></span><span class="pick-tx">${esc(o.label)}</span>${o.editable?'<span class="pick-edit" data-pick-edit="'+i+'">改</span>':''}</button>`;
+    : `<button type="button" class="pick-row" data-pick="${i}"><span class="pick-box"></span><span class="pick-tx">${esc(o.label)}</span>${o.editable?'<span class="pick-edit" data-pick-edit="'+i+'">改</span>':''}${o.deletable?'<span class="pick-del" data-pick-del="'+i+'">删</span>':''}</button>`;
   let html=appDialogPick.options.map(rowHTML).join("");
   if(appDialogPick.section){
     const s=appDialogPick.section,base=appDialogPick.options.length;
@@ -1496,7 +1497,7 @@ function renderAppDialogPick(cfg){
   if(secBtn) secBtn.onclick=()=>{ secBody.hidden=!secBody.hidden; secBtn.classList.toggle("open",!secBody.hidden); };
   box.querySelectorAll("[data-pick]").forEach(btn=>{
     btn.onclick=(ev)=>{
-      if(ev.target.closest("[data-pick-edit]"))return;
+      if(ev.target.closest("[data-pick-edit]")||ev.target.closest("[data-pick-del]"))return;
       const i=+btn.dataset.pick,st=appDialogPick,o=st.options[i];
       if(o.plain){ st.chosen.add(i); closeAppDialog(true); return; }
       if(!st.multi){ st.chosen.clear(); st.chosen.add(i); closeAppDialog(true); return; }
@@ -1517,6 +1518,17 @@ function renderAppDialogPick(cfg){
       o.label=t; o.value="h:"+t;
       const btn=box.querySelector('[data-pick="'+i+'"] .pick-tx');
       if(btn) btn.textContent=t;
+    };
+  });
+  box.querySelectorAll("[data-pick-del]").forEach(el=>{
+    el.onclick=(ev)=>{
+      ev.stopPropagation();
+      const i=+el.dataset.pickDel,o=appDialogPick.options[i];
+      if(typeof o.onDelete==="function" && o.onDelete(o.label)===false) return;
+      appDialogPick.chosen.delete(i);
+      const row=box.querySelector('[data-pick="'+i+'"]');
+      if(row) row.remove();
+      toastDone("删掉了。");
     };
   });
 }
@@ -1924,12 +1936,17 @@ function pastOptsHistory(){
   const routineTexts=new Set(routines.map(r=>String(r.text||"").trim()));
   const inPlay=new Set();
   enough.items.forEach(x=>{const t=x.text.trim();if(t)inPlay.add(t);(x.subs||[]).forEach(s=>{const st=String(s.text||"").trim();if(st)inPlay.add(st);});});
+  const seen=new Set();
   return optsHist.filter(item=>{
     const t=String(item.text||"").trim();
     return dayKey(item.t)!==today && !isDead("ohist",optsHistKey(item))
       && !doneTexts.has(t) && !opts.includes(item.text) && !bench.includes(item.text)
       && !inPlay.has(t) && !routineTexts.has(t);
-  }).sort((a,b)=>b.t-a.t);
+  }).sort((a,b)=>b.t-a.t).filter(item=>{
+    const t=String(item.text||"").trim();
+    if(seen.has(t)) return false;
+    seen.add(t); return true;
+  });
 }
 function renderOptsHistory(){
   const body=$("optsHistoryBody");
@@ -2122,22 +2139,28 @@ function migrateProviderValue(){
   return provider;
 }
 migrateProviderValue();
-async function callDeepSeek(sys, messages, key, model, thinking=false){
+async function callDeepSeek(sys, messages, key, model, thinking=false, maxTokens=600){
   if(!key) throw new Error("DeepSeek 需要在设置里填 key");
   const res = await fetch("https://api.deepseek.com/chat/completions", {
     method:"POST",
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
-    body: JSON.stringify({ model:model||"deepseek-v4-pro", thinking:{type:thinking?"enabled":"disabled"}, max_tokens:600, messages:[{role:"system",content:sys}, ...messages] })
+    body: JSON.stringify({ model:model||"deepseek-v4-pro", thinking:{type:thinking?"enabled":"disabled"}, max_tokens:maxTokens, messages:[{role:"system",content:sys}, ...messages] })
   });
   const data = await res.json();
   if(data.error) throw new Error(data.error.message || "API 错误");
-  return (data.choices?.[0]?.message?.content || "").trim();
+  const choice = data.choices?.[0] || {};
+  const out = (choice.message?.content || "").trim();
+  return { text: out, truncated: choice.finish_reason === "length" };
 }
 async function runAI(sys, messages, options={}){
   const key = LS.get("qyx_key", "");
   const provider = migrateProviderValue();
-  if(provider==="deepseek-v4-flash"||provider==="deepseek-v4-pro") return await callDeepSeek(sys,messages,key,provider,options.thinking===true);
-  return await callAnthropic(sys, messages, key);
+  let r;
+  if(provider==="deepseek-v4-flash"||provider==="deepseek-v4-pro")
+    r = await callDeepSeek(sys,messages,key,provider,options.thinking===true,options.maxTokens||600);
+  else
+    r = { text: await callAnthropic(sys, messages, key), truncated:false };
+  return options.raw ? r : r.text;
 }
 function aiContext(){
   const now = new Date();
@@ -2728,7 +2751,7 @@ function showAIReview(raw){
   const out = $("aiReviewResult"), toggle = $("aiReviewToggle");
   const item=typeof raw==="string"?{text:raw}:raw||{};
   const range=reviewRangeText(item);
-  out.innerHTML=(range?`<div class="ai-review-range">${esc(range)}</div>`:"")+`<div class="ai-review-text"></div>`;
+  out.innerHTML=(range?`<div class="ai-review-range"><span>${esc(range)}</span>${item.t?'<button type="button" class="review-del" data-review-del-latest="1">删</button>':''}</div>`:"")+`<div class="ai-review-text"></div>`;
   out.querySelector(".ai-review-text").textContent=cleanAIText(item.text);
   out.classList.add("show"); out.classList.remove("folded");
   toggle.classList.remove("show"); toggle.textContent = "展开";
@@ -2743,14 +2766,22 @@ $("aiReviewToggle").onclick = ()=>{
   const folded = out.classList.toggle("folded");
   $("aiReviewToggle").textContent = folded ? "展开" : "收起";
 };
+$("aiReviewResult").onclick=async e=>{
+  const del=e.target.closest("[data-review-del-latest]");
+  if(!del)return;
+  if(!await appDialog({title:"删掉这条回望？",text:"删掉之后，这段时间的记录可以重新回望。",okText:"删除",danger:true})) return;
+  const list=readReviews();list.splice(0,1);saveReviews(list);
+  renderReviewCard();
+};
 function renderReviewHistory(list=readReviews()){
   const btn=$("aiReviewHistBtn"),body=$("aiReviewHistBody"),older=list.slice(1);
   btn.hidden=!older.length;body.hidden=true;btn.classList.remove("open");
   btn.textContent=older.length?`以前的回望 · ${older.length}`:"";
-  body.innerHTML=older.map((item,i)=>`<button type="button" class="pick-sec ai-review-hist-item" data-review-hist="${i}"><span>${esc(reviewRangeText(item))}</span><span>${esc(cleanAIText(item.text).slice(0,40))}</span></button><div class="ai-review-hist-full" data-review-full="${i}" hidden>${esc(cleanAIText(item.text))}</div>`).join("");
+  body.innerHTML=older.map((item,i)=>`<div class="ai-review-hist-row"><button type="button" class="pick-sec ai-review-hist-item" data-review-hist="${i}"><span>${esc(reviewRangeText(item))}</span><span>${esc(cleanAIText(item.text).slice(0,40))}</span></button><button type="button" class="review-del" data-review-del="${i}">删</button></div><div class="ai-review-hist-full" data-review-full="${i}" hidden>${esc(cleanAIText(item.text))}</div>`).join("");
 }
 $("aiReviewHistBtn").onclick=()=>{const body=$("aiReviewHistBody"),open=body.hidden;body.hidden=!open;$("aiReviewHistBtn").classList.toggle("open",open);};
-$("aiReviewHistBody").onclick=e=>{const row=e.target.closest("[data-review-hist]");if(!row)return;const full=$("aiReviewHistBody").querySelector(`[data-review-full="${row.dataset.reviewHist}"]`);full.hidden=!full.hidden;row.classList.toggle("open",!full.hidden);};
+/* qyx_ai_review 暂无删除墓碑：单设备立即生效，多设备旧条目需各删一次。 */
+$("aiReviewHistBody").onclick=async e=>{const del=e.target.closest("[data-review-del]");if(del){e.stopPropagation();const idx=+del.dataset.reviewDel+1;if(!await appDialog({title:"删掉这条回望？",text:"删掉之后，这段时间的记录可以重新回望。",okText:"删除",danger:true}))return;const list=readReviews();list.splice(idx,1);saveReviews(list);renderReviewCard();return;}const row=e.target.closest("[data-review-hist]");if(!row)return;const full=$("aiReviewHistBody").querySelector(`[data-review-full="${row.dataset.reviewHist}"]`);full.hidden=!full.hidden;row.classList.toggle("open",!full.hidden);};
 /* 亮起条件：距上次回望 ≥ 7 天，且这段时间内 type==="note" 的记录 ≥ 20 条。
    只是让按钮旁边多一行字，不弹窗、不红点、不计数、不催。
    停用条件：若这行字出现后两周内一次都没被点，删掉这行提示（不影响回望功能本身）。 */
@@ -2780,29 +2811,43 @@ function localReviewFallback(recentLog,recentBottles,from,to){
 }
 $("aiReviewBtn").onclick = async ()=>{
   const btn = $("aiReviewBtn"), out = $("aiReviewResult");
-  localStorage.removeItem("qyx_review_hint_since");
-  const hist=readReviews();
-  const last=hist.length?hist[0].t:0;
-  const earliest=Math.min(...[...log.map(e=>e.t),...bottles.map(b=>b.t),Date.now()]);
-  const from=last||earliest;
-  const to=Date.now();
-  const recentLog=log.filter(e=>e.t>=from&&e.t<=to);
-  const recentBottles=bottles.filter(b=>b.t>=from&&b.t<=to);
-  if(!recentLog.length&&!recentBottles.length){showAIReview({from,to,text:"最近还没有足够记录。先正常使用几天，回望会慢慢长出来。"});return;}
   btn.disabled=true;btn.textContent="正在回望…";
-  const material = [
-    ...recentLog.slice(-80).map(e=>`[${dayKey(e.t)} ${TAG[e.type]||e.type}] ${stripRefs(e.text)}`),
-    ...recentBottles.slice(-30).map(b=>`[瓶子 ${dayKey(b.t)}] ${b.text}`)
-  ].join("\n");
-  let text;
   try{
-    text = await runAI(`你是我的私人手账回望助手。只根据我提供的 ${fmtDay(from)} 到 ${fmtDay(to)} 的材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`,[{role:"user",content:material}],{thinking:true});
-  }catch(e){ text=localReviewFallback(recentLog,recentBottles,from,to); }
-  const cleaned = cleanAIText(text);
-  const item={t:to,from,to,text:cleaned};
-  saveReviews([item].concat(hist));
-  showAIReview(item);renderReviewHistory([item].concat(hist));updateReviewHint();
-  btn.disabled=false;btn.textContent="回望这段时间";
+    localStorage.removeItem("qyx_review_hint_since");
+    const hist=readReviews();
+    const last=hist.length?hist[0].t:0;
+    const earliest=Math.min(...[...log.map(e=>e.t),...bottles.map(b=>b.t),Date.now()]);
+    const from=last||earliest;
+    const to=Date.now();
+    const recentLog=log.filter(e=>e.t>=from&&e.t<=to);
+    const recentBottles=bottles.filter(b=>b.t>=from&&b.t<=to);
+    if(!recentLog.length&&!recentBottles.length){showAIReview({from,to,text:"最近还没有足够记录。先正常使用几天，回望会慢慢长出来。"});return;}
+    const PROMPT=`你是我的私人手账回望助手。只根据我提供的 ${fmtDay(from)} 到 ${fmtDay(to)} 的材料，直接对我使用第二人称“你”。输出四小段，标题依次为：高频主题、情绪变化、重复关注、此刻观察。最后一段必须以“你”开头。禁止出现“她”“他”“用户”“当事人”等第三人称称呼。语气温和直接，不诊断、不说教、不编造。总字数180字以内。`;
+    const trim = t => { const s=String(t||"").trim(); return s.length>120 ? s.slice(0,120)+"…" : s; };
+    const material = [
+      ...recentLog.slice(-80).map(e=>`[${dayKey(e.t)} ${TAG[e.type]||e.type}] ${trim(stripRefs(e.text))}`),
+      ...recentBottles.slice(-30).map(b=>`[瓶子 ${dayKey(b.t)}] ${trim(b.text)}`)
+    ].join("\n").slice(0, 12000);
+    let text;
+    try{
+      let r = await runAI(PROMPT, [{role:"user",content:material}], {thinking:true, maxTokens:4000, raw:true});
+      if(r.truncated || !r.text){
+        r = await runAI(PROMPT, [{role:"user",content:material}], {thinking:false, maxTokens:2000, raw:true});
+      }
+      text = r.text;
+    }catch(e){ text=localReviewFallback(recentLog,recentBottles,from,to); }
+    const cleaned = cleanAIText(text);
+    if(cleaned.length < 40){
+      showAIReview({from,to,text:"这次没有生成出完整内容。材料可能太多了，稍后再试一次；这段时间的记录没有被消耗掉。"});
+      return;
+    }
+    const item={t:to,from,to,text:cleaned};
+    saveReviews([item].concat(hist));
+    showAIReview(item);renderReviewHistory([item].concat(hist));updateReviewHint();
+  }finally{
+    btn.disabled=false;
+    btn.textContent = readReviews().length?"回望这段时间":"生成回望";
+  }
 };
 
 /* ---------- 今天做完哪三件就够了 ---------- */
@@ -3114,6 +3159,15 @@ document.querySelectorAll("#enoughCard .esub-add").forEach(b=>{
               if(!cur)return false;
               const oldKey=optsHistKey(cur);
               bury("ohist",oldKey); cur.text=next; unbury("ohist",optsHistKey(cur));
+              saveOptsHist(); renderOptsHistory();
+            },
+            deletable:true,
+            onDelete:(text)=>{
+              const matches=optsHist.filter(y=>String(y.text||"").trim()===String(text||"").trim());
+              if(!matches.length)return false;
+              const keys=new Set(matches.map(optsHistKey));
+              matches.forEach(y=>bury("ohist",optsHistKey(y)));
+              optsHist=optsHist.filter(y=>!keys.has(optsHistKey(y)));
               saveOptsHist(); renderOptsHistory();
             }
           }))
@@ -4026,7 +4080,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.5.0";
+const APP_VERSION = "4.5.1";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
