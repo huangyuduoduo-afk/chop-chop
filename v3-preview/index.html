@@ -2261,9 +2261,32 @@ const GOAL_MAX = 2;
 function isWatch(a){ return a && a.kind === "watch"; }
 function goalCount(){ return monthAnchors().filter(a=>!isWatch(a) && !a.done).length; }
 function goalDoneCount(){ return monthAnchors().filter(a=>!isWatch(a) && a.done).length; }
+function prevYm(ym){
+  const [y,m]=ym.split("-").map(Number);
+  return m===1 ? `${y-1}-12` : `${y}-${String(m-1).padStart(2,"0")}`;
+}
 function monthAnchors(){
   const ym = ymNow();
-  if(!months[ym]) months[ym] = [];
+  if(!months[ym]){
+    /* 新月份第一次创建：把上个月的观察位带过来。
+       只在 undefined 时执行，空数组不再触发——所以删掉之后不会自己长回来。 */
+    const prev = months[prevYm(ym)] || [];
+    months[ym] = prev.filter(a=>a && a.kind==="watch").map(a=>({
+      id: entityId("goal_", ym+"|"+a.text+"|"+Math.random()),
+      text: a.text,
+      kind: "watch",
+      done: false,
+      splits: (a.splits||[]).map(s=>({text: (s&&s.text)||String(s||""), done:false})),
+      hist: [],
+      carriedFrom: prevYm(ym)
+    })).slice(0, MONTH_MAX);
+    /* 标签跟着一起带：观察位的轨迹是靠标签汇集记录的，不带标签等于带了个空壳 */
+    prev.filter(a=>a && a.kind==="watch").forEach((a,i)=>{
+      const tags = goalTags[a.id];
+      if(tags && tags.length && months[ym][i]) goalTags[months[ym][i].id] = [...tags];
+    });
+    saveMonths(); saveTagData(true);
+  }
   return months[ym];
 }
 function saveMonths(){ LS.set("qyx_months", months); }
@@ -4003,7 +4026,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.4.9-preview";
+const APP_VERSION = "4.5.0-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
