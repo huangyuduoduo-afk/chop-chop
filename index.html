@@ -135,16 +135,14 @@ header{
 /* 今天的三件 */
 .enough{padding:14px 16px 12px;margin:0 0 16px}
 .enough-title{font-family:var(--kai);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.06em;margin-bottom:10px}
-.enough-row{display:flex;gap:10px;align-items:center;margin-bottom:8px;position:relative}
+.enough-row{display:flex;gap:10px;align-items:center;margin-bottom:8px}
 .enough-row:last-of-type{margin-bottom:2px}
-.drawer-suggest{position:absolute;left:0;right:0;top:100%;z-index:12;display:none;
-  background:#fff;border:1px solid rgba(75,66,55,.14);border-radius:14px;
-  box-shadow:0 8px 24px rgba(75,66,55,.10);padding:4px;max-height:44vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.drawer-suggest.show{display:block}
-.drawer-suggest button{display:block;width:100%;text-align:left;border:0;background:transparent;
-  padding:9px 11px;border-radius:10px;font:500 13px "Noto Serif SC",var(--kai);color:var(--ink);cursor:pointer}
-.drawer-suggest button:active{background:#F1F6EC}
-.drawer-suggest .ds-hit,.drawer-suggest .rs-hit{background:#F1F6EC;color:var(--sage-deep)}
+.drawer-row{display:none;flex-wrap:wrap;align-items:center;gap:7px;margin:10px 0 2px}
+.drawer-row.show{display:flex}
+.drawer-label{font:500 11px var(--sans);color:var(--ink-faint);margin-right:2px}
+.drawer-chip{border:1px dashed rgba(99,153,34,.45);background:#F1F6EC;color:var(--sage-deep);
+  border-radius:999px;padding:6px 13px;font:500 12.5px "Noto Serif SC",var(--kai);cursor:pointer}
+.drawer-chip:active{transform:scale(.96)}
 .ecirc{
   width:25px;height:25px;border-radius:50%;flex-shrink:0;cursor:pointer;
   border:2px solid var(--sage);background:transparent;
@@ -948,12 +946,13 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 
     <div class="glass enough" id="enoughCard">
       <div class="v3-card-label"><span>✦</span><div><b>今天只做三件事</b><small>聚焦重点，少即是多。</small></div></div>
-      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="0">关联目标</button><button class="task-tag-btn" data-task-tag="0" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="0"></span><button class="task-delete" data-task-action="delete" data-i="0">删除</button><div class="drawer-suggest" data-i="0"></div></div><div class="task-tag-row" data-task-tags="0"></div>
+      <div class="enough-row"><button class="ecirc" data-i="0"></button><input type="text" data-i="0" placeholder="第一件"><button class="esub-add" data-i="0" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="0">关联目标</button><button class="task-tag-btn" data-task-tag="0" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="0"></span><button class="task-delete" data-task-action="delete" data-i="0">删除</button></div><div class="task-tag-row" data-task-tags="0"></div>
       <div class="esubs" data-i="0"></div>
-      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="1">关联目标</button><button class="task-tag-btn" data-task-tag="1" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="1"></span><button class="task-delete" data-task-action="delete" data-i="1">删除</button><div class="drawer-suggest" data-i="1"></div></div><div class="task-tag-row" data-task-tags="1"></div>
+      <div class="enough-row"><button class="ecirc" data-i="1"></button><input type="text" data-i="1" placeholder="第二件"><button class="esub-add" data-i="1" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="1">关联目标</button><button class="task-tag-btn" data-task-tag="1" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="1"></span><button class="task-delete" data-task-action="delete" data-i="1">删除</button></div><div class="task-tag-row" data-task-tags="1"></div>
       <div class="esubs" data-i="1"></div>
-      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="2">关联目标</button><button class="task-tag-btn" data-task-tag="2" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="2"></span><button class="task-delete" data-task-action="delete" data-i="2">删除</button><div class="drawer-suggest" data-i="2"></div></div><div class="task-tag-row" data-task-tags="2"></div>
+      <div class="enough-row"><button class="ecirc" data-i="2"></button><input type="text" data-i="2" placeholder="第三件"><button class="esub-add" data-i="2" title="拆小项">拆</button><button class="task-goal-btn" data-task-goal="2">关联目标</button><button class="task-tag-btn" data-task-tag="2" title="添加主题标签"># 标签</button><span class="wait-wrap" data-wait="2"></span><button class="task-delete" data-task-action="delete" data-i="2">删除</button></div><div class="task-tag-row" data-task-tags="2"></div>
       <div class="esubs" data-i="2"></div>
+      <div class="drawer-row" id="drawerRow"></div>
       <div class="routine-row" id="routineRow"></div>
       <div class="enough-fin" id="enoughFin">今天，够了。</div>
       <div id="optsHistoryBlock">
@@ -1960,18 +1959,13 @@ function recentDrawers(){
     .sort((a,b)=>b[1]-a[1])
     .map(([s])=>s);
 }
-function updateDrawerSuggest(i){
-  const inp = document.querySelector(`#enoughCard input[data-i="${i}"]`);
-  const box = document.querySelector(`.drawer-suggest[data-i="${i}"]`);
-  if(!inp||!box) return;
-  const q = inp.value.trim();
-  const pool = recentDrawers().filter(s=>!q||s.includes(q)).slice(0,5);
-  if(!pool.length){ box.classList.remove("show"); box.innerHTML=""; return; }
-  box.innerHTML = pool.map(s=>`<button type="button" data-drawer="${esc(s)}">${hlHit(s,q)}</button>`).join("");
+function renderDrawerRow(){
+  const box = $("drawerRow");
+  const pool = recentDrawers().slice(0,5);
+  if(!pool.length){ box.innerHTML=""; box.classList.remove("show"); return; }
+  box.innerHTML = `<span class="drawer-label">抽屉</span>`
+    + pool.map(s=>`<button type="button" class="drawer-chip" data-drawer="${esc(s)}">${esc(s)}</button>`).join("");
   box.classList.add("show");
-}
-function hideDrawerSuggest(){
-  document.querySelectorAll(".drawer-suggest").forEach(b=>{b.classList.remove("show");b.innerHTML="";});
 }
 function pastOptsHistory(){
   const today=dayKey(Date.now());
@@ -3085,6 +3079,7 @@ function renderEnough(){
   const filled = enough.items.filter(i=>i.text.trim()&&enoughStatus(i)!=="deleted");
   const allDone = filled.length===3 && filled.every(i=>enoughStatus(i)==="completed");
   $("enoughFin").style.display = allDone ? "block" : "none";
+  renderDrawerRow();
   renderRoutines();
 }
 /* 停用判据：两周内，常规区被点用（其文字出现在当天三件事的小项里）的天数少于 5 天，
@@ -3137,23 +3132,20 @@ document.querySelectorAll("#enoughCard input").forEach(inp=>{
     item.updatedAt=Date.now();
     saveEnough();renderEnough();
   });
-  inp.addEventListener("focus", ()=>{ hideDrawerSuggest(); updateDrawerSuggest(+inp.dataset.i); });
-  inp.addEventListener("input", ()=>updateDrawerSuggest(+inp.dataset.i));
-  inp.addEventListener("blur", ()=>setTimeout(hideDrawerSuggest, 150));
 });
-document.querySelectorAll(".drawer-suggest").forEach(box=>{
-  box.addEventListener("mousedown", e=>e.preventDefault());
-  box.addEventListener("touchstart", e=>e.preventDefault(), {passive:false});
-  box.onclick = e=>{
-    const b = e.target.closest("[data-drawer]"); if(!b) return;
-    const i = +box.dataset.i;
-    const inp = document.querySelector(`#enoughCard input[data-i="${i}"]`);
-    inp.value = b.dataset.drawer;
-    inp.dispatchEvent(new Event("input", {bubbles:true}));
-    hideDrawerSuggest();
-    inp.blur();
-  };
-});
+$("drawerRow").onclick = e=>{
+  const b = e.target.closest("[data-drawer]"); if(!b) return;
+  const text = b.dataset.drawer;
+  const inputs = [...document.querySelectorAll('#enoughCard input[data-i]')];
+  const focused = inputs.find(x=>x===document.activeElement && !x.value.trim());
+  const target = focused || inputs.find(x=>{
+    const i = +x.dataset.i;
+    return !x.value.trim() && enoughStatus(enough.items[i])!=="deleted";
+  }) || inputs.find(x=>!x.value.trim());
+  if(!target){ toastDone("三格都填了。"); return; }
+  target.value = text;
+  target.dispatchEvent(new Event("input", {bubbles:true}));
+};
 function setEnoughStatus(i,status){
   const item=enough.items[i];
   if(!item.text.trim()) return;
@@ -4139,7 +4131,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.5.2";
+const APP_VERSION = "4.5.3";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
