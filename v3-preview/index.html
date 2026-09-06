@@ -131,6 +131,8 @@ header{
   background:rgba(231,238,223,.6);border-radius:14px;
   font-family:var(--kai);font-size:13px;line-height:1.75;color:#4A5F3D;white-space:pre-wrap;
 }
+.sum-subs{margin:3px 0 7px 20px;display:grid;gap:2px}.sum-sub{font-size:12px;line-height:1.7;color:#7E796F}.sum-sub.done{color:#657C55}
+.sum-fix{border:0;background:rgba(99,153,34,.14);color:var(--sage-deep);border-radius:999px;font:600 10.5px var(--sans);padding:2px 7px;margin-left:6px;cursor:pointer}
 
 /* 今天的三件 */
 .enough{padding:14px 16px 12px;margin:0 0 16px}
@@ -178,6 +180,8 @@ header{
 .esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}.task-goal-btn{flex-shrink:0;border:0;background:transparent;color:#67805A;font:600 9.5px var(--sans);padding:4px 2px;cursor:pointer}.task-goal-chip{border:1px solid rgba(95,127,82,.2);background:#F1F6EC;color:#5E7951;border-radius:999px;padding:3px 8px;cursor:pointer;font:600 9.5px "Noto Serif SC",var(--kai)}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
+.esub .splus{border:0;background:transparent;color:var(--ink-faint);font-size:13px;line-height:1;padding:2px 5px;cursor:pointer}
+.esub .scnt{border:0;background:rgba(99,153,34,.14);color:var(--sage-deep);border-radius:999px;font:600 11px var(--sans);padding:2px 7px;margin-left:2px;cursor:pointer}
 .routine-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0 12px 35px;padding-top:4px}
 .routine-chip{padding-left:0;background:rgba(227,238,245,.58);border-color:rgba(127,178,212,.28)}
 .routine-chip .routine-use{border:0;background:none;color:#496D89;font:500 12.5px "Noto Serif SC",var(--kai);padding:6px 7px 6px 12px;cursor:pointer}
@@ -2951,10 +2955,17 @@ function enoughStatus(item){
   return item && ENOUGH_STATUSES.includes(item.status) ? item.status : (item&&item.done ? "completed" : "incomplete");
 }
 function enoughSubStatus(sub){ return sub&&ENOUGH_SUB_STATUSES.includes(sub.status)?sub.status:(sub&&sub.done?"completed":"incomplete"); }
+function subCount(sub){ const n=+(sub&&sub.c)||0; return n>0?n:(enoughSubStatus(sub)==="completed"?1:0); }
+/* 次数 c 跟着小项整条走：mergeAll 里小项按文字合并、取 updatedAt 较新者，
+   所以两台设备同一天点同一条小项时，次数不会相加，晚的那次覆盖早的那次。
+   当天的三件事基本在一台设备上操作，为此改动同步引擎不划算。 */
 function normalizeEnoughSub(sub){
   if(typeof sub==="string") return {text:sub,done:false,status:"incomplete",updatedAt:0};
   const status=enoughSubStatus(sub);
-  return {text:(sub&&sub.text)||"",done:status==="completed",status,updatedAt:Number(sub&&sub.updatedAt)||0};
+  const normalized={text:(sub&&sub.text)||"",done:status==="completed",status,updatedAt:Number(sub&&sub.updatedAt)||0};
+  const count=Math.max(0,Math.floor(+(sub&&sub.c)||0));
+  if(status==="completed"&&count>0) normalized.c=count;
+  return normalized;
 }
 function normalizeEnoughItem(item){
   item = item || blankEnoughItem();
@@ -3091,18 +3102,34 @@ function renderEnough(){
     enough.items[i].subs.forEach((sub, si)=>{
       const chip = document.createElement("span");
       chip.className = "esub" + (sub.status==="completed" ? " sdone" : sub.status==="expired" ? " sexpired" : "");
-      chip.innerHTML = `<button class="chk" title="点击切换：完成 / 时间结束 / 未完成">${sub.status==="completed"?"✓":sub.status==="expired"?"×":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
+      chip.innerHTML = `<button class="chk" title="点击切换：完成 / 时间结束 / 未完成">${sub.status==="completed"?"✓":sub.status==="expired"?"×":""}</button><span class="stx">${sub.text.replace(/</g,"&lt;")}</span><button class="splus" title="再做一次">＋</button>${subCount(sub)>=2?`<button class="scnt" title="点一下减一次">×${subCount(sub)}</button>`:``}<button class="todice" title="排进骰子">→骰</button><button class="x">✕</button>`;
       chip.querySelector(".chk").onclick = ()=>{
         const item=enough.items[i];
         const prev=sub.status;
         sub.status=sub.status==="incomplete"?"completed":sub.status==="completed"?"expired":"incomplete";
         sub.done=sub.status==="completed";
+        if(sub.status==="completed" && subCount(sub)<1) sub.c=1;
+        if(sub.status!=="completed") sub.c=0;
         sub.updatedAt=Date.now();
         syncParentFromSubs(item);
         saveEnough();
         if(sub.status==="completed") addDoneLogOnce(sub.text,"三件·小项");
         else if(prev==="completed") removeDoneLogToday(sub.text,"三件·小项");
         renderEnough();
+      };
+      chip.querySelector(".splus").onclick = ()=>{
+        const item=enough.items[i];
+        const wasDone = sub.status==="completed";
+        sub.c = subCount(sub) + 1;
+        sub.status="completed"; sub.done=true; sub.updatedAt=Date.now();
+        syncParentFromSubs(item); saveEnough();
+        if(!wasDone) addDoneLogOnce(sub.text,"三件·小项");
+        renderEnough();
+      };
+      const cnt = chip.querySelector(".scnt");
+      if(cnt) cnt.onclick = ()=>{
+        sub.c = Math.max(1, subCount(sub) - 1);
+        sub.updatedAt=Date.now(); saveEnough(); renderEnough();
       };
       chip.querySelector(".stx").onclick = async ()=>{
         const oldText=sub.text;
@@ -3474,7 +3501,7 @@ async function makeDailySummary(){
       goal: taskGoals[i.id] || null,
       status: enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),
       done: enoughStatus(i)==="completed",
-      subs: (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed"}))
+      subs: (i.subs||[]).filter(s=>s.text&&s.text.trim()).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed",c:subCount(s)}))
     }));
   }
   sum.habits = habits.map(h=>{
@@ -3495,11 +3522,60 @@ async function makeDailySummary(){
   LS.set("qyx_sums", summaries);
   renderSumBanner();
 }
-function buildSumHTML(sum){
+function addBackdatedDone(yk, text){
+  const t = new Date(yk+"T23:59:00").getTime();
+  const src = "三件·小项";
+  if(log.some(e=>e.type==="done" && dayKey(e.t)===yk && (e.src||"")===src && e.text===text)) return;
+  log.push({id:entityId("done_",yk+"|"+text), t, type:"done", text, src, updatedAt:Date.now()});
+  LS.set("qyx_log",log);
+}
+function fixYesterdayPrev(yk, parentText, subText){
+  const prev = LS.get("qyx_enough_prev", null);
+  if(!prev || prev.d!==yk) return;
+  const item = (prev.items||[]).find(x=>String(x.text||"").trim()===String(parentText||"").trim());
+  const s = item && (item.subs||[]).find(x=>String(x.text||"").trim()===String(subText||"").trim());
+  if(!s) return;
+  s.status="completed"; s.done=true; if(!(+s.c>0)) s.c=1; s.updatedAt=Date.now();
+  LS.set("qyx_enough_prev", prev);
+}
+function recountSummary(yk){
+  const sum = summaries[yk]; if(!sum) return;
+  const day = log.filter(e=>dayKey(e.t)===yk);
+  sum.stats = {
+    cut: day.filter(e=>e.type==="dice").length + day.filter(e=>e.type==="ai").length,
+    notes: day.filter(e=>e.type==="note").length,
+    done: day.filter(e=>e.type==="done").length
+  };
+  (sum.three||[]).forEach(it=>{
+    const subs = it.subs||[];
+    if(subs.length){ it.done = subs.every(s=>s.done); it.status = it.done?"completed":"incomplete"; }
+  });
+}
+function bindSumFix(root){
+  root.querySelectorAll("[data-fix-sub]").forEach(b=>{ b.onclick=(ev)=>{
+    ev.stopPropagation();
+    const yk = dayKey(Date.now()-864e5);
+    const [ti,si] = b.dataset.fixSub.split("|").map(Number);
+    const sum = summaries[yk]; if(!sum) return;
+    const sub = ((sum.three[ti]||{}).subs||[])[si]; if(!sub) return;
+    sub.status="completed"; sub.done=true; if(!(+sub.c>0)) sub.c=1;
+    fixYesterdayPrev(yk, sum.three[ti].text, sub.text);
+    addBackdatedDone(yk, sub.text);
+    recountSummary(yk);
+    LS.set("qyx_sums", summaries);
+    renderSumBanner(); renderV3Yesterday(); renderLog();
+    toastDone("补上了，记在昨天。");
+  };});
+}
+function buildSumHTML(sum,canFix=false){
   if(!sum.v2) return `<div class="sum-old">${esc(sum.text||"")}</div>`;
   let h = `<div class="sum-stats">切 ${sum.stats.cut} · 记 ${sum.stats.notes} · 划掉 ${sum.stats.done}</div>`;
-  const rows = (arr)=>arr.map(i=>`<div class="sum-row${i.done?" ok":""}"><span class="si">${i.done?"✓":"○"}</span><span>${esc(i.text)}</span></div>`).join("");
-  if(sum.three.length) h += `<div class="sum-sec">三件</div>` + rows(sum.three);
+  const rows = (arr,withSubs=false)=>arr.map((i,ti)=>{
+    let row=`<div class="sum-row${i.done?" ok":""}"><span class="si">${i.done?"✓":"○"}</span><span>${esc(i.text)}</span></div>`;
+    if(withSubs&&(i.subs||[]).length) row+=`<div class="sum-subs">${i.subs.map((s,si)=>{const ss=enoughSubStatus(s),count=subCount(s);return `<div class="sum-sub${ss==="completed"?" done":""}">${ss==="completed"?"✓":ss==="expired"?"×":"○"} ${esc(s.text)}${count>=2?` ×${count}`:""}${canFix&&ss!=="completed"?`<button class="sum-fix" data-fix-sub="${ti}|${si}">补勾</button>`:""}</div>`;}).join("")}</div>`;
+    return row;
+  }).join("");
+  if(sum.three.length) h += `<div class="sum-sec">三件</div>` + rows(sum.three,true);
   if(sum.bonus.length) h += `<div class="sum-sec">Bonus</div>` + rows(sum.bonus);
   const tail = [];
   if(sum.habits.length) tail.push(sum.habits.join("　"));
@@ -3514,12 +3590,13 @@ function renderSumBanner(){
   if(!summaries[yk] || LS.get("qyx_sumseen","")===yk) return;
   const d = document.createElement("div");
   d.className = "sum-card";
-  d.innerHTML = `<div class="sum-day">昨天 · ${yk.slice(5).replace("-","/")}</div>${buildSumHTML(summaries[yk])}<button class="close">✕</button>`;
+  d.innerHTML = `<div class="sum-day">昨天 · ${yk.slice(5).replace("-","/")}</div>${buildSumHTML(summaries[yk],true)}<button class="close">✕</button>`;
   d.querySelector(".close").onclick = ()=>{
     localStorage.setItem("qyx_sumseen", JSON.stringify(yk));
     box.innerHTML = "";
   };
   box.appendChild(d);
+  bindSumFix(d);
 }
 
 /* ---------- 3.0 昨日回顾卡：持续可见，不再只是一次性提示 ---------- */
@@ -3557,10 +3634,10 @@ function renderV3Yesterday(){
   const overall = Math.round(completed/3*100);
   let html = `<div class="v3-expanded-content"><div class="v3-completion-copy"><strong>${completed} / 3 完成</strong><span>完成率 ${overall}%</span></div>`;
   if(!items.length) html += '<div class="v3-yesterday-empty">昨天没有留下三件事。空白也算一天。</div>';
-  html += items.map(i=>{
+  html += items.map((i,ti)=>{
     const expired=i.status==="expired",symbol=i.status==="completed"?"✓":expired?"×":(i.progress>0?i.progress+"%":"");
     const ring=()=>`<span class="v3-progress-ring large${expired?" expired":""}" style="--p:${i.progress}" aria-label="完成比例 ${i.progress}%"><span>${symbol}</span></span>`;
-    const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map(s=>{const ss=enoughSubStatus(s);return `<span>${ss==="completed"?"✓":ss==="expired"?"×":"○"} ${esc(s.text)}</span>`;}).join("")}</div>`:"";
+    const subs=i.subs.length?`<div class="v3-detail-subs">${i.subs.map((s,si)=>{const ss=enoughSubStatus(s),count=subCount(s);return `<span>${ss==="completed"?"✓":ss==="expired"?"×":"○"} ${esc(s.text)}${count>=2?` ×${count}`:""}${ss!=="completed"?`<button class="sum-fix" data-fix-sub="${ti}|${si}">补勾</button>`:""}</span>`;}).join("")}</div>`:"";
     return `<div class="v3-summary-item"><div class="v3-summary-row">${ring()}<span class="v3-summary-title">${esc(i.text)}</span></div>${subs}</div>`;
   }).join("");
   const yesterdayLog=log.filter(e=>dayKey(e.t)===key);
@@ -3572,6 +3649,7 @@ function renderV3Yesterday(){
   const marks=[...((sum&&sum.habits)||[])];
   html += `<div class="v3-yesterday-extras"><div class="v3-summary-stats">切 ${stats.cut} · 记 ${stats.notes} · 划掉 ${stats.done}</div><div class="v3-yesterday-section"><b>Bonus</b>${bonusItems.length?`<div class="v3-bonus-items">${bonusItems.map(i=>`<span>${i.done?"✓":"○"} ${esc(i.text)}</span>`).join("")}</div>`:`<div class="v3-yesterday-marks">昨天没有留下 Bonus。</div>`}</div><div class="v3-yesterday-section"><b>问一问</b>${questions.length?questions.map(e=>`<div class="v3-question-item"><small>${esc(e.q)}</small><div class="v3-question-answer">${esc(cleanAIText(e.text))}</div></div>`).join(""):`<div class="v3-yesterday-marks">昨天没有使用问一问。</div>`}</div><div class="v3-yesterday-section"><b>AI 回望 · 洞察</b><div class="v3-summary-observation">${esc(insight)}</div></div>${marks.length?`<div class="v3-yesterday-marks">${esc(marks.join("　·　"))}</div>`:""}</div></div>`;
   body.innerHTML = html;
+  bindSumFix(body);
 }
 
 /* ---------- 记一笔 ---------- */
@@ -4068,7 +4146,7 @@ function buildExportBundle(){
     const taskDays={};
     [enough,LS.get("qyx_enough_prev",null)].forEach(src=>{
       if(src&&src.d&&src.d>=range.fromKey&&src.d<=range.toKey){
-        taskDays[src.d]={date:src.d,items:(src.items||[]).filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").map(i=>({text:i.text,status:enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),done:enoughStatus(i)==="completed",subs:(i.subs||[]).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed"}))})),bonus:[]};
+        taskDays[src.d]={date:src.d,items:(src.items||[]).filter(i=>i.text&&i.text.trim()&&enoughStatus(i)!=="deleted").map(i=>({text:i.text,status:enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),done:enoughStatus(i)==="completed",subs:(i.subs||[]).map(s=>({text:s.text,status:enoughSubStatus(s),done:enoughSubStatus(s)==="completed",c:subCount(s)}))})),bonus:[]};
       }
     });
     Object.keys(summaries).filter(k=>k>=range.fromKey&&k<=range.toKey).forEach(k=>{
@@ -4099,7 +4177,7 @@ function buildExportMarkdown(b){
   }
   if(b.tasks){
     lines.push("## 今日三件事","");
-    b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).filter(i=>enoughStatus(i)!=="deleted").forEach(i=>{ const status=enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),label=status==="completed"?"已完成":"未完成"; lines.push("- ["+(status==="completed"?"x":" ")+"] "+i.text+"（"+label+"）"); (i.subs||[]).forEach(s=>{const ss=enoughSubStatus(s),sl=ss==="completed"?"已完成":ss==="expired"?"时间结束":"未完成";lines.push("  - ["+(ss==="completed"?"x":" ")+"] "+s.text+"（"+sl+"）");}); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
+    b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).filter(i=>enoughStatus(i)!=="deleted").forEach(i=>{ const status=enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),label=status==="completed"?"已完成":"未完成"; lines.push("- ["+(status==="completed"?"x":" ")+"] "+i.text+"（"+label+"）"); (i.subs||[]).forEach(s=>{const ss=enoughSubStatus(s),sl=ss==="completed"?"已完成":ss==="expired"?"时间结束":"未完成",count=subCount(s);lines.push("  - ["+(ss==="completed"?"x":" ")+"] "+s.text+(count>=2?" ×"+count:"")+"（"+sl+"）");}); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
   }
   if(b.bottles){ lines.push("## 瓶子内容",""); b.bottles.length?b.bottles.forEach(x=>{ lines.push("### "+dt(x.t),"",x.text,""); (x.followups||[]).forEach(f=>lines.push("- 后续 "+dt(f.t)+"："+f.text)); }):lines.push("这段时间没有瓶子。",""); }
   if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
@@ -4173,7 +4251,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.5.4-preview";
+const APP_VERSION = "4.5.5-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_drawers","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
