@@ -3536,6 +3536,7 @@ function fixYesterdayPrev(yk, parentText, subText){
   const s = item && (item.subs||[]).find(x=>String(x.text||"").trim()===String(subText||"").trim());
   if(!s) return;
   s.status="completed"; s.done=true; if(!(+s.c>0)) s.c=1; s.updatedAt=Date.now();
+  syncParentFromSubs(item);
   LS.set("qyx_enough_prev", prev);
 }
 function recountSummary(yk){
