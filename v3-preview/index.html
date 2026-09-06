@@ -137,12 +137,13 @@ header{
 .enough-title{font-family:var(--kai);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.06em;margin-bottom:10px}
 .enough-row{display:flex;gap:10px;align-items:center;margin-bottom:8px}
 .enough-row:last-of-type{margin-bottom:2px}
-.drawer-row{display:none;flex-wrap:wrap;align-items:center;gap:7px;margin:10px 0 2px}
-.drawer-row.show{display:flex}
+.drawer-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0 4px;padding-bottom:12px;border-bottom:1px dashed rgba(75,66,55,.14)}
 .drawer-label{font:500 11px var(--sans);color:var(--ink-faint);margin-right:2px}
-.drawer-chip{border:1px dashed rgba(99,153,34,.45);background:#F1F6EC;color:var(--sage-deep);
-  border-radius:999px;padding:6px 13px;font:500 12.5px "Noto Serif SC",var(--kai);cursor:pointer}
-.drawer-chip:active{transform:scale(.96)}
+.drawer-chip{padding-left:0;background:#F1F6EC;border-color:rgba(99,153,34,.45);color:var(--sage-deep)}
+.drawer-chip .drawer-use{border:0;background:none;color:var(--sage-deep);font:500 12.5px "Noto Serif SC",var(--kai);padding:6px 7px 6px 12px;cursor:pointer}
+.drawer-chip .drawer-edit{border:0;margin-left:auto;font:500 11px var(--sans);color:var(--ink-faint);padding:2px 6px;border-radius:8px;background:rgba(75,66,55,.06);cursor:pointer}
+.drawer-chip .x{color:rgba(95,127,82,.5)}
+.drawer-add{border:1px dashed rgba(99,153,34,.4);background:rgba(241,246,236,.7);color:var(--sage-deep);border-radius:999px;padding:6px 12px;font:500 12px "Noto Serif SC",var(--kai);cursor:pointer}
 .ecirc{
   width:25px;height:25px;border-radius:50%;flex-shrink:0;cursor:pointer;
   border:2px solid var(--sage);background:transparent;
@@ -177,7 +178,7 @@ header{
 .esub .stx{cursor:text}.task-delete{flex-shrink:0;border:0;background:transparent;color:#A89587;font:500 10px var(--sans);padding:4px 3px;cursor:pointer}.task-delete:hover{color:#8D7465}.task-goal-btn{flex-shrink:0;border:0;background:transparent;color:#67805A;font:600 9.5px var(--sans);padding:4px 2px;cursor:pointer}.task-goal-chip{border:1px solid rgba(95,127,82,.2);background:#F1F6EC;color:#5E7951;border-radius:999px;padding:3px 8px;cursor:pointer;font:600 9.5px "Noto Serif SC",var(--kai)}
 .esub .todice{color:#B5772A;font-weight:600}
 .esub .x{color:rgba(138,95,34,.5)}
-.routine-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0 12px 35px;padding-top:4px}
+.routine-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0 12px 35px;padding-top:4px}
 .routine-chip{padding-left:0;background:rgba(227,238,245,.58);border-color:rgba(127,178,212,.28)}
 .routine-chip .routine-use{border:0;background:none;color:#496D89;font:500 12.5px "Noto Serif SC",var(--kai);padding:6px 7px 6px 12px;cursor:pointer}
 .routine-add{border:1px dashed rgba(75,66,55,.24);background:rgba(255,255,255,.45);color:var(--ink-soft);border-radius:999px;padding:6px 12px;font:500 12px "Noto Serif SC",var(--kai);cursor:pointer}
@@ -1327,6 +1328,7 @@ let opts     = LS.get("qyx_opts", []);
 let bench    = LS.get("qyx_bench", []);
 let optsHist = LS.get("qyx_opts_hist", []);
 let routines = LS.get("qyx_routines", []);
+let drawers = LS.get("qyx_drawers", null);      /* null = 还没播种过 */
 let polishHistory = LS.get("qyx_polish_history", []);
 let tags = LS.get("qyx_tags", []);
 let recordTags = LS.get("qyx_record_tags", {});
@@ -1863,6 +1865,7 @@ function saveOpts(){ LS.set("qyx_opts", opts); }
 function saveBench(){ LS.set("qyx_bench", bench); }
 function saveOptsHist(){ LS.set("qyx_opts_hist", optsHist); }
 function saveRoutines(){ LS.set("qyx_routines", routines); }
+function saveDrawers(){ LS.set("qyx_drawers", drawers||[]); }
 function optsHistKey(item){ return (item.t||0)+"|"+(item.text||""); }
 function rememberOpt(text,t=Date.now()){
   if(optsHist.some(item=>dayKey(item.t)===dayKey(t)&&item.text===text))return;
@@ -1959,13 +1962,65 @@ function recentDrawers(){
     .sort((a,b)=>b[1]-a[1])
     .map(([s])=>s);
 }
+function ensureDrawers(){
+  if(drawers) return drawers;
+  const seed = recentDrawers().slice(0,5);
+  const now = Date.now();
+  drawers = seed.map((text,i)=>({id:entityId("drawer_",text+"|"+now+"|"+i), text, updatedAt:now+i}));
+  saveDrawers();
+  return drawers;
+}
 function renderDrawerRow(){
+  ensureDrawers();
   const box = $("drawerRow");
-  const pool = recentDrawers().slice(0,5);
-  if(!pool.length){ box.innerHTML=""; box.classList.remove("show"); return; }
+  const used = new Set((enough.items||[])
+    .filter(x=>enoughStatus(x)!=="deleted")
+    .map(x=>String(x.text||"").trim()).filter(Boolean));
+  const list = drawers.filter(d=>!used.has(String(d.text||"").trim()));
   box.innerHTML = `<span class="drawer-label">抽屉</span>`
-    + pool.map(s=>`<button type="button" class="drawer-chip" data-drawer="${esc(s)}">${esc(s)}</button>`).join("");
+    + list.map(d=>`<span class="split-chip drawer-chip">`
+        + `<button class="drawer-use" data-drawer-use="${esc(d.id)}">${esc(d.text)}</button>`
+        + `<button class="drawer-edit" data-drawer-edit="${esc(d.id)}">改</button>`
+        + `<button class="x" data-drawer-remove="${esc(d.id)}">✕</button>`
+      + `</span>`).join("")
+    + `<button class="drawer-add" id="drawerAdd">＋ 抽屉</button>`;
   box.classList.add("show");
+  bindDrawerRow();
+}
+function bindDrawerRow(){
+  const box=$("drawerRow");
+  box.querySelectorAll("[data-drawer-use]").forEach(b=>{b.onclick=()=>{
+    const d=drawers.find(x=>String(x.id)===String(b.dataset.drawerUse)); if(!d) return;
+    const inputs=[...document.querySelectorAll('#enoughCard input[data-i]')];
+    const focused=inputs.find(x=>x===document.activeElement && !x.value.trim());
+    const target=focused||inputs.find(x=>!x.value.trim());
+    if(!target){ toastDone("三格都填了。"); return; }
+    target.value=d.text;
+    target.dispatchEvent(new Event("input",{bubbles:true}));
+  };});
+  box.querySelectorAll("[data-drawer-edit]").forEach(b=>{b.onclick=async()=>{
+    const d=drawers.find(x=>String(x.id)===String(b.dataset.drawerEdit)); if(!d) return;
+    const v=await appDialog({title:"改抽屉名字",input:"line",value:d.text});
+    if(v===null)return;
+    const t=v.trim(); if(!t)return;
+    if(drawers.some(x=>x!==d&&String(x.text||"").trim()===t)){toastDone("已经有同名的抽屉了。");return;}
+    d.text=t; d.updatedAt=Date.now(); saveDrawers(); renderDrawerRow();
+  };});
+  box.querySelectorAll("[data-drawer-remove]").forEach(b=>{b.onclick=()=>{
+    const id=b.dataset.drawerRemove;
+    drawers=drawers.filter(x=>String(x.id)!==String(id));
+    bury("drawer",id); saveDrawers(); renderDrawerRow();
+  };});
+  $("drawerAdd").onclick=async()=>{
+    if(drawers.length>=6){toastDone("抽屉最多 6 条，先删一条");return;}
+    const v=await appDialog({title:"添加抽屉",input:"line"});
+    if(v===null)return;
+    const t=v.trim(); if(!t)return;
+    if(drawers.some(x=>String(x.text||"").trim()===t)){toastDone("已经在抽屉里了。");return;}
+    const now=Date.now(),id=entityId("drawer_",t+"|"+now+"|"+Math.random());
+    unbury("drawer",id); drawers.push({id,text:t,updatedAt:now});
+    saveDrawers(); renderDrawerRow();
+  };
 }
 function pastOptsHistory(){
   const today=dayKey(Date.now());
@@ -3086,7 +3141,7 @@ function renderEnough(){
    说明这个入口没有降低启动成本，删除本功能。判据从导出数据看，不在应用内做统计。 */
 function renderRoutines(){
   const row=$("routineRow");
-  row.innerHTML=routines.slice(0,6).map(r=>`<span class="split-chip routine-chip"><button class="routine-use" data-routine-use="${esc(r.id)}">${esc(r.text)}</button><button class="x" data-routine-remove="${esc(r.id)}">✕</button></span>`).join("")+'<button class="routine-add" id="routineAdd">＋ 常规</button>';
+  row.innerHTML=`<span class="drawer-label">常规</span>`+routines.slice(0,9).map(r=>`<span class="split-chip routine-chip"><button class="routine-use" data-routine-use="${esc(r.id)}">${esc(r.text)}</button><button class="x" data-routine-remove="${esc(r.id)}">✕</button></span>`).join("")+'<button class="routine-add" id="routineAdd">＋ 常规</button>';
   row.querySelectorAll("[data-routine-use]").forEach(button=>{button.onclick=async()=>{
     const routine=routines.find(r=>String(r.id)===String(button.dataset.routineUse));if(!routine)return;
     const out=await addToTodaySmart(routine.text);
@@ -3103,7 +3158,7 @@ function renderRoutines(){
     bury("routine",id);saveRoutines();renderRoutines();renderOptsHistory();
   };});
   $("routineAdd").onclick=async()=>{
-    if(routines.length>=6){toastDone("常规最多 6 条，先删一条");return;}
+    if(routines.length>=9){toastDone("常规最多 9 条，先删一条");return;}
     const value=await appDialog({title:"添加常规",input:"line"});
     if(value===null)return;
     const text=value.trim();if(!text)return;
@@ -3133,19 +3188,6 @@ document.querySelectorAll("#enoughCard input").forEach(inp=>{
     saveEnough();renderEnough();
   });
 });
-$("drawerRow").onclick = e=>{
-  const b = e.target.closest("[data-drawer]"); if(!b) return;
-  const text = b.dataset.drawer;
-  const inputs = [...document.querySelectorAll('#enoughCard input[data-i]')];
-  const focused = inputs.find(x=>x===document.activeElement && !x.value.trim());
-  const target = focused || inputs.find(x=>{
-    const i = +x.dataset.i;
-    return !x.value.trim() && enoughStatus(enough.items[i])!=="deleted";
-  }) || inputs.find(x=>!x.value.trim());
-  if(!target){ toastDone("三格都填了。"); return; }
-  target.value = text;
-  target.dispatchEvent(new Event("input", {bubbles:true}));
-};
 function setEnoughStatus(i,status){
   const item=enough.items[i];
   if(!item.text.trim()) return;
@@ -4131,9 +4173,9 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.5.3-preview";
+const APP_VERSION = "4.5.4-preview";
 $("verPill").textContent = APP_VERSION;
-const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
+const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_drawers","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
 function bury(scope, val){
   if(!dead.some(d=>d.s===scope && d.v===val)) dead.push({s:scope, v:val, t:Date.now()});
@@ -4236,6 +4278,19 @@ function mergeAll(o){
   });
   routines=[...rtMap.values()].sort((a,b)=>(a.updatedAt||0)-(b.updatedAt||0)||String(a.id).localeCompare(String(b.id)));
   LS.setSilent("qyx_routines",routines);
+  if(drawers){
+    const dwMap=new Map(drawers.filter(x=>!isDead("drawer",x.id)).map(x=>[x.id,x]));
+    (o.qyx_drawers||[]).forEach(x=>{
+      if(!x||!x.id||isDead("drawer",x.id))return;
+      const old=dwMap.get(x.id);
+      if(!old||(x.updatedAt||0)>(old.updatedAt||0))dwMap.set(x.id,x);
+    });
+    drawers=[...dwMap.values()].sort((a,b)=>(a.updatedAt||0)-(b.updatedAt||0)||String(a.id).localeCompare(String(b.id)));
+    LS.setSilent("qyx_drawers",drawers);
+  }else if(o.qyx_drawers){
+    drawers=(o.qyx_drawers||[]).filter(x=>x&&x.id&&!isDead("drawer",x.id));
+    LS.setSilent("qyx_drawers",drawers);
+  }
   const tagMap=new Map(tags.map(t=>[t.id,t]));
   (o.qyx_tags||[]).forEach(t=>{if(!isDead("tag",t.id)){const old=tagMap.get(t.id);if(!old||(t.updated_time||0)>(old.updated_time||0))tagMap.set(t.id,t);}});
   tags=[...tagMap.values()].filter(t=>!isDead("tag",t.id));
