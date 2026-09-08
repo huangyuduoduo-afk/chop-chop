@@ -2955,10 +2955,30 @@ function enoughStatus(item){
   return item && ENOUGH_STATUSES.includes(item.status) ? item.status : (item&&item.done ? "completed" : "incomplete");
 }
 function enoughSubStatus(sub){ return sub&&ENOUGH_SUB_STATUSES.includes(sub.status)?sub.status:(sub&&sub.done?"completed":"incomplete"); }
-function subCount(sub){ const n=+(sub&&sub.c)||0; return n>0?n:(enoughSubStatus(sub)==="completed"?1:0); }
-/* 次数 c 跟着小项整条走：mergeAll 里小项按文字合并、取 updatedAt 较新者，
-   所以两台设备同一天点同一条小项时，次数不会相加，晚的那次覆盖早的那次。
-   当天的三件事基本在一台设备上操作，为此改动同步引擎不划算。 */
+/* 第 1 次沿用原来的来源，第 2 次起带 ×N。
+   这样完成记录的身份（日期|类型|来源|正文）天然不同，不会被去重合并。 */
+function subDoneSrc(n){ return n>=2 ? "三件·小项 ×"+n : "三件·小项"; }
+function subDoneCount(text){
+  const today = dayKey(Date.now());
+  const t = String(text||"").trim();
+  const entries = log.filter(e=>e.type==="done" && dayKey(e.t)===today
+    && String(e.text||"").trim()===t
+    && String(e.src||"").startsWith("三件·小项"));
+  return entries.reduce((n,e)=>{
+    const m=String(e.src||"").match(/^三件·小项 ×(\d+)$/);
+    return Math.max(n,m?(+m[1]||0):1);
+  },0);
+}
+function subCount(sub){
+  const n = subDoneCount(sub&&sub.text);
+  const legacy = Math.max(0,Math.floor(+(sub&&sub.c)||0));
+  if(n>0) return Math.max(n,legacy);   /* 4.5.5 当天已有次数的迁移兜底 */
+  if(legacy>0) return legacy;
+  return enoughSubStatus(sub)==="completed" ? 1 : 0;
+}
+/* 次数由当天的完成记录数出来。log 是并集合并，所以两台设备各自点的都会保留；
+   同一个 ×N 来源在两边重复时会被去重，因此跨设备是“取多的那个”，不是相加。
+   同一天同一件事在两台设备上分别做，取多的比相加更接近实际。 */
 function normalizeEnoughSub(sub){
   if(typeof sub==="string") return {text:sub,done:false,status:"incomplete",updatedAt:0};
   const status=enoughSubStatus(sub);
@@ -3109,27 +3129,33 @@ function renderEnough(){
         sub.status=sub.status==="incomplete"?"completed":sub.status==="completed"?"expired":"incomplete";
         sub.done=sub.status==="completed";
         if(sub.status==="completed" && subCount(sub)<1) sub.c=1;
-        if(sub.status!=="completed") sub.c=0;
+        if(sub.status!=="completed"){
+          const n = subCount(sub);
+          for(let k=n;k>=2;k--) removeDoneLogToday(sub.text,subDoneSrc(k));
+          sub.c=0;
+        }
         sub.updatedAt=Date.now();
         syncParentFromSubs(item);
         saveEnough();
         if(sub.status==="completed") addDoneLogOnce(sub.text,"三件·小项");
         else if(prev==="completed") removeDoneLogToday(sub.text,"三件·小项");
-        renderEnough();
+        renderEnough(); renderLog();
       };
       chip.querySelector(".splus").onclick = ()=>{
         const item=enough.items[i];
-        const wasDone = sub.status==="completed";
-        sub.c = subCount(sub) + 1;
-        sub.status="completed"; sub.done=true; sub.updatedAt=Date.now();
+        const n = subCount(sub) + 1;
+        sub.c = n; sub.status="completed"; sub.done=true; sub.updatedAt=Date.now();
         syncParentFromSubs(item); saveEnough();
-        if(!wasDone) addDoneLogOnce(sub.text,"三件·小项");
-        renderEnough();
+        addDoneLogOnce(sub.text,subDoneSrc(n));
+        renderEnough(); renderLog();
       };
       const cnt = chip.querySelector(".scnt");
       if(cnt) cnt.onclick = ()=>{
-        sub.c = Math.max(1, subCount(sub) - 1);
-        sub.updatedAt=Date.now(); saveEnough(); renderEnough();
+        const n = subCount(sub);
+        if(n<=1) return;
+        removeDoneLogToday(sub.text,subDoneSrc(n));
+        sub.c = n-1; sub.updatedAt=Date.now();
+        saveEnough(); renderEnough(); renderLog();
       };
       chip.querySelector(".stx").onclick = async ()=>{
         const oldText=sub.text;
@@ -4181,7 +4207,7 @@ function buildExportMarkdown(b){
     b.tasks.length?b.tasks.forEach(day=>{ lines.push("### "+day.date,""); (day.items||[]).filter(i=>enoughStatus(i)!=="deleted").forEach(i=>{ const status=enoughStatus(i)==="expired"?"incomplete":enoughStatus(i),label=status==="completed"?"已完成":"未完成"; lines.push("- ["+(status==="completed"?"x":" ")+"] "+i.text+"（"+label+"）"); (i.subs||[]).forEach(s=>{const ss=enoughSubStatus(s),sl=ss==="completed"?"已完成":ss==="expired"?"时间结束":"未完成",count=subCount(s);lines.push("  - ["+(ss==="completed"?"x":" ")+"] "+s.text+(count>=2?" ×"+count:"")+"（"+sl+"）");}); }); (day.bonus||[]).forEach(i=>lines.push("- Bonus ["+(i.done?"x":" ")+"] "+i.text)); lines.push(""); }):lines.push("这段时间没有三件事记录。","");
   }
   if(b.bottles){ lines.push("## 瓶子内容",""); b.bottles.length?b.bottles.forEach(x=>{ lines.push("### "+dt(x.t),"",x.text,""); (x.followups||[]).forEach(f=>lines.push("- 后续 "+dt(f.t)+"："+f.text)); }):lines.push("这段时间没有瓶子。",""); }
-  if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
+  if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.src?" · "+e.src:"")+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
   if(b.tagSystem&&b.tagSystem.tags.length){lines.push("## 标签索引","");b.tagSystem.tags.forEach(t=>lines.push("- #"+t.path+"（"+tagUsage(t.id).count+" 条记录）"));lines.push("");}
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()+"\n";
 }
@@ -4252,7 +4278,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.5.5";
+const APP_VERSION = "4.5.6";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_drawers","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
