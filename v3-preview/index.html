@@ -4278,7 +4278,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "4.5.7-preview";
+const APP_VERSION = "4.5.8-preview";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_drawers","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4329,6 +4329,24 @@ async function ghFetch(url, opt={}){
   if(!res.ok) throw new Error(res.status===401 ? "token 无效或过期" : ("GitHub: "+res.status));
   return res.json();
 }
+async function readBackupFile(file){
+  if(!file) throw new Error("云端备份文件不存在");
+  let content = file.content || "";
+  /* Gist 文件变大后 API 只返回截断片段；必须从 raw_url 读取完整正文。 */
+  if((file.truncated || !content) && file.raw_url){
+    const join = file.raw_url.includes("?") ? "&" : "?";
+    const res = await fetch(file.raw_url + join + "nocache=" + Date.now(), {cache:"no-store"});
+    if(!res.ok) throw new Error("完整云端备份读取失败：" + res.status);
+    content = await res.text();
+  }
+  try{
+    const data = JSON.parse(content);
+    if(!data || typeof data!=="object" || Array.isArray(data)) throw new Error("invalid backup");
+    return data;
+  }catch(e){
+    throw new Error("云端备份内容不完整，请稍后再同步");
+  }
+}
 async function fetchCloud(){
   let gistId = LS.get("qyx_gistid","");
   let data;
@@ -4343,8 +4361,7 @@ async function fetchCloud(){
     localStorage.setItem("qyx_gistid", JSON.stringify(found.id));
     data = await ghFetch("https://api.github.com/gists/"+found.id);
   }
-  const content = data.files["chopchop-backup.json"].content;
-  return {data: JSON.parse(content)};
+  return {data: await readBackupFile(data.files["chopchop-backup.json"])};
 }
 
 /* 并集合并：把 o（云端或历史版本）并进本机，永不减少记录 */
@@ -4634,9 +4651,11 @@ async function syncNow(silent){
         const mine = LS.get("qyx_gistid","");
         const extras = all.filter(g=>g.files && g.files["chopchop-backup.json"] && g.id!==mine).slice(0,3);
         for(const g of extras){
-          const full = await ghFetch("https://api.github.com/gists/"+g.id);
-          const o = JSON.parse(full.files["chopchop-backup.json"].content);
-          if(mergeAll(o)) rerenderAll();
+          try{
+            const full = await ghFetch("https://api.github.com/gists/"+g.id);
+            const o = await readBackupFile(full.files["chopchop-backup.json"]);
+            if(mergeAll(o)) rerenderAll();
+          }catch(e){}
         }
         siblingBackupsChecked = true;
       }catch(e){}
@@ -4693,7 +4712,7 @@ $("historyBtn").onclick = async ()=>{
         b.disabled = true; b.textContent += " …";
         try{
           const rev = await ghFetch(`https://api.github.com/gists/${gistId}/${c.version}`);
-          const o = JSON.parse(rev.files["chopchop-backup.json"].content);
+          const o = await readBackupFile(rev.files["chopchop-backup.json"]);
           const changed = mergeAll(o);
           if(changed) rerenderAll();
           toastDone(changed ? "并回来了。" : "这份里没有本机缺的东西。");
