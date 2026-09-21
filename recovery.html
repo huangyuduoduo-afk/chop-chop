@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chop chop · 只读恢复</title>
+<style>body{font:16px/1.8 system-ui,sans-serif;color:#34445c;background:#f5f9fd;max-width:720px;margin:40px auto;padding:20px}button{padding:12px 18px;border:0;border-radius:12px;background:#4f76a2;color:white;font:inherit;cursor:pointer}article{background:white;border:1px solid #dde7f1;border-radius:18px;padding:20px;margin:16px 0;white-space:pre-wrap;overflow-wrap:anywhere}small{color:#63748a}</style>
+<h1>先把文字留好。</h1><p>这是只读恢复页：不修改记录、不自动同步，也不向网络发送正文。它只能读取当前浏览器中这个网站的数据，不能代替另一台设备的备份。</p>
+<button id="export">下载本机完整恢复备份</button><p id="status"></p><div id="records"></div>
+<script>
+const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d;}catch{return d;}};
+const records=read('qyx_log',[]);document.getElementById('status').textContent='本机共有 '+records.length+' 条时间线记录。';
+for(const r of [...records].sort((a,b)=>b.t-a.t)){const a=document.createElement('article'),date=document.createElement('small'),text=document.createElement('p');date.textContent=new Date(r.t).toLocaleString();text.textContent=r.text||'';a.append(date,text);document.getElementById('records').append(a);}
+document.getElementById('export').onclick=()=>{const data={_schema:5,_recovery:true};for(const k of Object.keys(localStorage))if(k.startsWith('qyx_')&&!/token|key/.test(k))data[k]=read(k,null);const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='chopchop-readonly-recovery-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+</script></html>

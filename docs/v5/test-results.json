@@ -1,0 +1,117 @@
+{
+  "at": "2026-09-21T11:40:57.260Z",
+  "results": [
+    {
+      "name": "JavaScript syntax, all inline scripts and extension",
+      "status": "PASS"
+    },
+    {
+      "name": "Protected synchronization/deletion source unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "Isolated origin",
+      "status": "PASS"
+    },
+    {
+      "name": "Root record stored once and shares its ID",
+      "status": "PASS"
+    },
+    {
+      "name": "Append content and rapid double-save produce one record",
+      "status": "PASS"
+    },
+    {
+      "name": "Intentional equal text remains two independent submissions",
+      "status": "PASS"
+    },
+    {
+      "name": "Synchronization replay respects submission identity",
+      "status": "PASS"
+    },
+    {
+      "name": "Full backup includes idea relations and one set of bodies",
+      "status": "PASS"
+    },
+    {
+      "name": "Blank composer is not saved",
+      "status": "PASS"
+    },
+    {
+      "name": "Unsent note draft survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Saved note does not return after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "No horizontal overflow at required widths",
+      "status": "PASS"
+    },
+    {
+      "name": "Ten independent ideas with default title and icon",
+      "status": "PASS"
+    },
+    {
+      "name": "Complete and reopen, without adding a record",
+      "status": "PASS"
+    },
+    {
+      "name": "Edit shared root: ID/date preserved and no duplicate",
+      "status": "PASS"
+    },
+    {
+      "name": "Search finds historical append, not only latest text",
+      "status": "PASS"
+    },
+    {
+      "name": "Backup merge is lossless for record IDs, dates and idea links",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy backup imports without message-box fields",
+      "status": "PASS"
+    },
+    {
+      "name": "Voice SIMULATION: pause/resume/finish returns editable text only",
+      "status": "PASS"
+    },
+    {
+      "name": "Voice SIMULATION: cancel ignores late results and keeps original",
+      "status": "PASS"
+    },
+    {
+      "name": "Voice SIMULATION: permission error stays visible",
+      "status": "PASS"
+    },
+    {
+      "name": "All existing primary module entries render",
+      "status": "PASS"
+    },
+    {
+      "name": "Past note can join an idea without changing its ID/date",
+      "status": "PASS"
+    },
+    {
+      "name": "Unlink keeps the original note and date",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy bottle creation and followup remain operational",
+      "status": "PASS"
+    },
+    {
+      "name": "Interrupted two-phase save safely retries once",
+      "status": "PASS"
+    },
+    {
+      "name": "Delete a linked root leaves a safe placeholder",
+      "status": "PASS"
+    },
+    {
+      "name": "Remove idea preserves its recovery metadata",
+      "status": "PASS"
+    }
+  ]
+}
