@@ -882,7 +882,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 .habit-reminder.done{animation:reminder-done .85s ease}@keyframes reminder-done{35%{transform:translateY(-5px);box-shadow:0 16px 32px rgba(112,146,84,.2)}70%{transform:translateY(1px)}}
 @media(max-width:430px){.polish-compare{grid-template-columns:1fr}.v3-yesterday{padding:12px 14px 11px}.v3-page-title h1{font-size:22px}.version-pill{display:none}.head-clock{font-size:10px}.mood-row{gap:6px}.mood-btn{width:34px;height:34px}.v3-record-tools{padding-right:68px}.v3-today-ask{padding:18px}.v3-today-ask .buddy-row{right:5px;top:58px;transform:scale(.62)}.v3-today-ask textarea{padding-right:58px}.v3-throw-card textarea{width:67%;font-size:16px}.v3-bottle-art{right:8px;transform:scale(.78) rotate(14deg)}.fish-btn{min-height:145px;padding:24px}.fish-btn .glyph{font-size:56px}.memory-map .node{width:57px}.memory-map .orb{width:49px;height:49px}}
 </style>
-<link rel="stylesheet" href="assets/v5.css">
+<link rel="stylesheet" href="assets/v5.css?v=5.1.3">
 </head>
 <body>
 
@@ -2214,7 +2214,7 @@ function resetAI(){
   $("aiErr").style.display = "none";
 }
 
-async function callAnthropic(sys, messages, key){
+async function callAnthropic(sys, messages, key, maxTokens=300, signal){
   const headers = {"Content-Type":"application/json"};
   if(key){
     headers["x-api-key"] = key;
@@ -2222,8 +2222,8 @@ async function callAnthropic(sys, messages, key){
     headers["anthropic-dangerous-direct-browser-access"] = "true";
   }
   const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST", headers,
-    body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:300, system:sys, messages })
+    method:"POST", headers, signal,
+    body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:maxTokens, system:sys, messages })
   });
   const data = await res.json();
   if(data.error) throw new Error(data.error.message || "API 错误");
@@ -2236,10 +2236,10 @@ function migrateProviderValue(){
   return provider;
 }
 migrateProviderValue();
-async function callDeepSeek(sys, messages, key, model, thinking=false, maxTokens=600){
+async function callDeepSeek(sys, messages, key, model, thinking=false, maxTokens=600, signal){
   if(!key) throw new Error("DeepSeek 需要在设置里填 key");
   const res = await fetch("https://api.deepseek.com/chat/completions", {
-    method:"POST",
+    method:"POST",signal,
     headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
     body: JSON.stringify({ model:model||"deepseek-v4-pro", thinking:{type:thinking?"enabled":"disabled"}, max_tokens:maxTokens, messages:[{role:"system",content:sys}, ...messages] })
   });
@@ -2254,9 +2254,9 @@ async function runAI(sys, messages, options={}){
   const provider = migrateProviderValue();
   let r;
   if(provider==="deepseek-v4-flash"||provider==="deepseek-v4-pro")
-    r = await callDeepSeek(sys,messages,key,provider,options.thinking===true,options.maxTokens||600);
+    r = await callDeepSeek(sys,messages,key,provider,options.thinking===true,options.maxTokens||600,options.signal);
   else
-    r = { text: await callAnthropic(sys, messages, key), truncated:false };
+    r = { text: await callAnthropic(sys, messages, key, options.maxTokens||300, options.signal), truncated:false };
   return options.raw ? r : r.text;
 }
 function aiContext(){
@@ -4275,7 +4275,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "5.0.0";
+const APP_VERSION = "5.1.3";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_drawers","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4952,7 +4952,7 @@ document.addEventListener("input",e=>{if(e.target.matches("textarea"))cancelReco
 document.addEventListener("click",e=>{if(e.target.closest("button"))cancelRecordNudgeTimer();},true);
 
 </script>
-<script src="assets/v5.js"></script>
+<script src="assets/v5.js?v=5.1.3"></script>
 <script>
 ensureEnough();
 initTagSystem();
