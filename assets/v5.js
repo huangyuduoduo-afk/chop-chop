@@ -96,11 +96,12 @@
   const oldExport=buildExportBundle;
   buildExportBundle=function(){
     const b=oldExport(),inRange=r=>r&&dayKey(r.t)>=b.range.fromKey&&dayKey(r.t)<=b.range.toKey;
-    const recordIds=new Set(log.filter(inRange).map(r=>r.id));
+    const parts=selectedExportParts();
+    const recordIds=new Set(log.filter(r=>inRange(r)&&parts.has(r.type==='note'?'journals':r.type==='ai'?'ai':'events')).map(r=>r.id));
     const selectedLinks=state.links.filter(l=>recordIds.has(l.recordId));
     const ideaIds=new Set(selectedLinks.map(l=>l.ideaId));
-    b.messageBox={schema:state.schema,items:state.items.filter(i=>ideaIds.has(i.id)),links:selectedLinks,events:state.events.filter(e=>ideaIds.has(e.ideaId)&&e.t&&dayKey(e.t)>=b.range.fromKey&&dayKey(e.t)<=b.range.toKey),tasks:state.tasks.filter(t=>recordIds.has(t.recordId)||t.scheduledDate&&t.scheduledDate>=b.range.fromKey&&t.scheduledDate<=b.range.toKey)};
-    b.dailyReviews=daily.filter(r=>r.date>=b.range.fromKey&&r.date<=b.range.toKey);
+    b.messageBox={schema:state.schema,items:state.items.filter(i=>ideaIds.has(i.id)),links:selectedLinks,events:state.events.filter(e=>ideaIds.has(e.ideaId)&&e.t&&dayKey(e.t)>=b.range.fromKey&&dayKey(e.t)<=b.range.toKey),tasks:parts.has('tasks')?state.tasks.filter(t=>recordIds.has(t.recordId)||t.scheduledDate&&t.scheduledDate>=b.range.fromKey&&t.scheduledDate<=b.range.toKey):[]};
+    b.dailyReviews=parts.has('ai')?daily.filter(r=>r.date>=b.range.fromKey&&r.date<=b.range.toKey):[];
     return b;
   };
   const oldMarkdown=buildExportMarkdown;

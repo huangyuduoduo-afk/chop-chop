@@ -815,6 +815,9 @@ header{padding-top:24px}.wordmark{font-size:29px;letter-spacing:-.02em}.version-
 
 /* 导出中心：复用设置与历史记录中的既有入口 */
 .export-modal .modal{max-height:88vh}.export-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.export-close{border:0;background:transparent;color:var(--ink-soft);font-size:20px;cursor:pointer}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.export-grid .wide{grid-column:1/-1}.export-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 14px}.export-checks label{display:flex;align-items:center;gap:7px;margin:0;padding:8px 9px;border:1px solid rgba(75,66,55,.1);border-radius:12px;background:rgba(255,255,255,.52);color:var(--ink);font-size:11px}.export-checks input{width:auto}.export-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-formats button,.export-open-btn{border:1px solid rgba(75,66,55,.13);background:#fff;border-radius:14px;padding:11px;color:var(--ink);cursor:pointer;font-family:var(--sans)}.export-formats button:first-child{background:#EEF4E9;color:#5F7B4E}.export-hint{min-height:18px;margin-top:9px!important;color:#718466!important}.custom-range[hidden]{display:none}.settings-export{width:100%;margin-top:7px}
+.export-modal .export-formats button:first-child{background:#fff;color:var(--ink)}
+.export-modal .export-formats button:hover{border-color:#91A87C;background:#F4F8F1}
+.export-modal .export-hint:not(:empty){padding:9px 11px;border-radius:11px;background:#EEF4E9;color:#4D6840!important}
 .tag-suggest{display:none;position:absolute;left:18px;right:18px;top:118px;z-index:12;padding:7px;background:rgba(255,253,249,.98);border:1px solid rgba(108,132,89,.2);border-radius:14px;box-shadow:0 12px 28px rgba(75,66,55,.14)}.tag-suggest.show{display:grid;gap:3px}.tag-suggest button{border:0;background:transparent;text-align:left;padding:7px 9px;border-radius:9px;color:#5D7550;cursor:pointer;font:500 11px "Noto Serif SC",var(--kai)}.tag-chip{border:0;background:#EAF1E4;color:#60784F;border-radius:999px;padding:3px 8px;cursor:pointer;font:500 9.5px "Noto Serif SC",var(--kai);white-space:nowrap}.record-tags,.entity-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.task-tag-row{display:flex;flex-wrap:wrap;gap:4px;margin:-3px 0 4px 72px}.tag-bind,.task-tag-btn{border:0;background:transparent;color:#71875F;cursor:pointer;font:600 10px "Noto Serif SC",var(--kai);padding:4px}.tag-memory-card{padding:18px 20px;margin:17px 0;border-radius:24px;display:flex;align-items:center;gap:13px}.tag-memory-card>span{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:#E8F0E3;color:#668653;font-size:20px}.tag-memory-card div{flex:1}.tag-memory-card b,.tag-memory-card small{display:block}.tag-memory-card b{font:600 17px "Noto Serif SC",var(--kai)}.tag-memory-card small{font-size:10.5px;color:var(--ink-soft);margin-top:2px}.tag-memory-card button{border:1px solid rgba(96,120,79,.2);background:#fff;border-radius:999px;padding:8px 13px;color:#60784F;cursor:pointer}.tag-modal .modal{max-width:570px;max-height:88vh}.tag-toolbar{display:flex;gap:8px;align-items:center;margin:10px 0}.tag-toolbar select{margin:0}.tag-list{display:grid;gap:7px}.tag-list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(75,66,55,.09);border-radius:14px;background:rgba(255,255,255,.55);cursor:pointer}.tag-list-item .tag-main{flex:1;min-width:0}.tag-list-item b,.tag-list-item small{display:block}.tag-list-item b{font:600 12px "Noto Serif SC",var(--kai);color:#526548;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tag-list-item small{font-size:9.5px;color:#918A80;margin-top:2px}.tag-count{font-size:10px;color:#71875F}.tag-empty{padding:24px;text-align:center;color:var(--ink-soft);font:500 11px "Noto Serif SC",var(--kai)}.tag-detail-head{display:flex;align-items:center;gap:8px}.tag-back{border:0;background:transparent;color:#71875F;cursor:pointer}.tag-detail-stats{padding:10px 12px;margin:10px 0;border-radius:13px;background:#F1F5ED;color:#66745D;font-size:10px;line-height:1.8}.tag-manage{display:flex;gap:6px;margin-bottom:12px}.tag-manage button{border:1px solid rgba(75,66,55,.1);background:#fff;border-radius:999px;padding:6px 10px;color:#786F65;cursor:pointer;font-size:10px}.tag-related h4{margin:13px 0 6px;font:600 11px "Noto Serif SC",var(--kai);color:#6A7B5F}.tag-record{padding:8px 0;border-bottom:1px dashed rgba(75,66,55,.1);font:500 10.5px/1.7 "Noto Serif SC",var(--kai);color:#5D574F}.tag-record time{display:block;color:#9A9186;font-size:9px}.tag-modal [hidden]{display:none!important}
 .tag-suggest{max-height:44vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tag-suggest .ts-lib{border-top:.5px solid rgba(75,66,55,.14);color:var(--sage-deep)}
@@ -1231,7 +1234,7 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
 <div class="modal-bg export-modal" id="exportBg">
   <div class="modal">
     <div class="export-head"><h3>导出中心</h3><button class="export-close" id="closeExport" aria-label="关闭">×</button></div>
-    <p>选一段时间，保存属于你的完整记录。</p>
+    <p>选好时间和内容后，直接点击下方的格式按钮下载。</p>
     <div class="export-grid">
       <label class="wide">时间范围
         <select id="exportRange">
@@ -1254,14 +1257,14 @@ nav{border-radius:31px;padding:7px;background:rgba(255,252,247,.79)}nav button{b
       <label><input type="checkbox" data-export-part="bottles" checked>瓶子内容</label>
       <label><input type="checkbox" data-export-part="events" checked>时间事件</label>
     </div>
-    <label>导出格式</label>
+    <label>点击格式即可导出</label>
     <div class="export-formats">
-      <button data-export-format="markdown">Markdown</button>
-      <button data-export-format="pdf">PDF</button>
-      <button data-export-format="json">JSON</button>
-      <button data-export-format="image">图片长图</button>
+      <button data-export-format="markdown">下载 Markdown</button>
+      <button data-export-format="pdf">打印 / 存为 PDF</button>
+      <button data-export-format="json">下载 JSON</button>
+      <button data-export-format="image">下载图片长图</button>
     </div>
-    <p class="export-hint" id="exportHint"></p>
+    <p class="export-hint" id="exportHint" role="status" aria-live="polite"></p>
   </div>
 </div>
 
@@ -4159,7 +4162,11 @@ function buildExportBundle(){
   const inside=t=>t>=range.start.getTime()&&t<=range.end.getTime();
   const entries=[...log].filter(e=>inside(e.t)).sort((a,b)=>a.t-b.t);
   const bundle={meta:{app:"chop chop!",version:APP_VERSION,exportedAt:new Date().toISOString(),from:range.fromKey,to:range.toKey},range};
-  bundle.tagSystem={tags:tags.map(t=>Object.assign({},t,{path:tagPath(t.id)})),recordTags,goalTags,taskTags,taskGoals};
+  const exportedIds=new Set(entries.filter(e=>parts.has(e.type==="note"?"journals":e.type==="ai"?"ai":"events")).map(e=>e.id));
+  const scopedRecordTags=Object.fromEntries(Object.entries(recordTags).filter(([id])=>exportedIds.has(id)));
+  const tagIds=new Set(Object.values(scopedRecordTags).flat()),byTagId=new Map(tags.map(t=>[t.id,t]));
+  for(const id of [...tagIds]){let parent=byTagId.get(id)?.parent_id;while(parent&&!tagIds.has(parent)){tagIds.add(parent);parent=byTagId.get(parent)?.parent_id;}}
+  bundle.tagSystem={tags:tags.filter(t=>tagIds.has(t.id)).map(t=>Object.assign({},t,{path:tagPath(t.id)})),recordTags:scopedRecordTags,goalTags:{},taskTags:{},taskGoals:{}};
   if(parts.has("journals")) bundle.journals=entries.filter(e=>e.type==="note").map(e=>Object.assign({},e,{text:stripRefs(e.text)}));
   if(parts.has("ai")){
     bundle.aiEntries=entries.filter(e=>e.type==="ai").map(e=>Object.assign({},e,{text:stripRefs(e.text),q:stripRefs(e.q||"")}));
@@ -4205,13 +4212,15 @@ function buildExportMarkdown(b){
   }
   if(b.bottles){ lines.push("## 瓶子内容",""); b.bottles.length?b.bottles.forEach(x=>{ lines.push("### "+dt(x.t),"",x.text,""); (x.followups||[]).forEach(f=>lines.push("- 后续 "+dt(f.t)+"："+f.text)); }):lines.push("这段时间没有瓶子。",""); }
   if(b.events){ lines.push("## 时间事件",""); b.events.length?b.events.forEach(e=>lines.push("- "+dt(e.t)+"　["+(TAG[e.type]||e.type)+"] "+e.text+(e.src?" · "+e.src:"")+(e.event?" · "+e.event:""))):lines.push("这段时间没有其他时间事件。"); lines.push(""); }
-  if(b.tagSystem&&b.tagSystem.tags.length){lines.push("## 标签索引","");b.tagSystem.tags.forEach(t=>lines.push("- #"+t.path+"（"+tagUsage(t.id).count+" 条记录）"));lines.push("");}
+  if(b.tagSystem&&b.tagSystem.tags.length){lines.push("## 标签索引","");b.tagSystem.tags.forEach(t=>lines.push("- #"+t.path));lines.push("");}
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()+"\n";
 }
-function downloadText(name,text,type){
-  const a=document.createElement("a"), url=URL.createObjectURL(new Blob([text],{type}));
-  a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
+function downloadBlob(name,blob){
+  const a=document.createElement("a"), url=URL.createObjectURL(blob);
+  a.href=url;a.download=name;a.style.display="none";document.body.appendChild(a);
+  try{a.click();}finally{setTimeout(()=>{a.remove();URL.revokeObjectURL(url);},30000);}
 }
+function downloadText(name,text,type){downloadBlob(name,new Blob([text],{type}));}
 function exportAsPrintPDF(bundle){
   const md=buildExportMarkdown(bundle);
   const w=window.open("","_blank");
@@ -4235,7 +4244,9 @@ function exportBundleImage(bundle){
   ctx.fillStyle="#8C8072";ctx.font="500 22px 'PingFang SC',sans-serif";ctx.fillText(bundle.meta.from+" 至 "+bundle.meta.to,padI,122);
   let y=176;
   lines.forEach(line=>{ const heading=/^(日记记录|AI 整理与总结|今日三件事|瓶子内容|时间事件)$/.test(line); ctx.font=heading?"700 31px 'PingFang SC',sans-serif":"500 27px 'PingFang SC',sans-serif"; ctx.fillStyle=heading?"#60784F":"#403832"; ctx.fillText(line,padI,y); y+=lineH; });
-  const a=document.createElement("a");a.download="chopchop_"+bundle.range.label+".png";a.href=cv.toDataURL("image/png");a.click();
+  const data=cv.toDataURL("image/png"),binary=atob(data.slice(data.indexOf(",")+1));
+  const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+  downloadBlob("chopchop_"+bundle.range.label+".png",new Blob([bytes],{type:"image/png"}));
 }
 function openExportCenter(presetDay){
   const today=dayKey(Date.now());
@@ -4260,8 +4271,9 @@ document.querySelectorAll("[data-export-format]").forEach(btn=>btn.onclick=()=>{
     if(format==="json"){const plain=Object.assign({},bundle);delete plain.range;downloadText(name+".json",JSON.stringify(plain,null,2),"application/json;charset=utf-8");}
     if(format==="pdf") exportAsPrintPDF(bundle);
     if(format==="image") exportBundleImage(bundle);
-    $("exportHint").textContent=format==="pdf"?"已打开打印窗口，选择“存储为 PDF”即可。":"导出已开始。";
-  }catch(e){$("exportHint").textContent=e.message||"导出失败，请重试。";}
+    $("exportHint").textContent=format==="pdf"?"打印窗口已打开，请在其中选择“存储为 PDF”。":"已请求下载 "+name+"."+(format==="json"?"json":format==="image"?"png":"md")+"；若未看到文件，请检查浏览器下载列表。";
+    toastDone(format==="pdf"?"请在打印窗口存为 PDF":"已请求下载，请查看下载列表");
+  }catch(e){const message=e.message||"导出失败，请重试。";$("exportHint").textContent=message;toastDone("导出失败："+message);}
 });
 
 
@@ -4275,7 +4287,7 @@ function toastDone(msg){
 }
 
 /* ---------- 云同步：合并式引擎 ---------- */
-const APP_VERSION = "5.1.3";
+const APP_VERSION = "5.1.3.1";
 $("verPill").textContent = APP_VERSION;
 const BACKUP_KEYS = ["qyx_dice","qyx_log","qyx_opts","qyx_bench","qyx_opts_hist","qyx_routines","qyx_drawers","qyx_ongoing","qyx_provider","qyx_months","qyx_bottles","qyx_sums","qyx_enough","qyx_enough_prev","qyx_habits","qyx_bonus","qyx_bonus_prev","qyx_rules","qyx_ai_review","qyx_polish_history","qyx_sit_reminder","qyx_tags","qyx_record_tags","qyx_goal_tags","qyx_task_tags","qyx_task_goals","qyx_dead"];
 let dead = LS.get("qyx_dead", []);   // 墓碑：删除过的东西，合并时不复活 {s:范围, v:值, t}
@@ -4952,7 +4964,7 @@ document.addEventListener("input",e=>{if(e.target.matches("textarea"))cancelReco
 document.addEventListener("click",e=>{if(e.target.closest("button"))cancelRecordNudgeTimer();},true);
 
 </script>
-<script src="assets/v5.js?v=5.1.3"></script>
+<script src="assets/v5.js?v=5.1.3.1"></script>
 <script>
 ensureEnough();
 initTagSystem();
