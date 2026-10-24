@@ -1,0 +1,48 @@
+.shell { min-height: 100dvh; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(var(--safe-t) + 8px) var(--gutter) 8px;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.wordmark {
+  font: 700 25px/1 var(--font-round); letter-spacing: -.3px; color: var(--ink); text-decoration: none;
+}
+.wordmark b { color: var(--pink-deep); font-weight: 700; margin-left: 1px; }
+.topbar-actions { display: flex; gap: 2px; }
+
+.sync-btn {
+  position: relative; width: 38px; height: 38px; border: 0; border-radius: 12px;
+  display: grid; place-items: center; background: transparent; color: var(--ink-faint);
+}
+.sync-btn.busy svg { animation: spin 1s linear infinite; color: var(--sky-deep); }
+.sync-btn.error { color: var(--danger); }
+.sync-btn.dirty::after, .sync-btn.no-token::after {
+  content: ""; position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--star); box-shadow: 0 0 0 2px var(--bg);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.page {
+  width: min(680px, 100%); margin: 0 auto;
+  padding: 6px var(--gutter) calc(var(--nav-h) + var(--safe-b) + 28px);
+}
+.page-title { margin: 10px 2px 14px; }
+.page-title h1 { margin: 0; font-size: var(--fs-xl); font-weight: 700; letter-spacing: .5px; }
+.page-title p { margin: 3px 0 0; font-size: var(--fs-sm); color: var(--ink-faint); }
+
+.tabbar {
+  position: fixed; left: 50%; bottom: calc(var(--safe-b) + 10px); z-index: 25; transform: translateX(-50%);
+  width: min(560px, calc(100% - 20px)); height: var(--nav-h);
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; padding: 6px;
+  background: color-mix(in srgb, var(--card) 90%, transparent);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-pop);
+}
+.tabbar a {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border-radius: 18px; color: var(--ink-faint); text-decoration: none; font-size: 11px;
+}
+.tabbar a.on { background: var(--sky-mist); color: var(--sky-deep); font-weight: 650; }

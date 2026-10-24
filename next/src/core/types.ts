@@ -163,7 +163,7 @@ export interface DailyReview {
   provider?: string;
   promptVersion?: string | number;
   paragraphs: { text: string; source_ids?: string[] }[];
-  gentleNote?: string;
+  gentleNote?: unknown; // stored as an object by 5.1.x
 }
 
 /** Keys pushed to / merged from the Gist by the legacy engine, in legacy order. */
