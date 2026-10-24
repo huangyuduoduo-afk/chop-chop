@@ -10,6 +10,7 @@ import { LocalStore, type KV } from '../core/storage';
 import { SyncEngine, type SyncOutcome } from '../core/sync';
 import type { Snapshot } from '../core/types';
 import { clone, dayKey, systemClock, type Clock } from '../core/util';
+import { indexAllRecordTags } from '../domain/shared';
 
 export const APP_VERSION: string = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : '6.0.0-dev';
 
@@ -38,12 +39,20 @@ export function initState(kv: KV, clock: Clock = systemClock): AppState {
     store,
     clock,
     version: APP_VERSION,
-    onMerged: (s) => { snapshot.value = s; },
+    onMerged: (s) => { snapshot.value = withTagIndex(store, s, clock); },
   });
   app = { store, clock, engine };
-  snapshot.value = store.readSnapshot();
+  snapshot.value = withTagIndex(store, store.readSnapshot(), clock);
   dirty.value = store.dirty;
   return app;
+}
+
+/** Index #tags of records that arrived without them (legacy did this on boot and after merges). */
+function withTagIndex(store: LocalStore, s: Snapshot, clock: Clock): Snapshot {
+  const draft = clone(s);
+  if (!indexAllRecordTags(draft, clock)) return s;
+  store.writeSnapshot(draft, { userEdit: false, now: clock.now() });
+  return draft;
 }
 
 export function getApp(): AppState {

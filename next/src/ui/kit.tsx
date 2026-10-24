@@ -29,7 +29,7 @@ export function Card({ title, sub, icon, actions, children, tone, class: cls }: 
   );
 }
 
-type BtnProps = JSX.HTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'soft' | 'ghost' | 'danger'; icon?: IconName; small?: boolean };
+type BtnProps = JSX.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'soft' | 'ghost' | 'danger'; icon?: IconName; small?: boolean };
 export function Button({ variant = 'soft', icon, small, children, class: cls, ...rest }: BtnProps) {
   return (
     <button type="button" class={`btn btn-${variant} ${small ? 'btn-sm' : ''} ${cls || ''}`} {...rest}>

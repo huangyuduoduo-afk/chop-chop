@@ -1,0 +1,75 @@
+.goals-page { display: block; }
+
+/* 习惯 */
+.habit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.habit {
+  position: relative; background: var(--card-soft); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.habit-tap {
+  display: grid; gap: 4px; width: 100%; min-height: 96px; padding: 12px 14px; border: 0; border-radius: var(--radius);
+  background: transparent; text-align: left;
+}
+.habit-tap:active { background: var(--sky-mist); }
+.habit-name { font-size: var(--fs-sm); color: var(--ink-soft); padding-right: 34px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.habit-count { font: 700 28px/1.1 var(--font-round); color: var(--sky-deep); }
+.habit-count.pop { animation: habit-pop .28s ease-out; }
+@keyframes habit-pop { 40% { transform: scale(1.22); } }
+.habit-spark { display: flex; gap: 4px; }
+.habit-spark i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.habit-spark i.hit { background: var(--sky); }
+.habit-spark i.td { box-shadow: 0 0 0 2px var(--sky-mist); }
+.habit-spark i.td.hit { background: var(--sky-deep); }
+.habit-menu { position: absolute; top: 4px; right: 2px; }
+.habit-add {
+  min-height: 96px; border: 1.5px dashed var(--line-strong); border-radius: var(--radius);
+  background: transparent; color: var(--ink-faint); display: grid; place-items: center;
+}
+
+/* 本月 */
+.month-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 18px 2px 10px; font-size: var(--fs-lg); font-weight: 650; }
+.month-count { font-size: var(--fs-xs); font-weight: 400; color: var(--ink-faint); }
+.goal-add { display: grid; gap: 8px; margin-bottom: 14px; }
+.goal-add-btns { display: flex; gap: 8px; }
+.goal-hint { margin: 0; font-size: var(--fs-xs); color: var(--ink-faint); }
+
+.goal-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow); padding: 12px 8px 12px 14px; margin: 0 0 10px;
+}
+.goal-card.watch { background: var(--card-soft); box-shadow: none; }
+.goal-head { display: flex; align-items: center; gap: 10px; }
+.goal-title { flex: 1; min-width: 0; margin: 0; font-size: var(--fs); font-weight: 600; overflow-wrap: anywhere; }
+.goal-card.done .goal-title { color: var(--ink-soft); }
+.goal-crown { color: var(--star-deep); }
+.goal-dot { width: 10px; height: 10px; margin: 8px; flex: none; border-radius: 50%; border: 2px solid var(--sky); }
+.goal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 36px; }
+.goal-splits { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 6px 0 0; padding-left: 36px; }
+.split-chip {
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 2px 0 2px 8px;
+  background: var(--sky-mist); border-radius: 999px; font-size: var(--fs-sm);
+}
+.split-chip .check { width: 22px; height: 22px; }
+.split-chip.done .split-text { color: var(--ink-faint); text-decoration: line-through; }
+.split-text { overflow-wrap: anywhere; }
+.split-chip .icon-btn { width: 34px; height: 34px; }
+.split-add {
+  min-height: 38px; padding: 0 12px; border: 1px dashed var(--line-strong); border-radius: 999px;
+  background: transparent; color: var(--ink-faint); font-size: var(--fs-sm);
+}
+.goal-splitting { margin: 8px 0 0 36px; color: var(--ink-faint); font-size: var(--fs-sm); }
+
+.trail { margin: 10px 6px 0 36px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--card-soft); font-size: var(--fs-sm); color: var(--ink-soft); }
+.trail-head { color: var(--ink-faint); font-size: var(--fs-xs); margin-bottom: 4px; }
+.trail-line { display: flex; gap: 10px; padding: 2px 0; }
+.trail-t { flex: none; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.trail details { margin-top: 4px; }
+.trail summary { color: var(--ink-faint); font-size: var(--fs-xs); cursor: pointer; }
+
+/* 往月 */
+.past-months { margin: 16px 2px 0; }
+.past-months summary { display: flex; align-items: center; gap: 4px; min-height: 38px; font-weight: 600; color: var(--ink-soft); cursor: pointer; list-style: none; }
+.past-months summary::-webkit-details-marker { display: none; }
+.past-months[open] summary svg { transform: rotate(90deg); }
+.past-month { display: flex; gap: 12px; padding: 6px 0; font-size: var(--fs-sm); color: var(--ink-soft); border-top: 1px solid var(--line); }
+.past-month b { flex: none; color: var(--sky-deep); }
+.past-month span { overflow-wrap: anywhere; }

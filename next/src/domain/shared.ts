@@ -115,3 +115,17 @@ export function addLog(s: Snapshot, input: NewLog, clock: Clock): LogEntry {
 }
 
 export const findLog = (s: Snapshot, id: string) => (s.qyx_log || []).find((e) => e.id === id);
+
+/**
+ * Legacy initTagSystem, run at boot and after every cloud merge: every record gets an id
+ * and its #tags indexed (union with what is stored, tombstoned tags stay dead).
+ * Returns true if anything changed. Writes are "silent" (not a user edit).
+ */
+export function indexAllRecordTags(s: Snapshot, clock: Clock): boolean {
+  const before = JSON.stringify([s.qyx_log, s.qyx_tags, s.qyx_record_tags]);
+  (s.qyx_log || []).forEach((e, i) => {
+    if (!e.id) e.id = stableId('rec_', (e.t || 0) + '|' + (e.type || '') + '|' + (e.text || '') + '|' + i);
+    indexRecordTags(s, e, clock, false);
+  });
+  return JSON.stringify([s.qyx_log, s.qyx_tags, s.qyx_record_tags]) !== before;
+}
