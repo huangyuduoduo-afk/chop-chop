@@ -16,14 +16,14 @@
  *  F6  reconcile never revives a deleted row from its plan / idea
  */
 import {
-  blankEnoughItem, doneLogIdentity, enoughStatus, enoughSubStatus, logKey, normalizeEnoughItem, syncParentFromSubs,
+  blankEnoughItem, enoughStatus, enoughSubStatus, normalizeEnoughItem, syncParentFromSubs,
 } from '../core/merge';
 import type { BonusDay, EnoughDay, EnoughItem, EnoughSub, Idea, PlanTask, Snapshot } from '../core/types';
 import { dayKey, monthKey, pad, stableId, type Clock } from '../core/util';
 import { findIdea, findTask, ideaTitle, ideasForWrite, readIdeas } from './ideas';
 import { stripRefs } from './refs';
 import { currentDicePool } from './settings';
-import { addLog, bury, ensureTagPath, isDead, unbury } from './shared';
+import { addDoneLogOnce, addLog, bury, ensureTagPath, isDead, removeDoneLogToday, unbury } from './shared';
 
 export const MAX_OPTS = 9;
 export const MAX_DRAWERS = 6;
@@ -39,23 +39,7 @@ export const isFree = (x: EnoughItem) => !isAlive(x) || !String(x.text || '').tr
 
 /* ================= done-log helpers (addDoneLogOnce / removeDoneLogToday) ================= */
 
-export function addDoneLogOnce(s: Snapshot, text: string, src: string, clock: Clock) {
-  const key = `${today(clock)}|done|${src || ''}|${text}`;
-  const existing = (s.qyx_log || []).find((e) => e.type === 'done' && doneLogIdentity(e) === key);
-  return existing || addLog(s, { type: 'done', text, src }, clock);
-}
-
-export function removeDoneLogToday(s: Snapshot, text: string, src: string, clock: Clock): boolean {
-  const key = `${today(clock)}|done|${src || ''}|${text}`;
-  const log = s.qyx_log || [];
-  const idx = log.findIndex((e) => e.type === 'done' && doneLogIdentity(e) === key);
-  if (idx < 0) return false;
-  const e = log[idx];
-  bury(s, 'log', logKey(e), clock);
-  if (s.qyx_record_tags) delete s.qyx_record_tags[e.id];
-  log.splice(idx, 1);
-  return true;
-}
+export { addDoneLogOnce, removeDoneLogToday };
 
 /* ================= 往日写过的事项 history (qyx_opts_hist) ================= */
 

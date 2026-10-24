@@ -7,10 +7,10 @@
  *  - one record has at most ONE active owner idea. Legacy enforced it only in the UI; here every
  *    domain function that attaches/moves a record enforces it.
  */
-import { doneLogIdentity, enoughStatus, logKey } from '../core/merge';
+import { enoughStatus } from '../core/merge';
 import type { EnoughItem, Idea, IdeaLink, IdeasState, LogEntry, PlanTask, Snapshot } from '../core/types';
 import { dayKey, type Clock } from '../core/util';
-import { addLog, bury } from './shared';
+import { addDoneLogOnce, removeDoneLogToday } from './shared';
 import { excerptText } from './refs';
 
 /* ---------------- icons ---------------- */
@@ -26,7 +26,6 @@ export const iconKey = (k: unknown): string => (IDEA_ICONS.some((i) => i.key ===
 /* ---------------- reading ---------------- */
 
 const EMPTY = (): IdeasState => ({ schema: 2, items: [], links: [], events: [], tasks: [] });
-const SAFE_ID = /^[-\w:.]+$/;
 
 /** Read-only view (never mutates the snapshot). */
 export function readIdeas(s: Snapshot): IdeasState {
@@ -137,22 +136,6 @@ function upsertLink(st: IdeasState, link: { id: string; ideaId: string; recordId
 
 /* ---------------- today mirror (qyx_enough rows that mirror a task / idea) ---------------- */
 
-function addDoneLogOnce(s: Snapshot, text: string, src: string, clock: Clock) {
-  const key = `${dayKey(clock.now())}|done|${src || ''}|${text}`;
-  const existing = (s.qyx_log || []).find((e) => e.type === 'done' && doneLogIdentity(e) === key);
-  return existing || addLog(s, { type: 'done', text, src }, clock);
-}
-function removeDoneLogToday(s: Snapshot, text: string, src: string, clock: Clock): boolean {
-  const key = `${dayKey(clock.now())}|done|${src || ''}|${text}`;
-  const log = (s.qyx_log ||= []);
-  const idx = log.findIndex((e) => e.type === 'done' && doneLogIdentity(e) === key);
-  if (idx < 0) return false;
-  const e = log[idx];
-  bury(s, 'log', logKey(e), clock);
-  if (s.qyx_record_tags) delete s.qyx_record_tags[e.id];
-  log.splice(idx, 1);
-  return true;
-}
 const todayRows = (s: Snapshot, clock: Clock): EnoughItem[] =>
   s.qyx_enough && s.qyx_enough.d === dayKey(clock.now()) ? s.qyx_enough.items || [] : [];
 

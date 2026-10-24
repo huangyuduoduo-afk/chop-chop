@@ -5,9 +5,9 @@
  * Ports of legacy helpers: bury/unbury, addLog, tag indexing. Keep semantics identical
  * — old clients merge what these write.
  */
-import { Tombstones } from '../core/merge';
+import { Tombstones, doneLogIdentity, logKey } from '../core/merge';
 import type { LogEntry, Snapshot, Tag } from '../core/types';
-import { stableId, type Clock } from '../core/util';
+import { dayKey, stableId, type Clock } from '../core/util';
 
 /* ---------------- tombstones ---------------- */
 
@@ -128,4 +128,26 @@ export function indexAllRecordTags(s: Snapshot, clock: Clock): boolean {
     indexRecordTags(s, e, clock, false);
   });
   return JSON.stringify([s.qyx_log, s.qyx_tags, s.qyx_record_tags]) !== before;
+}
+
+/* ---------------- done-log rows (legacy addDoneLogOnce / removeDoneLogToday) ---------------- */
+
+/** One 'done' row per day + src + text. */
+export function addDoneLogOnce(s: Snapshot, text: string, src: string, clock: Clock): LogEntry {
+  const key = `${dayKey(clock.now())}|done|${src || ''}|${text}`;
+  const existing = (s.qyx_log || []).find((e) => e.type === 'done' && doneLogIdentity(e) === key);
+  return existing || addLog(s, { type: 'done', text, src }, clock);
+}
+
+/** Undo today's 'done' row for this src + text (tombstoned so other devices drop it too). */
+export function removeDoneLogToday(s: Snapshot, text: string, src: string, clock: Clock): boolean {
+  const key = `${dayKey(clock.now())}|done|${src || ''}|${text}`;
+  const log = (s.qyx_log ||= []);
+  const idx = log.findIndex((e) => e.type === 'done' && doneLogIdentity(e) === key);
+  if (idx < 0) return false;
+  const e = log[idx];
+  bury(s, 'log', logKey(e), clock);
+  if (s.qyx_record_tags) delete s.qyx_record_tags[e.id];
+  log.splice(idx, 1);
+  return true;
 }

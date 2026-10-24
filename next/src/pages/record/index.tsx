@@ -13,6 +13,7 @@ import { Composer, EditRecordSheet } from './Composer';
 import { RecordMenu, TagChips, TaskList } from './RecordParts';
 import { YesterdayCard } from './YesterdayCard';
 import './record.css';
+import { SitReminder } from './SitReminder';
 
 const TYPE_BADGE: Record<string, string> = { dice: '骰子', ai: '问一句', draw: '抽签', done: '完成', bonus: 'bonus' };
 const CLAMP = 360;
@@ -111,6 +112,7 @@ export default function RecordPage() {
       ))}
       {hidden && <button type="button" class="all-records" onClick={() => setAll(true)}>查看全部记录　›</button>}
       {more && <button type="button" class="all-records" onClick={() => setLimit(limit + 60)}>再看更多</button>}
+      <SitReminder />
       {editing && <EditRecordSheet recordId={editing} onClose={() => setEditing(null)} />}
     </div>
   );

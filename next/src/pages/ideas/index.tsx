@@ -1,16 +1,16 @@
 /* 消息盒子: one card per idea; #/ideas/<id> = that idea's full timeline; #/ideas/new = new idea. */
 import { useEffect, useState } from 'preact/hooks';
 import { navigate, route } from '../../app/router';
-import { commit, getApp, snapshot } from '../../app/state';
+import { snapshot } from '../../app/state';
 import { Markdown } from '../../domain/markdown';
 import { excerptText, fmtDT } from '../../domain/refs';
 import {
-  contentTime, findIdea, ideaHits, ideaLinks, ideaTitle, listIdeas, logRecord, moveRecord, readIdeas, recordTasks,
+  contentTime, findIdea, ideaHits, ideaLinks, ideaTitle, listIdeas, logRecord, readIdeas, recordTasks,
   type IdeaFilter,
 } from '../../domain/ideas';
 import { dayKey } from '../../core/util';
 import type { Idea } from '../../core/types';
-import { Button, Empty, IconButton, toast } from '../../ui/kit';
+import { Button, Empty } from '../../ui/kit';
 import { Icon } from '../../ui/icons';
 import { Composer, EditRecordSheet } from '../record/Composer';
 import { RecordMenu, TagChips, TaskList } from '../record/RecordParts';
@@ -227,12 +227,6 @@ function IdeaDetail({ ideaId, jumpTo }: { ideaId: string; jumpTo?: string }) {
                     <TagChips recordId={r.id} />
                   </>
                 ) : <p class="faint">这条记录已从说说中删除。其余补充仍然保留。</p>}
-                {l.role !== 'root' && (
-                  <button type="button" class="link-btn" onClick={() => {
-                    const res = commit((d, c) => moveRecord(d, l.recordId, null, c));
-                    if (!res.ok) toast(res.reason);
-                  }}>移出此想法</button>
-                )}
               </article>
             </>
           );

@@ -67,3 +67,21 @@ cause as D4); the port reports `changed` from a data comparison.
   it has to be pointed at the new build before the iOS app can move to 6.x.
 - 3 synthetic test records exist in production `qyx_log` (`r21-synthetic-record`,
   `v513-ai-synthetic-1/2`). Removing them is a production write — needs the owner's OK.
+
+## Behaviour changes in the 6.x pages (all wire-compatible, each asserted in tests)
+
+- 说说/消息盒子: "作为新想法" works (was broken); editing keeps the record id; deleting a record also
+  soft-removes its idea links and checklist tasks; one owner per record enforced in data; mood
+  survives reload; links render for https only, never as raw HTML.
+- 今天: accepting a dice result tombstones the opt; re-adding to 定过的 unburies it; a deleted row's
+  circle does nothing; selecting a plan/idea into today only writes when something differs;
+  reconcile never revives a deleted row.
+- 目标/瓶子: rendering never writes (month creation moved to an explicit page-open step);
+  failed AI 回望 saves nothing (legacy saved a fallback as a real review); memory-map AI evidence
+  is behind its own button; duplicate habit names refused.
+- Settings: tag rename bumps `updatedAt` and matches whole tags only; clearing the dice pool
+  unburies the defaults; import/history restore go through the merge (add-only) and mark dirty.
+- Daily summary (`qyx_sums`) is still created at boot / day change, but without the unprompted AI
+  observation (`obs: ''`); AI runs only on explicit taps.
+- Not rebuilt (data kept and merged): 语音整理/polish UI, nudge card, typed `@`/`#` suggest boxes
+  (inserted from the Aa panel instead), buddy animation/confetti.
