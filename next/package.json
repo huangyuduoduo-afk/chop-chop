@@ -1,0 +1,23 @@
+{
+  "name": "chopchop-next",
+  "private": true,
+  "version": "6.0.0-dev",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.5",
+    "vitest": "^3.2.7"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.11.3",
+    "preact": "^10.29.8"
+  }
+}
