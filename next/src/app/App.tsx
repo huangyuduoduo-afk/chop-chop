@@ -1,5 +1,5 @@
 import { Icon } from '../ui/icons';
-import { DialogHost, ToastHost } from '../ui/kit';
+import { DialogHost, ToastHost, confirmAsk } from '../ui/kit';
 import IdeasPage from '../pages/ideas';
 import TodayPage from '../pages/today';
 import RecordPage from '../pages/record';
@@ -7,7 +7,8 @@ import GoalsPage from '../pages/goals';
 import SeaPage from '../pages/sea';
 import SettingsPage from '../pages/settings';
 import { PAGES, navigate, route, type PageId } from './router';
-import { dirty, syncMessage, syncNow, syncStatus } from './state';
+import { IS_PREVIEW, dirty, syncMessage, syncNow, syncStatus } from './state';
+import { seedDemo } from '../dev/seed';
 import './app.css';
 
 const VIEWS: Record<PageId, () => preact.JSX.Element> = {
@@ -38,6 +39,14 @@ export function App() {
           <button type="button" class="icon-btn" aria-label="设置" onClick={() => navigate('settings')}><Icon name="gear" /></button>
         </div>
       </header>
+      {IS_PREVIEW && (
+        <div class="preview-banner" role="note">
+          <span>预览版 · 示例数据 · 不连云端</span>
+          <button type="button" onClick={async () => {
+            if (await confirmAsk('恢复示例数据？', '预览里的改动会被清掉。正式数据不受影响。')) { seedDemo(); location.reload(); }
+          }}>恢复示例</button>
+        </div>
+      )}
       <main class="page" id={'page-' + r.page}>
         <View />
       </main>

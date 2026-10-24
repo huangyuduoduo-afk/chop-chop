@@ -2,6 +2,11 @@ import { parseBackup } from './backup';
 import type { BackupFile } from './types';
 
 export const BACKUP_FILE = 'chopchop-backup.json';
+/**
+ * Tests against real GitHub must use another file name: every client (incl. 5.x) folds in
+ * *all* gists holding BACKUP_FILE, so a test gist with that name would leak into real data.
+ */
+export const TEST_BACKUP_FILE = 'chopchop-TEST-synthetic.json';
 const API = 'https://api.github.com';
 
 type Fetch = typeof fetch;
@@ -16,7 +21,12 @@ interface GistFile { content?: string; truncated?: boolean; raw_url?: string }
 interface GistSummary { id: string; updated_at?: string; files?: Record<string, GistFile> }
 
 export class GistClient {
-  constructor(private token: string, private fetchImpl: Fetch = (...a) => fetch(...a)) {}
+  constructor(
+    private token: string,
+    private fetchImpl: Fetch = (...a) => fetch(...a),
+    private file: string = BACKUP_FILE,
+    private description = 'chop chop! backup',
+  ) {}
 
   private async api<T>(path: string, init: RequestInit = {}): Promise<T> {
     if (!this.token) throw new GistError('先填 GitHub token');
@@ -38,7 +48,7 @@ export class GistClient {
     const ids: string[] = [];
     for (let page = 1; page <= maxPages; page++) {
       const list = await this.api<GistSummary[]>(`/gists?per_page=100&page=${page}`);
-      list.forEach((g) => { if (g.files && g.files[BACKUP_FILE]) ids.push(g.id); });
+      list.forEach((g) => { if (g.files && g.files[this.file]) ids.push(g.id); });
       if (list.length < 100) break;
     }
     return ids;
@@ -61,7 +71,7 @@ export class GistClient {
   async read(id: string): Promise<BackupFile | null> {
     try {
       const g = await this.api<GistSummary>(`/gists/${id}`);
-      return await this.readFile(g.files?.[BACKUP_FILE]);
+      return await this.readFile(g.files?.[this.file]);
     } catch (e) {
       if (e instanceof GistError && e.status === 404) return null;
       throw e;
@@ -69,13 +79,13 @@ export class GistClient {
   }
 
   async write(id: string, content: string): Promise<void> {
-    await this.api(`/gists/${id}`, { method: 'PATCH', body: JSON.stringify({ files: { [BACKUP_FILE]: { content } } }) });
+    await this.api(`/gists/${id}`, { method: 'PATCH', body: JSON.stringify({ files: { [this.file]: { content } } }) });
   }
 
   async create(content: string): Promise<string> {
     const g = await this.api<GistSummary>('/gists', {
       method: 'POST',
-      body: JSON.stringify({ description: 'chop chop! backup', public: false, files: { [BACKUP_FILE]: { content } } }),
+      body: JSON.stringify({ description: this.description, public: false, files: { [this.file]: { content } } }),
     });
     return g.id;
   }
@@ -86,6 +96,6 @@ export class GistClient {
 
   async readRevision(id: string, version: string): Promise<BackupFile> {
     const g = await this.api<GistSummary>(`/gists/${id}/${version}`);
-    return this.readFile(g.files?.[BACKUP_FILE]);
+    return this.readFile(g.files?.[this.file]);
   }
 }

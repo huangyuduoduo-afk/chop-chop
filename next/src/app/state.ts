@@ -14,6 +14,9 @@ import { indexAllRecordTags } from '../domain/shared';
 
 export const APP_VERSION: string = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : '6.0.0-dev';
 
+/** Preview build: demo data, never talks to GitHub. */
+export const IS_PREVIEW: boolean = typeof __PREVIEW__ === 'boolean' && __PREVIEW__;
+
 export type SyncStatus = 'idle' | 'busy' | 'ok' | 'error' | 'no-token';
 
 export interface AppState {
@@ -86,7 +89,7 @@ export function commit<T>(mutate: (draft: Snapshot, clock: Clock) => T, opts: { 
 
 export function scheduleSync(delay = 1200) {
   const { store } = getApp();
-  if (!store.token) return;
+  if (!store.token || IS_PREVIEW) return;
   clearTimeout(syncTimer);
   syncTimer = setTimeout(() => void syncNow(), delay);
 }
@@ -94,6 +97,11 @@ export function scheduleSync(delay = 1200) {
 export async function syncNow(opts: { full?: boolean } = {}): Promise<SyncOutcome> {
   const { engine, store } = getApp();
   clearTimeout(syncTimer);
+  if (IS_PREVIEW) {
+    syncStatus.value = 'no-token';
+    syncMessage.value = '预览版不连云端，改动只留在这台设备的预览里。';
+    return { ok: false, reason: 'no-token', message: syncMessage.value };
+  }
   syncStatus.value = 'busy';
   const out = await engine.sync(opts);
   if (out.ok) {

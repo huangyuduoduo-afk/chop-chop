@@ -46,3 +46,10 @@
   border-radius: 18px; color: var(--ink-faint); text-decoration: none; font-size: 11px;
 }
 .tabbar a.on { background: var(--sky-mist); color: var(--sky-deep); font-weight: 650; }
+
+.preview-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 0 var(--gutter) 6px; padding: 6px 8px 6px 14px; border-radius: 999px;
+  background: var(--star-mist); color: var(--star-deep); font-size: var(--fs-xs); font-weight: 600;
+}
+.preview-banner button { border: 0; background: transparent; color: var(--star-deep); text-decoration: underline; font-size: var(--fs-xs); padding: 4px 6px; }

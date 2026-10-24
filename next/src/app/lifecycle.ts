@@ -3,7 +3,7 @@
  * boot, back to foreground (≥30 s apart), leaving with unsynced edits, coming online,
  * edits in other tabs.
  */
-import { APP_VERSION, getApp, now, reloadFromStorage, scheduleSync, syncNow } from './state';
+import { APP_VERSION, IS_PREVIEW, getApp, now, reloadFromStorage, scheduleSync, syncNow } from './state';
 
 let lastForegroundSync = 0;
 let lastUpdateCheck = 0;
@@ -32,6 +32,7 @@ export function startLifecycle(opts: { hasUnsavedDraft: () => boolean }) {
 
 /** Reload when the deployed page carries a different APP_VERSION and nothing is being typed. */
 async function checkUpdate(hasUnsavedDraft: () => boolean) {
+  if (IS_PREVIEW) return;
   if (Date.now() - lastUpdateCheck < 60_000) return;
   lastUpdateCheck = Date.now();
   try {
