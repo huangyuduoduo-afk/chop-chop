@@ -1,0 +1,104 @@
+/*
+ * Chopchop design tokens. Palette is taken from the avatar: sky-blue ground,
+ * cloud-white cards, Kirby pink and star yellow as small accents only.
+ * Components use tokens, never raw colours.
+ */
+:root {
+  --bg: #f4f8fd;
+  --bg-deep: #e9f1fb;
+  --card: #ffffff;
+  --card-soft: #f9fbfe;
+  --line: #e2eaf5;
+  --line-strong: #cfdbec;
+
+  --ink: #34445c;
+  --ink-soft: #64758c;
+  --ink-faint: #93a1b3;
+
+  --sky: #aec6ea;
+  --sky-deep: #4a6fa5;
+  --sky-mist: #edf3fc;
+  --pink: #f6b3c6;
+  --pink-deep: #d4648a;
+  --pink-mist: #fdf0f4;
+  --star: #f5d67a;
+  --star-deep: #b8891c;
+  --star-mist: #fdf6e1;
+  --danger: #c4566d;
+
+  --primary: var(--sky-deep);
+  --primary-ink: #ffffff;
+  --done: var(--sky-deep);
+
+  --radius-lg: 22px;
+  --radius: 16px;
+  --radius-sm: 11px;
+  --shadow: 0 1px 2px rgb(52 68 92 / 4%), 0 8px 24px rgb(74 111 165 / 8%);
+  --shadow-pop: 0 4px 10px rgb(52 68 92 / 8%), 0 18px 44px rgb(74 111 165 / 16%);
+
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-round: "Baloo 2", var(--font);
+  --fs-xs: 12px;
+  --fs-sm: 13.5px;
+  --fs: 15.5px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+
+  --gutter: 16px;
+  --nav-h: 64px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141b26;
+    --bg-deep: #0f151e;
+    --card: #1c2533;
+    --card-soft: #18202c;
+    --line: #2a3546;
+    --line-strong: #3a4659;
+    --ink: #e3e9f2;
+    --ink-soft: #aab6c6;
+    --ink-faint: #7a8799;
+    --sky: #5f7fae;
+    --sky-deep: #9dbbe6;
+    --sky-mist: #1f2b3d;
+    --pink: #b9708a;
+    --pink-deep: #f0a3bd;
+    --pink-mist: #2c1f27;
+    --star: #b99a45;
+    --star-deep: #f0cf74;
+    --star-mist: #2a2618;
+    --danger: #ef8fa3;
+    --primary-ink: #0f151e;
+    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 25%);
+    --shadow-pop: 0 4px 10px rgb(0 0 0 / 35%), 0 18px 44px rgb(0 0 0 / 40%);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141b26; --bg-deep: #0f151e; --card: #1c2533; --card-soft: #18202c; --line: #2a3546; --line-strong: #3a4659;
+  --ink: #e3e9f2; --ink-soft: #aab6c6; --ink-faint: #7a8799; --sky: #5f7fae; --sky-deep: #9dbbe6; --sky-mist: #1f2b3d;
+  --pink: #b9708a; --pink-deep: #f0a3bd; --pink-mist: #2c1f27; --star: #b99a45; --star-deep: #f0cf74; --star-mist: #2a2618;
+  --danger: #ef8fa3; --primary-ink: #0f151e; color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 var(--fs)/1.6 var(--font);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--sky-deep); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

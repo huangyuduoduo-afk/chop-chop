@@ -1,0 +1,64 @@
+.sea-page { display: block; }
+.sea-row { display: flex; gap: 8px; margin-top: 10px; }
+.sea-count { margin: 0 2px 10px; color: var(--ink-soft); font-size: var(--fs-sm); }
+.sea-fine { margin: 8px 0 0; font-size: var(--fs-xs); color: var(--ink-faint); }
+.badge { padding: 2px 9px; border-radius: 999px; background: var(--pink-mist); color: var(--pink-deep); font-size: var(--fs-xs); font-weight: 600; }
+.link-btn { min-height: 38px; padding: 0 8px; border: 0; background: transparent; color: var(--sky-deep); font-size: var(--fs-sm); }
+
+.fish-btn {
+  display: grid; gap: 2px; width: 100%; min-height: 62px; margin: 0 0 14px; padding: 12px 16px; text-align: left;
+  border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); box-shadow: var(--shadow);
+}
+.fish-btn b { font-size: var(--fs); }
+.fish-btn small { color: var(--ink-faint); font-size: var(--fs-xs); }
+.fish-btn.glow { border-color: var(--pink); box-shadow: 0 0 0 3px var(--pink-mist), var(--shadow); }
+
+.bottle-card .bottle-date { color: var(--ink-faint); font-size: var(--fs-xs); }
+.bottle-text { margin: 4px 0 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bottle-follow { padding-left: 12px; margin-bottom: 8px; border-left: 3px solid var(--sky); }
+.bottle-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+.roam-list { display: grid; gap: 10px; }
+.roam-item { padding: 10px 12px; border-radius: var(--radius-sm); background: var(--card-soft); }
+.roam-item time { font-size: var(--fs-xs); color: var(--ink-faint); }
+.roam-mood { margin-left: 8px; font-size: var(--fs-xs); }
+.roam-item p { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.memory-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.memory-node {
+  display: grid; justify-items: center; gap: 2px; min-height: 76px; padding: 8px 4px;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--card-soft);
+}
+.memory-node.on { background: var(--sky-mist); border-color: var(--sky); }
+.memory-node .orb { color: var(--sky-deep); font-size: 18px; }
+.memory-node small { color: var(--ink-faint); font-size: var(--fs-xs); }
+.memory-detail { display: grid; gap: 8px; margin-top: 12px; }
+.memory-detail article { padding: 8px 10px; border-radius: var(--radius-sm); background: var(--card-soft); }
+.memory-detail time { font-size: var(--fs-xs); color: var(--ink-faint); }
+.memory-detail p { margin: 2px 0 0; overflow-wrap: anywhere; }
+mark.ev { background: var(--star-mist); color: var(--star-deep); border-radius: 4px; padding: 0 2px; }
+
+.daily-date { display: grid; gap: 4px; font-size: var(--fs-sm); color: var(--ink-soft); }
+.daily-status { min-height: 1.4em; margin: 8px 0; font-size: var(--fs-sm); color: var(--ink-soft); }
+.daily-status.err { color: var(--danger); }
+.daily-entry { padding: 12px; border-radius: var(--radius-sm); background: var(--card-soft); margin-top: 8px; }
+.daily-entry small { color: var(--ink-faint); }
+.daily-par p { margin: 8px 0 4px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.daily-sources { display: flex; flex-wrap: wrap; gap: 6px; }
+.daily-sources button {
+  min-height: 34px; max-width: 100%; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--card); color: var(--ink-soft); font-size: var(--fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.daily-older summary { min-height: 38px; display: flex; align-items: center; color: var(--ink-faint); font-size: var(--fs-sm); cursor: pointer; }
+
+.review-hint { margin: 0 0 4px; font-size: var(--fs-sm); color: var(--star-deep); }
+.review-box, .review-note { margin-top: 12px; padding: 12px; border-radius: var(--radius-sm); background: var(--card-soft); }
+.review-note.err { background: var(--pink-mist); color: var(--danger); }
+.review-note p { margin: 4px 0 0; }
+.review-range { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-xs); color: var(--ink-faint); }
+.review-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.review-text.folded { max-height: 8.5em; overflow: hidden; }
+.review-hist-row { display: flex; align-items: center; gap: 4px; border-top: 1px solid var(--line); }
+.review-hist-item { flex: 1; min-width: 0; display: grid; gap: 2px; padding: 8px 0; border: 0; background: transparent; text-align: left; font-size: var(--fs-xs); color: var(--ink-soft); }
+.review-hist-item span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.review-hist .review-text { padding: 0 0 8px; }
