@@ -1,8 +1,8 @@
 # Brief for agents building Chopchop 6.x pages
 
 Worktree: `/Users/xixi/Documents/Codex/2026-07-19/new-chat/work/chop-chop-next` (branch `claude/next`).
-New app lives in `next/` (Vite + Preact + @preact/signals + TypeScript). Legacy app = repo-root
-`index.html` + `assets/v5.js` — read it, never edit it.
+New app lives in `next/` (Vite + Preact + @preact/signals + TypeScript). Legacy app = `legacy/index.html`
++ `legacy/assets/v5.js` (served at /legacy/ as a fallback) — read it, never edit it.
 
 ## Hard rules
 - Edit only the paths your task assigns. Never edit `next/src/core/**`, `next/src/ui/**`,

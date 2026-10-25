@@ -1,4 +1,4 @@
-// Executable oracle for the legacy Chopchop app (repo-root index.html + assets/v5*.js).
+// Executable oracle for the legacy Chopchop app (legacy/index.html + legacy/assets/v5*.js, formerly the repo root).
 // Boots the real legacy code in jsdom with frozen time, no network, deterministic ids,
 // so the new TypeScript merge implementation can be differential-tested against it.
 //
@@ -19,12 +19,12 @@ const read = (p) => readFileSync(resolve(REPO, p), 'utf8');
 let cachedHtml = null;
 function buildHtml() {
   if (cachedHtml) return cachedHtml;
-  let html = read('index.html');
+  let html = read('legacy/index.html');
   // Escape "</script" inside inlined JS so it does not terminate the tag early.
   const inline = (path) => '<script>' + read(path).replace(/<\/script/gi, '<\\/script') + '</script>';
   let n = 0;
-  html = html.replace(/<script\s+src="assets\/v5-preflight\.js[^"]*"\s*><\/script>/, () => (n++, inline('assets/v5-preflight.js')));
-  html = html.replace(/<script\s+src="assets\/v5\.js[^"]*"\s*><\/script>/, () => (n++, inline('assets/v5.js')));
+  html = html.replace(/<script\s+src="assets\/v5-preflight\.js[^"]*"\s*><\/script>/, () => (n++, inline('legacy/assets/v5-preflight.js')));
+  html = html.replace(/<script\s+src="assets\/v5\.js[^"]*"\s*><\/script>/, () => (n++, inline('legacy/assets/v5.js')));
   if (n !== 2) throw new Error('legacy-oracle: expected to inline 2 asset scripts, inlined ' + n);
   // No external resources: strip every <link> (fonts, preconnect, stylesheet, manifest, icons).
   html = html.replace(/<link\b[^>]*>/gi, '');

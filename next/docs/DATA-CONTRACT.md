@@ -57,7 +57,7 @@ cause as D4); the port reports `changed` from a data comparison.
   (D1 off), and with D1 on every difference must be explained by a tombstone.
 - `tests/sync.test.ts` — fake GitHub; new devices and a real-legacy device share a Gist.
 - `tests/real-data.test.ts` — opt-in, prints only paths/counts. 2026-10-24: both production
-  backups (1371 records) merged in both directions → 0 differing paths vs legacy.
+  backups merged in both directions → 0 differing paths vs legacy.
 
 ## Cutover notes
 
