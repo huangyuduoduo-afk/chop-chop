@@ -4,6 +4,36 @@
  * Never shipped: main.tsx imports it behind import.meta.env.DEV.
  */
 import { stableId, dayKey, monthKey } from '../core/util';
+import type { PhotoRef } from '../core/types';
+import { PhotoDB } from '../core/photos';
+
+/* Demo photos: soft gradient pictures drawn on a canvas and kept only in this browser. */
+const PALETTES = [['#f6b3c6', '#aec6ea'], ['#aec6ea', '#f5d67a'], ['#cfe3d4', '#aec6ea'], ['#c9c3e6', '#f6b3c6']];
+function demoPhoto(n: number, t: number): PhotoRef {
+  const id = 'demo-photo-' + n;
+  return { id, path: `p/demo/${id}.jpg`, thumb: `t/demo/${id}.jpg`, w: 1200, h: 900, bytes: 0, t };
+}
+async function drawDemoPhotos() {
+  if (typeof document === 'undefined' || typeof indexedDB === 'undefined') return;
+  const db = new PhotoDB();
+  for (let n = 1; n <= 4; n++) {
+    const c = document.createElement('canvas');
+    c.width = 1200; c.height = 900;
+    const g = c.getContext('2d');
+    if (!g) return;
+    const [a, b] = PALETTES[n - 1];
+    const grad = g.createLinearGradient(0, 0, 1200, 900);
+    grad.addColorStop(0, a); grad.addColorStop(1, b);
+    g.fillStyle = grad; g.fillRect(0, 0, 1200, 900);
+    g.fillStyle = 'rgba(255,255,255,.75)';
+    for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(200 + i * 220, 300 + ((i * 137 + n * 61) % 360), 60 + ((i + n) % 3) * 40, 0, Math.PI * 2); g.fill(); }
+    const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/jpeg', 0.85));
+    if (!blob) return;
+    const ref = demoPhoto(n, 0);
+    await db.putBlob(ref.path, blob);
+    await db.putBlob(ref.thumb, blob);
+  }
+}
 
 export function seedDemo(now = Date.now()) {
   for (const k of Object.keys(localStorage)) if (k.startsWith('qyx_')) localStorage.removeItem(k);
@@ -19,6 +49,12 @@ export function seedDemo(now = Date.now()) {
     rec(6, 5 * H, '想法盒子的卡片可以按最近更新排序'),
     rec(7, 2 * H, '晚上整理一下下周的安排'),
     { ...rec(8, 26 * H, '读完第二节', { type: 'done', src: '三件·小项' }) },
+    // Scattered earlier days so the calendar has texture; some carry demo photos.
+    rec(9, 5 * D + 4 * H, '傍晚的天是粉色的，站在楼下看了好一会儿', { images: [demoPhoto(1, now - 5 * D)] }),
+    rec(10, 7 * D + 2 * H, '第一次自己做了番茄炒蛋，咸了一点', { starredAt: now - 7 * D }),
+    rec(11, 9 * D + 6 * H, '和朋友在河边走了一圈，风很舒服 #生活', { images: [demoPhoto(2, now - 9 * D), demoPhoto(3, now - 9 * D)], starredAt: now - 9 * D }),
+    rec(12, 12 * D + 3 * H, '整理了书架，找到一本以前很喜欢的诗集'),
+    rec(13, 15 * D + 5 * H, '下雨天，在窗边听了一下午的歌', { images: [demoPhoto(4, now - 15 * D)] }),
   ];
   const ideaRoot = log[0].id, sid = 'demo-idea-1';
   const ideas = {
@@ -53,4 +89,5 @@ export function seedDemo(now = Date.now()) {
     qyx_dead: [],
   };
   for (const [k, v] of Object.entries(data)) localStorage.setItem(k, JSON.stringify(v));
+  void drawDemoPhotos();
 }

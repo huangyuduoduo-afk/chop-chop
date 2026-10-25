@@ -1,11 +1,13 @@
-/* 回看这一天 (v5 每日回望) and AI 回望. Both call the AI only from their button. */
+/* 回看这一天 (记忆瞬间; old v5 paragraphs stay readable under 以前的回望) and AI 回望. Both call the AI only from their button. */
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { aiErrorText } from '../../core/ai';
 import { aiConfig, commit, getApp, now, snapshot, today } from '../../app/state';
 import { navigate } from '../../app/router';
 import type { AiReview, DailyReview } from '../../core/types';
+import * as M from '../../domain/moments-ai';
 import * as S from '../../domain/sea';
 import { Button, Card, confirmAsk, toast } from '../../ui/kit';
+import { DailyMoments } from './Moments';
 
 /* ---------------- 回看这一天 ---------------- */
 
@@ -43,36 +45,15 @@ function DailyEntry({ e }: { e: DailyReview }) {
 
 export function DailyCard() {
   const [day, setDay] = useState(today.value);
-  const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState('');
-  const [isError, setIsError] = useState(false);
   const s = snapshot.value;
-  const { list, latest, stale } = useMemo(() => S.dailyForDay(s, day), [s.qyx_daily_review_v51, s.qyx_log, day]);
-  const label = day === today.value ? '回看今天' : '回看这一天';
-
-  const go = async () => {
-    setBusy(true); setIsError(false); setStatus('');
-    try {
-      const out = await S.requestDaily(snapshot.value, day, aiConfig(), getApp().clock, { onSending: () => setStatus(S.DAILY_STATUS.sending) });
-      if (out.kind === 'ok') {
-        commit((st) => S.saveDaily(st, out.entry));
-        setStatus(S.DAILY_STATUS.saved);
-      } else if (out.kind === 'error') {
-        setStatus(out.message); setIsError(true);
-      } else setStatus(S.DAILY_STATUS[out.kind]);
-    } finally {
-      setBusy(false);
-    }
-  };
+  const { older } = useMemo(() => M.momentsForDay(s, day), [s.qyx_daily_review_v51, day]);
 
   return (
-    <Card title="回看这一天" sub="从写下的内容里，轻轻看一眼。" icon="calendar" tone="sky">
-      <label class="daily-date">日期 <input class="input" type="date" value={day} onInput={(e) => { setDay(e.currentTarget.value || today.value); setStatus(''); setIsError(false); }} /></label>
-      <div class="sea-row"><Button variant="primary" disabled={busy} onClick={() => void go()}>{busy ? '正在回看…' : label}</Button></div>
-      <p class={`daily-status ${isError ? 'err' : ''}`} role="status" aria-live="polite">{status || (latest && stale ? S.DAILY_STATUS.changed : '')}</p>
-      {latest ? <DailyEntry e={latest} /> : <p class="sea-fine">{S.DAILY_STATUS.empty}</p>}
-      {list.length > 1 && (
-        <details class="daily-older"><summary>这一天以前的回望 · {list.length - 1}</summary>{list.slice(1).map((e) => <DailyEntry key={e.id} e={e} />)}</details>
+    <Card title="回看这一天" sub="挑出值得留下的瞬间，看看自己当时写下的话。" icon="calendar" tone="sky">
+      <label class="daily-date">日期 <input class="input" type="date" value={day} onInput={(e) => setDay(e.currentTarget.value || today.value)} /></label>
+      <DailyMoments day={day} />
+      {older.length > 0 && (
+        <details class="daily-older"><summary>以前的回望 · {older.length}</summary>{older.map((e) => <DailyEntry key={e.id} e={e} />)}</details>
       )}
     </Card>
   );
