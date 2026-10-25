@@ -42,7 +42,17 @@
 .goal-card.done .goal-title { color: var(--ink-soft); }
 .goal-crown { color: var(--star-deep); }
 .goal-dot { width: 10px; height: 10px; margin: 8px; flex: none; border-radius: 50%; border: 2px solid var(--sky); }
-.goal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 36px; }
+.goal-more { margin: 8px 0 0 36px; }
+.goal-more > summary {
+  list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
+  min-height: 30px; padding: 0 10px; border-radius: 999px; background: var(--card-soft);
+  color: var(--ink-faint); font-size: var(--fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.goal-more > summary::-webkit-details-marker { display: none; }
+.goal-more > summary::after { content: "›"; transition: transform .15s; }
+.goal-more[open] > summary::after { transform: rotate(90deg); }
+.goal-more .goal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.goal-more .trail { margin-left: 0; }
 .goal-splits { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 6px 0 0; padding-left: 36px; }
 .split-chip {
   display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 2px 0 2px 8px;

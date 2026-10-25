@@ -90,6 +90,25 @@ function AddRow() {
   );
 }
 
+/** Tags and the record trail stay folded behind one line, so a month of cards stays short. */
+function GoalMore({ a, tags, open, setOpen }: {
+  a: MonthGoal; tags: { id: string; path: string }[]; open: boolean; setOpen: (v: boolean) => void;
+}) {
+  const { derived, cardOps } = G.goalTrail(snapshot.value, a);
+  if (!tags.length && !derived.length && !cardOps.length) return null;
+  const parts = [
+    tags.length ? `#${tags[0].path}${tags.length > 1 ? ` 等 ${tags.length} 个标签` : ''}` : '',
+    derived.length ? `相关记录 ${derived.length} 条` : '',
+  ].filter(Boolean);
+  return (
+    <details class="goal-more" open={open} onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}>
+      <summary>{parts.join(' · ') || '卡片记录'}</summary>
+      {tags.length > 0 && <div class="goal-tags">{tags.map((t) => <Chip key={t.id}>#{t.path}</Chip>)}</div>}
+      <Trail a={a} />
+    </details>
+  );
+}
+
 function Trail({ a }: { a: MonthGoal }) {
   const { derived, cardOps } = G.goalTrail(snapshot.value, a);
   const line = (h: G.TrailLine) => (
@@ -160,7 +179,7 @@ function SplitChip({ a, i, watch }: { a: MonthGoal; i: number; watch: boolean })
 
 function GoalCard({ a }: { a: MonthGoal }) {
   const watch = G.isWatch(a);
-  const [trail, setTrail] = useState(watch);
+  const [trail, setTrail] = useState(false);
   const [splitting, setSplitting] = useState(false);
   const tags = G.goalTagPaths(snapshot.value, a.id);
 
@@ -210,7 +229,6 @@ function GoalCard({ a }: { a: MonthGoal }) {
         <h3 class="goal-title">{a.text}{!watch && a.done && <span class="goal-crown" aria-label="已完成"> ♛</span>}</h3>
         <Menu label="目标操作" items={items} />
       </div>
-      {tags.length > 0 && <div class="goal-tags">{tags.map((t) => <Chip key={t.id}>#{t.path}</Chip>)}</div>}
       <div class="goal-splits">
         {(a.splits || []).map((_, i) => <SplitChip key={i} a={a} i={i} watch={watch} />)}
         <button type="button" class="split-add" onClick={async () => {
@@ -219,7 +237,7 @@ function GoalCard({ a }: { a: MonthGoal }) {
         }}>＋ 写一个</button>
       </div>
       {splitting && <p class="goal-splitting" role="status">在拆…</p>}
-      {trail && <Trail a={a} />}
+      <GoalMore a={a} tags={tags} open={trail} setOpen={setTrail} />
     </article>
   );
 }
