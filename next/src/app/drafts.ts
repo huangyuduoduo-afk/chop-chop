@@ -86,12 +86,15 @@ export function useDraft(context: string, extra: Partial<Draft> = {}) {
 
   const onInput = (e: Event) => update({ text: (e.currentTarget as HTMLTextAreaElement).value });
 
-  async function submit(save: (text: string, submissionId: string, draft: Draft) => unknown | Promise<unknown>): Promise<boolean> {
+  async function submit(
+    save: (text: string, submissionId: string, draft: Draft) => unknown | Promise<unknown>,
+    opts: { allowEmpty?: boolean } = {},
+  ): Promise<boolean> {
     if (busy.current) return false;
     busy.current = true;
     try {
       const live = ref.current ? ref.current.value : draft.text;
-      if (!live.trim()) return false;
+      if (!live.trim() && !opts.allowEmpty) return false;
       const current = { ...draft, text: live };
       write(current);
       const ok = await save(live, current.submissionId, current);

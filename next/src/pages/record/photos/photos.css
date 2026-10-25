@@ -1,0 +1,68 @@
+/* Photos: record grid, viewer, composer strip. Tokens only. */
+.ph-grid { display: grid; gap: 6px; margin: 8px 0 2px; }
+.ph-grid.cols-1 { grid-template-columns: minmax(0, 1fr); }
+.ph-grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ph-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ph-grid.cols-1 .ph-tile { max-height: 340px; }
+.ph-tile {
+  position: relative; display: block; width: 100%; padding: 0; overflow: hidden; border: 1px solid var(--line);
+  border-radius: var(--radius-sm); background: var(--sky-mist); cursor: zoom-in;
+}
+.ph-tile:active { opacity: .88; }
+.ph-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ph-hold {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 100%; min-height: 56px;
+  background: linear-gradient(110deg, var(--sky-mist) 30%, var(--card-soft) 50%, var(--sky-mist) 70%) 0 0 / 200% 100%;
+  color: var(--ink-faint); animation: ph-shimmer 1.8s ease-in-out infinite;
+}
+.ph-hold small { font-size: var(--fs-xs); }
+.ph-hold.big { background: none; color: var(--ink-faint); animation: none; }
+@keyframes ph-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .ph-hold { animation: none; } }
+
+/* viewer */
+.ph-viewer {
+  position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center;
+  background: rgb(20 28 40 / 92%); animation: fade .15s;
+}
+.ph-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: calc(var(--safe-t) + 56px) 12px calc(var(--safe-b) + 48px); }
+.ph-full { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); user-select: none; }
+.ph-full.soft { filter: blur(2px); opacity: .85; }
+.ph-close, .ph-nav {
+  position: absolute; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%;
+  background: rgb(255 255 255 / 16%); color: #fff;
+}
+.ph-close { top: calc(var(--safe-t) + 10px); right: 12px; }
+.ph-nav { top: 50%; margin-top: -22px; }
+.ph-nav.prev { left: 10px; }
+.ph-nav.next { right: 10px; }
+.ph-nav:disabled { opacity: .25; }
+.ph-count { position: absolute; bottom: calc(var(--safe-b) + 16px); left: 0; right: 0; margin: 0; text-align: center; color: rgb(255 255 255 / 80%); font-size: var(--fs-sm); }
+@media (max-width: 520px) { .ph-nav { top: auto; bottom: calc(var(--safe-b) + 6px); margin-top: 0; } }
+
+/* composer strip */
+.ph-strip-wrap { display: grid; gap: 6px; }
+.ph-strip { display: flex; gap: 8px; margin: 0; padding: 2px 2px 4px; list-style: none; overflow-x: auto; }
+.ph-chip { position: relative; flex: none; width: 76px; height: 76px; }
+.ph-chip-main {
+  display: block; width: 100%; height: 100%; padding: 0; overflow: hidden; border: 2px solid transparent;
+  border-radius: var(--radius-sm); background: var(--sky-mist);
+}
+.ph-chip.on .ph-chip-main { border-color: var(--sky-deep); }
+.ph-chip.working { border-radius: var(--radius-sm); overflow: hidden; background: var(--sky-mist); }
+.ph-x {
+  position: absolute; top: -5px; right: -5px; min-width: 24px; height: 24px; padding: 0 5px; display: grid; place-items: center;
+  border: 1px solid var(--line-strong); border-radius: 999px; background: var(--card); color: var(--ink-soft);
+  font-size: var(--fs-xs); box-shadow: var(--shadow);
+}
+.ph-x::after { content: ''; position: absolute; inset: -9px; }
+.ph-x.armed { background: var(--pink-mist); border-color: var(--pink); color: var(--danger); }
+.ph-order { display: flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--ink-faint); }
+.ph-order span { flex: 1; }
+.ph-order button {
+  width: 40px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--card-soft); color: var(--ink-soft);
+}
+.ph-order button:disabled { opacity: .4; }
+.composer.drop { outline: 2px dashed var(--sky); outline-offset: 4px; border-radius: var(--radius); }
+.ph-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }

@@ -8,16 +8,24 @@
  */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { useDraft } from '../../app/drafts';
+import { drainPhotos, photos } from '../../app/photos';
 import { navigate } from '../../app/router';
 import { commit, getApp, snapshot } from '../../app/state';
 import { editRecord, editableText, MOODS, submitRecord } from '../../domain/records';
 import { IDEA_ICONS, ideaTitle, liveIdeas, ownerOf } from '../../domain/ideas';
 import { displayReferences, excerptText, fmtDT, refCandidates, refToken, resolveToken, type RefMap } from '../../domain/refs';
+import { preparePhoto } from '../../core/photos';
+import type { PhotoRef } from '../../core/types';
+import { attachPhotos, detachPhoto, movePhoto } from '../../domain/moments';
 import { Button, Sheet, toast } from '../../ui/kit';
 import { Icon } from '../../ui/icons';
 import { IdeaIcon } from '../ideas/IdeaIcon';
 import { useVoice } from './voice';
+import { PhotoStrip } from './photos/PhotoStrip';
+import { PhotoIcon } from './photos/Thumb';
+import { MAX_PHOTOS, addRef, commitThenDrain, isImageFile, moveRef, newPhotoId, pickNotice, readDraftPhotos, removeRef, stagePicked } from './photos/photoLogic';
 import './record.css';
+import './photos/photos.css';
 
 export type ComposerMode = 'note' | 'append' | 'new-idea' | 'edit';
 
@@ -55,6 +63,10 @@ export function Composer(props: ComposerProps) {
   const [moodOpen, setMoodOpen] = useState(false);
   const [pickRef, setPickRef] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [working, setWorking] = useState(0);
+  const [dropping, setDropping] = useState(false);
+  const fileEl = useRef<HTMLInputElement>(null);
+  const inflight = useRef(0);
   const trace = useRef({ entered: 0, active: 0, focusedAt: 0, typed: false });
   const composing = useRef(false);
   const el = () => d.ref.current as HTMLTextAreaElement | null;
@@ -67,6 +79,68 @@ export function Composer(props: ComposerProps) {
   const target = rawTarget === undefined ? ownDefault : ideas.some((i) => i.id === rawTarget) ? rawTarget : '';
   const title = (d.draft.title as string) || '';
   const icon = (d.draft.icon as string) || 'star';
+
+  /* ---- 图片: staged on pick (so a reload keeps them); a record's own photos in edit mode ---- */
+  const editing = mode === 'edit' && !!props.editId;
+  const draftPhotos = readDraftPhotos(d.draft.photos);
+  const photoList: PhotoRef[] = editing ? log.find((x) => x.id === props.editId)?.images || [] : draftPhotos;
+  const listRef = useRef<PhotoRef[]>(draftPhotos);
+  if (!editing) listRef.current = draftPhotos;
+  const currentPhotos = () => (editing ? snapshot.value.qyx_log?.find((x) => x.id === props.editId)?.images || [] : listRef.current);
+
+  const addFiles = async (files: ArrayLike<File>) => {
+    if (!Array.from(files).some(isImageFile)) return;
+    const res = await stagePicked(files, {
+      have: currentPhotos().length + inflight.current,
+      prepare: preparePhoto,
+      stage: (ref, full, thumb) => photos().stage(ref, full, thumb),
+      newId: newPhotoId,
+      now: () => getApp().clock.now(),
+      onWork: (delta) => { inflight.current += delta; setWorking(inflight.current); },
+      onStaged: (ref) => {
+        if (editing) commit((s, c) => attachPhotos(s, props.editId!, [ref], c));
+        else { listRef.current = addRef(listRef.current, ref); d.update({ photos: listRef.current }); }
+      },
+    });
+    if (editing && res.added.length) void drainPhotos();
+    const notice = pickNotice(res);
+    if (notice) toast(notice, 4000);
+  };
+
+  const removePhoto = (id: string) => {
+    let ref: PhotoRef | null | undefined;
+    if (editing) ref = commit((s, c) => detachPhoto(s, props.editId!, id, c));
+    else {
+      ref = listRef.current.find((p) => p.id === id);
+      listRef.current = removeRef(listRef.current, id);
+      d.update({ photos: listRef.current });
+    }
+    if (ref) photos().discard(ref).then(() => drainPhotos()).catch(() => toast('图片已移除，云端清理稍后再试。'));
+  };
+
+  const shiftPhoto = (id: string, delta: -1 | 1) => {
+    if (editing) commit((s, c) => movePhoto(s, props.editId!, id, delta, c));
+    else { listRef.current = moveRef(listRef.current, id, delta); d.update({ photos: listRef.current }); }
+  };
+
+  const onPaste = (e: ClipboardEvent) => {
+    const files = Array.from(e.clipboardData?.files || []).filter(isImageFile);
+    if (!files.length || e.clipboardData?.getData('text/plain')) return; // pasted text goes through as usual
+    e.preventDefault();
+    void addFiles(files);
+  };
+  const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types || []).includes('Files');
+  const onDragOver = (e: DragEvent) => { if (hasFiles(e)) { e.preventDefault(); setDropping(true); } };
+  const onDrop = (e: DragEvent) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    setDropping(false);
+    void addFiles(Array.from(e.dataTransfer?.files || []));
+  };
+  const pickClick = () => {
+    if (currentPhotos().length + inflight.current >= MAX_PHOTOS) { toast(`最多 ${MAX_PHOTOS} 张图片`); return; }
+    fileEl.current?.click();
+  };
 
   /** Write text into textarea + draft together (refs travel with the draft). */
   const setText = (value: string, extra: Record<string, unknown> = {}) => {
@@ -176,6 +250,7 @@ export function Composer(props: ComposerProps) {
   /* ---- save ---- */
   const save = async () => {
     if (saving) return;
+    if (inflight.current > 0) { toast('图片还在处理，稍等一下再记。'); return; }
     setSaving(true);
     try {
       const t = el();
@@ -185,6 +260,7 @@ export function Composer(props: ComposerProps) {
       const wall = tr.entered ? now - tr.entered : 0;
       if (!tr.typed) active = wall;
       const fixedMood = mood;
+      const photoRefs = mode === 'edit' ? [] : listRef.current.slice();
       let outcome: { recordId: string; ideaId: string | null } | null = null;
       const ok = await d.submit((text, sid) => {
         try {
@@ -194,13 +270,19 @@ export function Composer(props: ComposerProps) {
             outcome = { recordId: props.editId, ideaId: null };
             return true;
           }
-          const res = commit((s, c) => submitRecord(s, {
-            submissionId: sid, text, refs: getRefs(),
-            mood: mode === 'note' ? fixedMood : null,
-            ideaId: mode === 'new-idea' ? (target || null) : target || null,
-            newIdea: mode === 'new-idea' && !target ? { title: title.trim(), icon } : null,
-            trace: mode === 'note' && wall > 0 ? { wall, active } : null,
-          }, c));
+          // photos are already staged (on pick); the record and its photo refs go in one commit, then upload
+          const res = commitThenDrain(photoRefs.length > 0, () => commit((s, c) => {
+            const out = submitRecord(s, {
+              submissionId: sid, text, refs: getRefs(),
+              mood: mode === 'note' ? fixedMood : null,
+              ideaId: mode === 'new-idea' ? (target || null) : target || null,
+              newIdea: mode === 'new-idea' && !target ? { title: title.trim(), icon } : null,
+              trace: mode === 'note' && wall > 0 ? { wall, active } : null,
+              allowEmpty: photoRefs.length > 0,
+            }, c);
+            if (out.ok && photoRefs.length) attachPhotos(s, out.recordId, photoRefs, c);
+            return out;
+          }), (r) => r.ok, () => void drainPhotos());
           if (!res.ok) return false;
           outcome = { recordId: res.recordId, ideaId: res.ideaId };
           return true;
@@ -208,9 +290,10 @@ export function Composer(props: ComposerProps) {
           toast('尚未完成保存：' + (e instanceof Error ? e.message : '写入失败') + '。文字已保留。', 4000);
           return false;
         }
-      });
+      }, { allowEmpty: photoRefs.length > 0 });
       if (!ok || !outcome) return;
       refs.current = new Map();
+      listRef.current = [];
       trace.current = { entered: 0, active: 0, focusedAt: 0, typed: false };
       setMoodOpen(false);
       if (mode !== 'edit') toast('已保存到本机' + (getApp().store.token ? '，等待云端确认。' : '。'));
@@ -221,13 +304,20 @@ export function Composer(props: ComposerProps) {
     }
   };
 
-  const cancel = () => { d.discard(); refs.current = new Map(); props.onCancel?.(); };
+  const cancel = () => {
+    if (!editing) for (const p of listRef.current) photos().discard(p).catch(() => undefined);
+    listRef.current = [];
+    d.discard();
+    refs.current = new Map();
+    props.onCancel?.();
+  };
   const label = props.saveLabel || (mode === 'edit' ? '保存修改' : mode === 'append' ? '保存补充' : mode === 'new-idea' ? '保存想法' : '记下');
   const placeholder = props.placeholder || (mode === 'note' ? '发生了什么、注意到什么，话多正好……' : mode === 'append' ? '补充一点新的想法……' : mode === 'new-idea' ? '一点想法、一段话，都可以留在这里' : '');
   const listening = voice.phase === 'starting' || voice.phase === 'listening';
 
   return (
-    <div class={`composer mode-${mode}`}>
+    <div class={`composer mode-${mode} ${dropping ? 'drop' : ''}`} onPaste={onPaste} onDragOver={onDragOver}
+      onDragLeave={(e) => { if (e.target === e.currentTarget) setDropping(false); }} onDrop={onDrop}>
       {mode === 'new-idea' && (
         <div class="composer-meta">
           {!target && (
@@ -276,6 +366,8 @@ export function Composer(props: ComposerProps) {
         </div>
       )}
 
+      <PhotoStrip items={photoList} working={working} confirmRemove={editing} onRemove={removePhoto} onMove={shiftPhoto} />
+
       {voice.phase !== 'idle' && (
         <div class="voice-bar" role="status" aria-live="polite">
           <span class={`voice-dot ${voice.phase === 'listening' ? 'on' : ''}`} />
@@ -294,6 +386,11 @@ export function Composer(props: ComposerProps) {
             {mood || '心情'}
           </button>
         )}
+        <button type="button" class={`tool ${photoList.length ? 'on' : ''}`} aria-label={photoList.length ? `图片，已选 ${photoList.length} 张` : '添加图片'} onClick={pickClick}>
+          <PhotoIcon /> 图片{photoList.length ? ` ${photoList.length}` : ''}
+        </button>
+        <input ref={fileEl} class="ph-file" type="file" accept="image/*" multiple tabIndex={-1} aria-hidden="true"
+          onChange={(e) => { const input = e.currentTarget; const files = Array.from(input.files || []); input.value = ''; void addFiles(files); }} />
         {voice.supported && voice.phase === 'idle' && (
           <button type="button" class="tool" onClick={voice.start}><Icon name="mic" size={16} /> 语音输入</button>
         )}
@@ -329,7 +426,7 @@ export function Composer(props: ComposerProps) {
           </label>
         ) : <span class="grow" />}
         {mode === 'edit' && <Button variant="ghost" onClick={cancel}>取消</Button>}
-        <Button variant="primary" class="save-btn" aria-busy={saving} onClick={save}>{label}</Button>
+        <Button variant="primary" class="save-btn" aria-busy={saving} disabled={working > 0} onClick={save}>{label}</Button>
       </div>
 
       <RefPicker open={pickRef} onClose={() => setPickRef(false)} onPick={insertRef} />

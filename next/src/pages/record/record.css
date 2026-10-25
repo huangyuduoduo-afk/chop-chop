@@ -118,3 +118,57 @@
 }
 .sit-reminder .sit-label { font-weight: 650; color: var(--star-deep); }
 .sit-reminder p { flex: 1; margin: 0; min-width: 10em; }
+
+/* ---- 月历 / 一天 (6.1) ---- */
+.seg { display: flex; gap: 4px; padding: 4px; margin: 0 0 12px; border-radius: 999px; background: var(--sky-mist); }
+.seg button { flex: 1; min-height: 38px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-soft); font-size: var(--fs-sm); }
+.seg button.on { background: var(--card); color: var(--sky-deep); font-weight: 650; box-shadow: var(--shadow); }
+
+.star-btn { width: 38px; height: 38px; display: grid; place-items: center; border: 0; background: transparent; color: var(--ink-faint); border-radius: 50%; }
+.star-btn.on { color: var(--star-deep); }
+.star-btn.on svg { fill: var(--star); }
+
+.cal-head { display: flex; align-items: center; gap: 4px; margin: 4px 0 10px; }
+.cal-head h2 { margin: 0 4px; font-size: var(--fs-lg); }
+.cal-nav { width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--ink-soft); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.cal-week { display: contents; }
+.cal-week span { text-align: center; font-size: 11px; color: var(--ink-faint); padding: 2px 0 4px; }
+.cal-cell {
+  position: relative; overflow: hidden; aspect-ratio: 1 / 1.1; min-width: 0; padding: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink);
+}
+.cal-cell.out { opacity: .4; }
+.cal-cell.today { border-color: var(--sky-deep); box-shadow: 0 0 0 2px var(--sky); }
+.cal-cell.lived { background: var(--sky-mist); border-color: transparent; }
+/* A day with a photo shows the photo itself; only a soft band behind the number keeps it legible. */
+.cal-cover { z-index: 0; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cal-cell.has-cover { border-color: transparent; }
+.cal-cell.has-cover::after {
+  z-index: 1; content: ""; position: absolute; inset: 0 0 auto; height: 52%;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--card) 78%, transparent), transparent);
+}
+.cal-cell.has-cover .cal-dots i { box-shadow: 0 0 0 1.5px var(--card); }
+.cal-num { position: relative; z-index: 2; margin-top: 4px; font-size: 13px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.cal-star { z-index: 2; position: absolute; top: 2px; right: 3px; font-size: 11px; line-height: 1; color: var(--star-deep); }
+.cal-dots { z-index: 2; position: absolute; bottom: 5px; left: 0; right: 0; display: flex; justify-content: center; gap: 2px; }
+.cal-dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--sky-deep); }
+.cal-starred { margin-top: 18px; display: grid; gap: 6px; }
+.cal-starred h3 { margin: 0 2px; font-size: var(--fs-sm); color: var(--ink-faint); font-weight: 600; }
+.cal-starred .faint { margin: 0 2px; }
+.cal-star-row {
+  display: grid; gap: 2px; text-align: left; width: 100%; min-height: 44px; padding: 8px 12px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--card); color: var(--ink);
+}
+.cal-star-when { font-size: 11px; color: var(--star-deep); }
+.cal-star-text { font-size: var(--fs-sm); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+
+.day-block { margin-top: 14px; }
+.day-block > h3 { margin: 0 2px 8px; font-size: var(--fs-sm); color: var(--ink-faint); font-weight: 600; }
+.day-hl { background: var(--star-mist); border-radius: var(--radius); padding: 8px 12px 12px; margin-bottom: 8px; }
+.rec-badge.is-star { background: var(--star-mist); color: var(--star-deep); }
+.day-hl .rec-badge.is-star { background: var(--card); }
+.day-excerpt { max-height: 7em; overflow: hidden; }
+.rec-compact { padding-bottom: 10px; }
+.day-empty { display: grid; justify-items: center; gap: 8px; padding: 14px 0; }

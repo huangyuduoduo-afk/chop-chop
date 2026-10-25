@@ -1,7 +1,7 @@
 /* 说说: composer on top, then every record newest first, grouped by day. */
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { navigate, route } from '../../app/router';
-import { getApp, now, snapshot } from '../../app/state';
+import { getApp, now, snapshot, today } from '../../app/state';
 import { Markdown } from '../../domain/markdown';
 import { charCount, fmtSpan } from '../../domain/refs';
 import { dayTitle, greeting, groupByDay, ownerIdea, recordsNewestFirst } from '../../domain/records';
@@ -16,6 +16,9 @@ import './record.css';
 import { SitReminder } from './SitReminder';
 import { RecordPhotos } from './photos/RecordPhotos';
 import { StarButton } from './calendar/StarButton';
+import { DayView } from './calendar/DayView';
+import { MonthView } from './calendar/MonthView';
+import { parseRecordRoute } from './calendar/nav';
 
 const TYPE_BADGE: Record<string, string> = { dice: '骰子', ai: '问一句', draw: '抽签', done: '完成', bonus: 'bonus' };
 const CLAMP = 360;
@@ -57,16 +60,14 @@ function Row({ r, log, onEdit, hit }: { r: LogEntry; log: LogEntry[]; onEdit: (i
   );
 }
 
-export default function RecordPage() {
+function Timeline({ target }: { target: string | null }) {
   const snap = snapshot.value;
   now.value;
   const clock = getApp().clock;
-  const target = route.value.params[0];
   const [editing, setEditing] = useState<string | null>(null);
   const [all, setAll] = useState(false);
   const [limit, setLimit] = useState(60);
   const [flash, setFlash] = useState<string | null>(null);
-  const [pick] = useState(() => Math.floor(Math.random() * 1000));
 
   const groups = useMemo(() => groupByDay(recordsNewestFirst(snap)), [snap.qyx_log]);
   const log = snap.qyx_log || [];
@@ -93,11 +94,7 @@ export default function RecordPage() {
   const more = all && budget <= 0 && log.length > limit;
 
   return (
-    <div class="record-page">
-      <div class="greet">
-        <img src="avatar.jpg" alt="陪你记录的头像" width="44" height="44" />
-        <p>{greeting(snap, clock, pick)}</p>
-      </div>
+    <>
       <YesterdayCard />
       <section class="card composer-card" aria-label="写一笔">
         <Composer mode="note" context="note" />
@@ -118,6 +115,29 @@ export default function RecordPage() {
       {more && <button type="button" class="all-records" onClick={() => setLimit(limit + 60)}>再看更多</button>}
       <SitReminder />
       {editing && <EditRecordSheet recordId={editing} onClose={() => setEditing(null)} />}
+    </>
+  );
+}
+
+export default function RecordPage() {
+  const snap = snapshot.value;
+  now.value;
+  const clock = getApp().clock;
+  const [pick] = useState(() => Math.floor(Math.random() * 1000));
+  const view = parseRecordRoute(route.value.params, today.value);
+  return (
+    <div class="record-page">
+      <div class="greet">
+        <img src="avatar.jpg" alt="陪你记录的头像" width="44" height="44" />
+        <p>{greeting(snap, clock, pick)}</p>
+      </div>
+      <div class="seg" role="tablist" aria-label="说说视图">
+        <button type="button" role="tab" aria-selected={view.view === 'timeline'} class={view.view === 'timeline' ? 'on' : ''} onClick={() => navigate('record')}>时间线</button>
+        <button type="button" role="tab" aria-selected={view.view !== 'timeline'} class={view.view !== 'timeline' ? 'on' : ''} onClick={() => navigate('record', 'cal', today.value.slice(0, 7))}>月历</button>
+      </div>
+      {view.view === 'timeline' && <Timeline target={view.target} />}
+      {view.view === 'cal' && <MonthView month={view.month} />}
+      {view.view === 'day' && <DayView day={view.day} />}
     </div>
   );
 }

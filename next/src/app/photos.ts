@@ -41,17 +41,18 @@ export function startPhotoUploads() {
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') void drainPhotos(); });
 }
 
-/** Object URL for a photo path, or null while it is not available (retries every 20 s). */
+/** Object URL for a photo path, or null while it is not available (retries after 3 s, 10 s, then every 20 s). */
 export function usePhotoUrl(path: string | undefined): string | null {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!path) return;
     let alive = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let tries = 0;
     const load = () => photos().url(path).then((u) => {
       if (!alive) return;
       if (u) setUrl(u);
-      else timer = setTimeout(load, 20_000);
+      else timer = setTimeout(load, [3_000, 10_000][tries++] ?? 20_000);
     });
     void load();
     return () => { alive = false; clearTimeout(timer); };

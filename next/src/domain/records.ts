@@ -55,6 +55,8 @@ export interface SubmitInput {
   /** Create a new idea with this record as its root. */
   newIdea?: { title: string; icon: string } | null;
   trace?: { wall: number; active: number } | null;
+  /** A photo-only note may have no text. */
+  allowEmpty?: boolean;
 }
 export type SubmitResult =
   | { ok: true; recordId: string; ideaId: string | null; duplicate: boolean }
@@ -62,7 +64,7 @@ export type SubmitResult =
 
 export function submitRecord(s: Snapshot, input: SubmitInput, clock: Clock): SubmitResult {
   const value = String(input.text || '').trim();
-  if (!value) return { ok: false, reason: 'empty' };
+  if (!value && !input.allowEmpty) return { ok: false, reason: 'empty' };
   const sid = input.submissionId;
   const recordId = 'rec5_' + sid;
   const log = (s.qyx_log ||= []);

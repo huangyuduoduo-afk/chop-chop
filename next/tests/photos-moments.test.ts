@@ -166,3 +166,15 @@ describe('moments', () => {
     expect(d.cover?.id).toBe('p1');
   });
 });
+
+import { submitRecord } from '../src/domain/records';
+describe('photo-only note', () => {
+  it('empty text is rejected unless the note carries photos', () => {
+    const s: Snapshot = {};
+    expect(submitRecord(s, { submissionId: 'a', text: '  ' }, clock)).toMatchObject({ ok: false });
+    const out = submitRecord(s, { submissionId: 'b', text: '', allowEmpty: true }, clock);
+    expect(out).toMatchObject({ ok: true, recordId: 'rec5_b' });
+    expect(attachPhotos(s, 'rec5_b', [ref('only')], clock)).toBe(true);
+    expect(s.qyx_log![0]).toMatchObject({ text: '', images: [{ id: 'only' }] });
+  });
+});
