@@ -27,7 +27,22 @@ export interface LogEntry {
   mark?: unknown;
   submissionId?: string; // v5: stable identity, bypasses content dedupe
   v5StableId?: string;
+  /** 6.1: photos stored in the owner's private GitHub repo. Old clients keep the field untouched. */
+  images?: PhotoRef[];
+  /** 6.1: marked as a highlight (精选) by the owner; null/absent = not starred. */
+  starredAt?: Ms | null;
   [extra: string]: unknown;
+}
+
+export interface PhotoRef {
+  id: string;
+  /** Repo paths: full image and thumbnail, e.g. p/2026/10/<id>.jpg and t/2026/10/<id>.jpg */
+  path: string;
+  thumb: string;
+  w: number;
+  h: number;
+  bytes: number;
+  t: Ms;
 }
 
 export interface Tombstone {

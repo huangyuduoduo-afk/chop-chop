@@ -18,6 +18,8 @@ import { IdeaIcon } from './IdeaIcon';
 import { IdeaMenu } from './IdeaMenu';
 import { readPrefs, writePrefs, type ViewPrefs } from './prefs';
 import './ideas.css';
+import { RecordPhotos } from '../record/photos/RecordPhotos';
+import { StarButton } from '../record/calendar/StarButton';
 
 let listScroll = 0;
 
@@ -218,11 +220,13 @@ function IdeaDetail({ ideaId, jumpTo }: { ideaId: string; jumpTo?: string }) {
               <article class={`tl-item ${flash === l.recordId ? 'ref-hit' : ''}`} id={'idea-rec-' + l.recordId} key={l.id}>
                 <header>
                   <small>{l.role === 'root' ? '最初写下' : '接着写'} · {r ? fmtDT(r.t) : '记录已删除'}{r && r.updatedAt && r.updatedAt > r.t + 1000 ? ' · 编辑过' : ''}</small>
+                  {r && <StarButton record={r} />}
                   {r && <RecordMenu recordId={r.id} type={r.type} onEdit={setEditing} insideIdea={ideaId} />}
                 </header>
                 {r ? (
                   <>
                     {r.text && <Markdown text={r.text} log={log} onGo={(t) => navigate('record', t.id)} />}
+                    <RecordPhotos record={r} />
                     <TaskList recordId={r.id} />
                     <TagChips recordId={r.id} />
                   </>

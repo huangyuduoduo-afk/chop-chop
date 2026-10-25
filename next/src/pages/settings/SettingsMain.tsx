@@ -11,6 +11,7 @@ import {
 } from '../../domain/settings';
 import { downloadText } from './io';
 import './settings.css';
+import { PhotoSettings } from './PhotoSettings';
 
 const PROVIDERS = [
   { value: 'deepseek-v4-pro', label: 'DeepSeek V4 Pro（更强，稍慢）' },
@@ -171,6 +172,7 @@ export default function SettingsMain() {
         <p class="status" aria-live="polite">{statusLine}{dirty.value && st !== 'busy' ? '（有改动未同步）' : ''}</p>
       </Card>
 
+      <PhotoSettings />
       <Card title="AI 服务" icon="sparkle">
         <label class="field">
           <span>服务</span>

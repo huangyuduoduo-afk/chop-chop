@@ -14,6 +14,8 @@ import { RecordMenu, TagChips, TaskList } from './RecordParts';
 import { YesterdayCard } from './YesterdayCard';
 import './record.css';
 import { SitReminder } from './SitReminder';
+import { RecordPhotos } from './photos/RecordPhotos';
+import { StarButton } from './calendar/StarButton';
 
 const TYPE_BADGE: Record<string, string> = { dice: '骰子', ai: '问一句', draw: '抽签', done: '完成', bonus: 'bonus' };
 const CLAMP = 360;
@@ -34,6 +36,7 @@ function Row({ r, log, onEdit, hit }: { r: LogEntry; log: LogEntry[]; onEdit: (i
         {typeof r.src === 'string' && r.src && <span class="rec-badge">{r.src}</span>}
         {r.mood && <span class="rec-mood" aria-label="心情">{r.mood}</span>}
         <span class="grow" />
+        {r.id && <StarButton record={r} />}
         {r.id && <RecordMenu recordId={r.id} type={r.type} onEdit={onEdit} />}
       </header>
       {r.type === 'ai' && r.q && <p class="rec-q">{r.q}</p>}
@@ -43,6 +46,7 @@ function Row({ r, log, onEdit, hit }: { r: LogEntry; log: LogEntry[]; onEdit: (i
         </div>
       )}
       {long && <button type="button" class="link-btn" onClick={() => setOpen(!open)}>{open ? '收起' : '展开全文'}</button>}
+      <RecordPhotos record={r} />
       {r.type === 'note' && wall > 0 && active > 0 && (
         <p class="rec-trace">{charCount(r.text)} 字 · {fmtSpan(active)}{wall - active > 60000 ? ` · 中间离开 ${fmtSpan(wall - active)}` : ''}</p>
       )}
